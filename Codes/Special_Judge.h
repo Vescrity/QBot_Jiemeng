@@ -429,7 +429,7 @@ bool spj(Msg_type type,const char *buf,const char*msg){                         
         get_copy(0,4,"[\\n]",opt+strlen(opt));
       }
       output(type,opt);
-    }//fclose(stdin);
+    }
     return 1;
   }
   if(spj_pfct(".info",msg)){                                                    //版本信息
@@ -438,11 +438,9 @@ bool spj(Msg_type type,const char *buf,const char*msg){                         
   }if(spj_pfct(".switch on",msg)&&(check_priv(type.sender_id))){                //开启应答
 
     main_switch=1;
-    //output(type,"程序版本：v7.5 更新于2022-09-15 15:40");
     return 1;
   }if(spj_pfct(".switch off",msg)){                                             //关闭应答
     main_switch=0;
-    //output(type,"程序版本：v7.5 更新于2022-09-15 15:40");
     return 1;
   }
   if(spj_rand(msg)){                                                            //生成随机数
