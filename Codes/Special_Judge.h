@@ -433,7 +433,7 @@ bool spj(Msg_type type,const char *buf,const char*msg){                         
     return 1;
   }
   if(spj_pfct(".info",msg)){                                                    //版本信息
-    output(type,"程序版本：vGit_0.10.5 beta10 更新于2022-10-10 14:05[\\n]开发by雪と葉[\\n]请勿滥用bot酱呐♥");
+    output(type,"程序版本：v10.7 更新于2022-10-14 18:38[\\n]开发by雪と葉[\\n]项目地址:https://github.com/Vescrity/QBot_Jiemeng[\\n]请勿滥用bot酱呐♥");
     return 1;
   }if(spj_pfct(".switch on",msg)&&(check_priv(type.sender_id))){                //开启应答
 
