@@ -1,6 +1,6 @@
 # QBot_Jiemeng
 借助go-cqhttp，使用C++开发的QQ聊天机器人程序
-页面施工ing...
+注意：说明暂时只适用于v10.7
 ## 简介
 桔梦(QBot_Jiemeng)是一个借助[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)来达到QQ聊天功能的机器人程序。使用者可通过桔梦来实现检测关键词并做出特定回复的功能。词库可自定义。
 
