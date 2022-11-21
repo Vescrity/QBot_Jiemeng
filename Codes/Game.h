@@ -1,6 +1,5 @@
 #ifndef GAME
 #define GAME
-/*一个无聊的四子棋小游戏，内置智障电脑*/
 #define MM (100)
 #include<stdio.h>
 #include<string.h>
@@ -26,8 +25,6 @@ struct pr{
 struct Connect_Four{
   int stat,crt_player;
   static int Mx,My,step;
-
-
   Connect_Four(){Mx=My=step=stat=step=0;}
   struct player{
     char name[1<<5];
@@ -49,7 +46,7 @@ struct Connect_Four{
       char opt[1<<12];
       memset(opt,0,sizeof(opt));
       sprintf(opt+strlen(opt),"step=%d\n",step);
-      for(int i=1;i<=Mx+1;i++)sprintf(opt+strlen(opt),"| %d ",i);
+      for(int i=1;i<Mx+1;i++)sprintf(opt+strlen(opt),"| %d ",i);
       sprintf(opt+strlen(opt),"|\n");
       for(int i=My;i>0;i--){
         for(int j=1;j<=Mx;j++){
@@ -115,7 +112,7 @@ struct Connect_Four{
         ttp=tmp[i];
         for(int j=1;j<=Mx;j++){
           int ppts=pts;
-          if(tmp[i].tl[j]<My)ttp.inst(j,opt);
+          if(tmp[i].tl[j]<=My)ttp.inst(j,opt);
           else continue;
           mxopt=ttp.mxcnt(opt);
           if(mxopt>=4)ppts-=50;
@@ -140,7 +137,7 @@ struct Connect_Four{
   }
   string opr(const char*command){
     puts(command);
-    bool ifr=0;
+    bool ifr=0;                                     //本次调用是否已读取数据
     char opt[1<<12];
     memset(opt,0,sizeof(opt));
     string cm(command);
@@ -156,7 +153,7 @@ struct Connect_Four{
         sprintf(opt+strlen(opt),"错误：参数缺失！");string rt(opt);return rt;
       }
       sscanf(command,"%d%d%d",&ppp,&Mx,&My);
-      if(Mx<5||My<5||(ppp<1||ppp>3)){
+      if(Mx<5||My<5||(ppp<1||ppp>3)||Mx>20||My>100){
         sprintf(opt+strlen(opt),"错误：参数不合理！");string rt(opt);return rt;
       }
       printf("%d %d %d\n",ppp,Mx,My);
@@ -200,9 +197,9 @@ struct Connect_Four{
         sscanf(command,"%d",&tt);
         if(tt>Mx||tt<1){
           sprintf(opt+strlen(opt),"错误：参数不合理！");string rt(opt);return rt;
-        }
+        }ifr=1;
         m_insert(tt,ply[crt_player],crt_player);
-        sprintf(opt+strlen(opt),"%s",mmp.prt().c_str());
+        //sprintf(opt+strlen(opt),"%s",mmp.prt().c_str());
         if(!(mmp.mxcnt(1)<4&&mmp.mxcnt(2)<4)){
           sprintf(opt+strlen(opt),"[name] win!\n");stat=2;
           string rt(opt);return rt;
@@ -218,6 +215,7 @@ struct Connect_Four{
       sprintf(opt+strlen(opt),"已经结束了捏\n");
       string rt(opt);return rt;
     }
+    return string("GAME_ERROR");
   }
 };
 int Connect_Four::step=0;

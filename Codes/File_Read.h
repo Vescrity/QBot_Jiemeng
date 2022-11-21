@@ -1,6 +1,5 @@
 #ifndef FILE_READ
   #define FILE_READ
-  /**配置文件加载库**/
 #include<algorithm>
 #include"Jie_Meng_Base.h"
 #include"Key_Ans.h"
@@ -40,6 +39,25 @@ void read_config(){
   gets(tmptxt);
   sscanf(tmptxt,"ANS_FILENAME=%s",tmptxt);
   ANS_FILENAME=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"APP_ID=%s",tmptxt);
+  APP_ID=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"APP_SECRET=%s",tmptxt);
+  APP_SECRET=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"BAIDU_APP_ID=%s",tmptxt);
+  BAIDU_APP_ID=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"BAIDU_APP_SECRET=%s",tmptxt);
+  BAIDU_APP_SECRET=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"AI_PATH=%s",tmptxt);
+  AI_PATH=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"SYMBOL_NAME=%s",tmptxt);
+  SYMBOL_NAME=tmptxt;
+
   printf("应答库文件名：ANS_FILENAME=");
   puts(ANS_FILENAME.c_str());
 }

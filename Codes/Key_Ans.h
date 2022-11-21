@@ -1,6 +1,5 @@
 #ifndef KEY_ANS
   #define KEY_ANS
-  /*应答组的类型定义库*/
 #include<stdlib.h>
 #include<vector>
 #include<stdio.h>
@@ -8,21 +7,21 @@
 #include"Jie_Meng_Base.h"
 #include"Msg_type.h"
 using namespace std;
-struct Words{                                   //关键词
-  char txt[10000];
-  bool crt(const char *s){                      //判断是否匹配
+struct Words{
+  char txt[1<<14];
+  bool crt(const char *s){
     int l=strlen(txt);
     for(int i=0;i<l;i++){
       if(txt[i]!=*(s+i))return 0;
     }return 1;
   }
 };
-struct Keys{                                    //关键词组
+struct Keys{
   vector<Words>word;
   bool allcrt;
   int word_num;
   Keys(){word_num=allcrt=0;}
-  bool crt(const char *s){                      //是否触发关键词组
+  bool crt(const char *s){
     if(allcrt){
       if(strlen(s)==strlen(word[0].txt)){
         return word[0].crt(s);
@@ -40,17 +39,17 @@ struct Keys{                                    //关键词组
       }return 1;
     }return 0;
   }
-  void insert_word(Words a){                     //插入新的关键词
+  void insert_word(Words a){
     word.push_back(a);
     word_num++;
   }
-  void print(Msg_type);                           //执行输出
+  void print(Msg_type);
 };
-struct Group{                                     //应答组类型定义
+struct Group{
   vector<Keys>key;
   vector<Keys>ans;
-  int key_num,ans_num,pri;                        //pri:优先级
-  bool sp,sg,priv;                                //sp:该应答组是否限定特定人可触发 sg:（群）
+  int key_num,ans_num,pri;
+  bool sp,sg,priv;
   string spid;
   void insert_key(Keys a){key.push_back(a);key_num++;}
   void insert_ans(Keys a){ans.push_back(a);ans_num++;}
@@ -71,5 +70,5 @@ struct Group{                                     //应答组类型定义
   void print(Msg_type);
   Group(){priv=sg=sp=key_num=ans_num=pri=0;}
 };
-bool operator <(Group a,Group b){return a.pri>b.pri;}     //为了按优先级排序
+bool operator <(Group a,Group b){return a.pri>b.pri;}
 #endif

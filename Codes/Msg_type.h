@@ -1,13 +1,12 @@
 #ifndef MSG_TYPE
   #define MSG_TYPE
-  /*消息类型定义库*/
 #include"Msg_get.h"
 #include<string>
 #ifndef IP_ADD
   #define IP_ADD "http://127.0.0.1:"+string(pt)+"/"
 #endif
 using namespace std;
-
+/*void report_print(const char*);*/
 
 struct Msg_type{
   bool ifgrp;//1-Group msg  0-Private msg
@@ -23,7 +22,9 @@ struct Msg_type{
     memset(sender_name,0.,sizeof sender_name);
     memset(grp_name,0.,sizeof grp_name);
   }void get_grp_name(char*);
-  void get_msg_type(const char *txxt){                            //获取消息类型（群聊/私聊，发件人等）
+  void get_msg_type(const char *txxt){
+    //printf("getmsg\n");
+    if(strlen(txxt)==0)return;
     int l,r,t,r1,r2;
     t=get_st(txxt,"message_type");
     if(t==-1){
@@ -66,16 +67,16 @@ struct Msg_type{
       l+=12;
       get_copy(l,r,txxt,sender_name);
     }
-    if(ifgrp){
+    /*if(ifgrp){
       get_grp_name(grp_name);
-    }
+    }*/
     msg_type_ed:get_sender_id(txxt,sender_id);
-    puts("\n---------------------------------------------------");
+    /*puts("\n---------------------------------------------------");
     printf("\n收到消息\nGroup_ID=%s\n",grp_id);
     printf("Group_name=%s\n",grp_name);
     printf("Sender_ID=%s\n",sender_id);
     printf("Sender_name=%s\n",sender_name);
-    printf("Message=");
+    printf("Message=");*/
   }
 };
 #endif
