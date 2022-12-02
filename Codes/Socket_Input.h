@@ -26,7 +26,7 @@ bool ifwhite(Msg_type type){
 }
 
   Msg_type init(char *msg){
-    try{
+    //try{
       ss:memset(msg,0,sizeof msg);
       WSADATA wsaData;
       WSAStartup( MAKEWORD(2, 2), &wsaData);
@@ -57,7 +57,7 @@ bool ifwhite(Msg_type type){
       closesocket(servSock);
       ::WSACleanup();
       //reward();
-      //puts(buffer);
+      //puts("socket");
       Msg_type type,emp;
       emp.grp_id[0]='-';
       if(strlen(buffer)==0)return emp;
@@ -71,13 +71,13 @@ bool ifwhite(Msg_type type){
 
       stats_refresh();
       return type;
-    }
-    catch(...){
+    //}
+    /*catch(...){
       error_report(string("ERROR_in_SOCKET_INPUT::init"));
       Msg_type type;
-      get_copy(0,8,"81281997",type.sender_id);
+      get_copy(0,8,"12345678",type.sender_id);
       type.ifgrp=0;
       return type;
-    }
+    }*/
   }
 #endif

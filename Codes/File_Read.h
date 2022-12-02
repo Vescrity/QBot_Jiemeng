@@ -40,6 +40,15 @@ void read_config(){
   sscanf(tmptxt,"ANS_FILENAME=%s",tmptxt);
   ANS_FILENAME=tmptxt;
   gets(tmptxt);
+  sscanf(tmptxt,"NOTE_FILENAME=%s",tmptxt);
+  NOTE_FILENAME=tmptxt;
+  gets(tmptxt);
+  sscanf(tmptxt,"IF_HAVE_MATLAB=%s",tmptxt);
+  IF_HAVE_MATLAB=tmptxt[0]=='1';
+  gets(tmptxt);
+  sscanf(tmptxt,"AL_TOKEN=%s",tmptxt);
+  AL_TOKEN=tmptxt;
+  gets(tmptxt);
   sscanf(tmptxt,"APP_ID=%s",tmptxt);
   APP_ID=tmptxt;
   gets(tmptxt);

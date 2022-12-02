@@ -27,6 +27,13 @@ void get_msg(char *txt,char *msg){
   r=l+(((r1<r2)&&(r1!=-1))?r1:(r2==-1?r1:r2));
   get_copy(l,r,txt,msg);
   msg[r-l]=0;
+  strchg("\\r","\r",msg);
+  strchg("\\n","\n",msg);
+  strchg("\\\"","\"",msg);
+  strchg("\\\\","\\",msg);
+  strchg("\\u003e",">",msg);
+  strchg("\\u003c","<",msg);
+  strchg("\\u0026amp;","&",msg);
   //puts(msg);
   //for(int i=0;i<strlen(msg);i++)printf("%d ",msg[i]);
   printf("\n");

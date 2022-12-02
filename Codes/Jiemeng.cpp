@@ -11,6 +11,7 @@
 #include"Special_Judge.h"
 #include"Key_Ans.h"
 #include"File_Read.h"
+#include"Daily.h"
 #pragma comment (lib, "ws2_32.lib")
 #define THR_NUM 128
 using namespace std;
@@ -80,8 +81,13 @@ void Heart_Beat(){
 int main(){
   system("chcp 65001");
   read();
+  char tmp[1<<12]={0};
+  getcwd(tmp,sizeof tmp);
+  RUN_PATH=tmp;
   thread HB(Heart_Beat);
   HB.detach();
+  thread DL(Daily);
+  DL.detach();
   start_time++;
   read_white_list();
   freopen("CON","r",stdin);

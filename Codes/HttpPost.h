@@ -2,9 +2,9 @@
 #define HTTPPOST
 #include<string>
 #include<vector>
-class HttpRequest
-{
-public:
+#include<iostream>
+class HttpRequest{
+  public:
     HttpRequest(const std::string& ip, int port);
     ~HttpRequest(void);
     std::string HttpGet(std::string req);
@@ -13,78 +13,65 @@ public:
     static std::string genJsonString(std::string key, std::string value);
     static std::string genJson(std::string key, std::string value);
     // 分割字符串
-    static std::vector<std::string> split(const std::string &s, const std::string &seperator);
+    static std::vector<std::string>split(const std::string&s,const std::string&seperator);
     // 根据key从Response获取Header中的内容
-    static std::string getHeader(std::string respose, std::string key);
+    static std::string getHeader(std::string respose,std::string key);
     std::string m_ip;
     int m_port;
 };
 #include <WinSock.h>
 #include <iostream>
 #pragma comment(lib, "ws2_32.lib")
-HttpRequest::HttpRequest(const std::string& ip, int port) : m_ip(ip), m_port(port)
-{
-}
-HttpRequest::~HttpRequest(void)
-{
-}
+HttpRequest::HttpRequest(const std::string& ip, int port) : m_ip(ip), m_port(port){}
+HttpRequest::~HttpRequest(void){}
 // Http GET请求
 std::string HttpRequest::HttpGet(std::string req)
 {
-    std::string ret = ""; // 返回Http Response
-    try
+  std::string ret = ""; // 返回Http Response
+  try{
+    WSADATA wData;
+    ::WSAStartup(MAKEWORD(2, 2), &wData);
+    SOCKET clientSocket = socket(AF_INET, 1, 0);
+    struct sockaddr_in ServerAddr = {0};
+    ServerAddr.sin_addr.s_addr = inet_addr(m_ip.c_str());
+    ServerAddr.sin_port = htons(m_port);
+    ServerAddr.sin_family = AF_INET;
+    int errNo = connect(clientSocket, (sockaddr*)&ServerAddr, sizeof(ServerAddr));
+    if(errNo == 0)
     {
-        // 开始进行socket初始化
-        WSADATA wData;
-        ::WSAStartup(MAKEWORD(2, 2), &wData);
-        SOCKET clientSocket = socket(AF_INET, 1, 0);
-        struct sockaddr_in ServerAddr = {0};
-        ServerAddr.sin_addr.s_addr = inet_addr(m_ip.c_str());
-        ServerAddr.sin_port = htons(m_port);
-        ServerAddr.sin_family = AF_INET;
-        int errNo = connect(clientSocket, (sockaddr*)&ServerAddr, sizeof(ServerAddr));
-        if(errNo == 0)
-        {
-            std::string strSend = " HTTP/1.1\r\n"
-                "Cookie:16888\r\n\r\n";
-            strSend = "GET " + req + strSend;
-            // 发送
-            errNo = send(clientSocket, strSend.c_str(), strSend.length(), 0);
-            if(errNo > 0)
-            {
-                //cout << "发送成功" << endl;
-            }
-            else
-            {
-                std::cout << "errNo:" << errNo << std::endl;
-                return ret;
-            }
-            // 接收
-            char bufRecv[3069] = {0};
-            errNo = recv(clientSocket, bufRecv, 3069, 0);
-            if(errNo > 0)
-            {
-                ret = bufRecv;// 如果接收成功，则返回接收的数据内容
-            }
-            else
-            {
-                std::cout << "errNo:" << errNo << std::endl;
-                return ret;
-            }
-        }
-        else
-        {
-            errNo = WSAGetLastError();
-            std::cout << "errNo:" << errNo << std::endl;
-        }
-        // socket环境清理
-        ::WSACleanup();
+      std::string strSend = " HTTP/1.1\r\n"
+            "Cookie:16888\r\n\r\n";
+      strSend = "GET " + req + strSend;
+      errNo = send(clientSocket, strSend.c_str(), strSend.length(), 0);
+      if(errNo > 0){
+            //cout << "发送成功" << endl;
+      }
+      else{
+        std::cout << "errNo:" << errNo << std::endl;
+        return ret;
+      }
+      char bufRecv[3069] = {0};
+      errNo = recv(clientSocket, bufRecv, 3069, 0);
+      if(errNo > 0){
+        ret = bufRecv;// 如果接收成功，则返回接收的数据内容
+      }
+      else{
+        std::cout << "errNo:" << errNo << std::endl;
+        return ret;
+      }
     }
-    catch (...)
-    {
-        return "";
+    else{
+      errNo = WSAGetLastError();
+      std::cout << "errNo:" << errNo << std::endl;
     }
-    return ret;
+    // socket环境清理
+    ::WSACleanup();
+
+  }
+  catch (...){
+    return "";
+  }
+  return ret;
 }
 
 // Http POST请求
@@ -227,5 +214,31 @@ std::string HttpRequest::getHeader(std::string respose, std::string key)
     }
     return "";
 }
+
+BOOL Get_IP(const char*szHost, char* szIp)
+{
+	WSADATA        wsaData;
+
+	HOSTENT   *pHostEnt;
+	int             nAdapter = 0;
+	struct       sockaddr_in   sAddr;
+	if (WSAStartup(0x0101, &wsaData))
+	{
+		printf(" gethostbyname error for host:\n");
+		return FALSE;
+	}
+
+	pHostEnt = gethostbyname(szHost);
+	if (pHostEnt)
+	{
+		if (pHostEnt->h_addr_list[nAdapter]){
+			memcpy(&sAddr.sin_addr.s_addr, pHostEnt->h_addr_list[nAdapter], pHostEnt->h_length);
+			sprintf(szIp, "%s", inet_ntoa(sAddr.sin_addr));
+		}
+	}
+	WSACleanup();
+	return TRUE;
+}
+
 
 #endif

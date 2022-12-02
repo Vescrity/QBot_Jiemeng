@@ -44,6 +44,13 @@ struct Keys{
     word_num++;
   }
   void print(Msg_type);
+  string get_opt(){
+    string opt;
+    for(int i=0;i<this->word_num;i++){
+      if(i)opt=opt+"\n";
+      opt=opt+this->word[i].txt;
+    }return opt;
+  }
 };
 struct Group{
   vector<Keys>key;
@@ -68,6 +75,10 @@ struct Group{
     }return 0;
   }
   void print(Msg_type);
+  string get_opt(){
+    int r=rand()%this->ans_num;
+    return this->ans[r].get_opt();
+  }
   Group(){priv=sg=sp=key_num=ans_num=pri=0;}
 };
 bool operator <(Group a,Group b){return a.pri>b.pri;}
