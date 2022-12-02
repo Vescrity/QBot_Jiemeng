@@ -1,6 +1,8 @@
 # QBot_Jiemeng
 借助go-cqhttp，使用C++开发的QQ聊天机器人程序
-注意：说明暂时只适用于v10.7
+
+- 最近的版本中使用MATLAB来实现了一些特殊功能
+
 ## 简介
 桔梦(QBot_Jiemeng)是一个借助[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)来达到QQ聊天功能的机器人程序。使用者可通过桔梦来实现检测关键词并做出特定回复的功能。词库可自定义。
 
@@ -14,19 +16,36 @@
 	- 你需要安装[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)
 	- 配置准备：
 		- 1.配置go-cqhttp相关配置[config.yml]
+
+			- o.下载后按操作提示进行操作。生成配置文件后请修改以下内容：
 			- a.账号相关内容
 			- b.HTTP通信设置
-				- 监听地址：127.0.0.1 
+				- 监听地址：127.0.0.1
 				- 监听端口设置为任意空闲端口【参考：5702】
 				- 反向HTTP POST：
 					- url: 'http://127.0.0.1:任意空闲端口（不可为监听端口）/'
 			- 相关配置具体可参考示例文件
+			- 完成配置后请运行go-cqhttp.bat并按提示完成登陆
 		- 2.配置Jiemeng相关配置[config.cfg]
-			- Self_ID: 你的用作bot的qq号
+			- (可参考预设文件)
+			- Self_ID: bot qq号
 			- INPORT: 反向HTTP中的端口号
 			- OUTPORT: 监听端口
-			- sleep_time: 每次做出应答后的冷却时间
+			- sleep_time: 每次做出应答后的冷却时间（本选项在新版本中基本无效）
 			- ANS_FILENAME: 应答库文件名
+			- NOTE_FILENAME: 笔记功能文件名
+			- IF_HAVE_MATLAB: 是否安装MATLAB(是=1，否=0)(个别功能需要MATLAB，如无MATLAB不影响使用)
+			- AL_TOKEN: alapi.cn 获取到的TOKEN(部分功能需要，如无可不填)
+			- APP_ID: 电点科技小程序中获取(部分功能需要，如无可不填)
+			- APP_SECRET: 电点科技小程序中获取(部分功能需要，如无可不填)
+			- BAIDU_APP_ID: 使用百度翻译API需要，如无可不填
+			- BAIDU_APP_SECRET: 使用百度翻译API需要，如无可不填
+			- AI_PATH: AI画图安装路径(仅支持stabble-diffusion-webui，用于AI画图功能，如无可不填)
+			- SYMBOL_NAME: symbol程序的文件名
+		- 2.配置start相关配置[start.cfg]
+			- 第一行: Jiemeng主程序的文件名
+			- 第二行: go-cqhttp的exe文件名
+			- 第三行: symbol程序的文件名
 		- 3.Bot权限相关配置
 			- a. [black_list.lst]
 				- 全局黑名单，Bot不会对名单内的qq账号的消息做出响应
@@ -86,10 +105,6 @@
 					- 替换为0-【数值-1】的一个随机数
 				- 更多特殊代码详见进阶说明。
 - 开始使用：
-		
-	 - 启动go-cqhttp并完成相关登录操作，启动Jiemeng.exe
 
-
-
-
-
+	 - 请确保已完成所有配置
+	 - 将Jiemeng的全部文件内容放到和go-cqhttp同一文件夹下，运行start.exe即可
