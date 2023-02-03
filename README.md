@@ -2,12 +2,35 @@
 借助go-cqhttp，使用C++开发的QQ聊天机器人程序
 
 - 最近的版本中使用MATLAB来实现了一些特殊功能
+- 本说明适用于v20.6
+- 本说明用于介绍桔梦基本功能，组成，并帮助您快速上手。
+- 具体的详细说明请参照进阶说明。
 
 ## 简介
 桔梦(QBot_Jiemeng)是一个借助[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)来达到QQ聊天功能的机器人程序。使用者可通过桔梦来实现检测关键词并做出特定回复的功能。词库可自定义。
 
 ## ~~开发者的一些废话~~
 ~~非计算机相关专业，纯业余开发，技术稀烂，代码可读性极差，总之图一乐~~
+
+## 组成
+
+桔梦的工作需要以下文件：
+- 主体程序(默认名称Jiemeng.exe)
+	- 负责进行消息处理等任务
+- go-cqhttp及其相关文件
+	- 用于接收、发送消息
+- 启动器start.exe
+	- 启动程序
+- symbol程序
+	- 作为标记表明程序正常运行
+- 相关配置文件
+- 词库文件
+- 附加功能(非必需)
+	- mat_run.exe
+		- 用于执行MATLAB代码
+	- plot.exe
+		- 用于对天气数据进行绘图
+
 
 ## 使用说明
 
@@ -16,7 +39,6 @@
 	- 你需要安装[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)
 	- 配置准备：
 		- 1.配置go-cqhttp相关配置[config.yml]
-
 			- o.下载后按操作提示进行操作。生成配置文件后请修改以下内容：
 			- a.账号相关内容
 			- b.HTTP通信设置
@@ -26,27 +48,32 @@
 					- url: 'http://127.0.0.1:任意空闲端口（不可为监听端口）/'
 			- 相关配置具体可参考示例文件
 			- 完成配置后请运行go-cqhttp.bat并按提示完成登陆
+
 		- 2.配置Jiemeng相关配置[config.cfg]
 			- (可参考预设文件)
 			- Self_ID: bot qq号
 			- INPORT: 反向HTTP中的端口号
 			- OUTPORT: 监听端口
-			- sleep_time: 每次做出应答后的冷却时间（本选项在新版本中基本无效）
+			- sleep_time: 每次做出应答后的冷却时间
+			- delay_time: 发送多条消息时的间隔时间
 			- ANS_FILENAME: 应答库文件名
 			- NOTE_FILENAME: 笔记功能文件名
 			- IF_HAVE_MATLAB: 是否安装MATLAB(是=1，否=0)(个别功能需要MATLAB，如无MATLAB不影响使用)
-			- AL_TOKEN: alapi.cn 获取到的TOKEN(部分功能需要，如无可不填)
-			- APP_ID: 电点科技小程序中获取(部分功能需要，如无可不填)
-			- APP_SECRET: 电点科技小程序中获取(部分功能需要，如无可不填)
-			- BAIDU_APP_ID: 使用百度翻译API需要，如无可不填
-			- BAIDU_APP_SECRET: 使用百度翻译API需要，如无可不填
-			- AI_PATH: AI画图安装路径(仅支持stabble-diffusion-webui，用于AI画图功能，如无可不填)
+			- AL_TOKEN: alapi.cn 获取到的TOKEN(部分功能需要，如无请填0)
+			- APP_ID: 电点科技小程序中获取(部分功能需要，如无请填0)
+			- APP_SECRET: 电点科技小程序中获取(部分功能需要，如无请填0)
+			- BAIDU_APP_ID: 使用百度翻译API需要，如无请填0
+			- BAIDU_APP_SECRET: 使用百度翻译API需要，如无请填0
+			- OPEN_AI_SECRET: 使用ChatGPT功能需要，如无请填0
+			- OPEN_AI_MODEL: ChatGPT模型名称，详情参考官网。
+			- AI_PATH: AI画图安装路径(仅支持stabble-diffusion-webui，用于AI画图功能，如无请填0)
 			- SYMBOL_NAME: symbol程序的文件名
-		- 2.配置start相关配置[start.cfg]
+		- 3.配置start相关配置[start.cfg]
 			- 第一行: Jiemeng主程序的文件名
 			- 第二行: go-cqhttp的exe文件名
-			- 第三行: symbol程序的文件名
-		- 3.Bot权限相关配置
+			- 第三行：是否显示来自go-cqhttp的信息(show/hide)
+			- 第四行: symbol程序的文件名
+		- 4.Bot权限相关配置
 			- a. [black_list.lst]
 				- 全局黑名单，Bot不会对名单内的qq账号的消息做出响应
 			- b. [white_list.lst]
@@ -58,7 +85,10 @@
 			- d. [priv_list.lst]
 				- 管理权限列表。
 				- 名单内的账号拥有对Bot的管理级权限。
-		- 4.应答库文件
+			- e. [broad_pri.lst]
+				- 私聊广播对象列表。
+				- 使用广播指令时会对名单内的帐号发送广播消息。
+		- 5.应答库文件
 			- 结构
 				- 应答库由若干个应答组组成。
 				- 每个应答组包含关键词部分，回复部分和优先级这三部分。
@@ -104,6 +134,7 @@
 				- [rand:数值]
 					- 替换为0-【数值-1】的一个随机数
 				- 更多特殊代码详见进阶说明。
+
 - 开始使用：
 
 	 - 请确保已完成所有配置
