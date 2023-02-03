@@ -239,6 +239,4 @@ BOOL Get_IP(const char*szHost, char* szIp)
 	WSACleanup();
 	return TRUE;
 }
-
-
 #endif

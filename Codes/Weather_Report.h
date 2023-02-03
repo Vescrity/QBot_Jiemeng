@@ -43,14 +43,14 @@
       sun_rise    =json_read(msg,         "sr");
       sun_set     =json_read(msg,         "ss");
     }void _24hinit(const char*msg){
-      cond_day    =json_read(msg,"cond_txt");
-      date        =json_read(msg,"time");
-      hum         =json_read(msg,"hum");
-      max_tmp     =json_read(msg,"tmp");
-      pop         =json_read(msg,"pop");
-      wind_dir    =json_read(msg,"wind_dir");
-      wind_spd    =json_read(msg,"wind_spd");
-      wind_sc     =json_read(msg,"wind_sc");
+      cond_day    =json_read(msg,   "cond_txt");
+      date        =json_read(msg,       "time");
+      hum         =json_read(msg,        "hum");
+      max_tmp     =json_read(msg,        "tmp");
+      pop         =json_read(msg,        "pop");
+      wind_dir    =json_read(msg,   "wind_dir");
+      wind_spd    =json_read(msg,   "wind_spd");
+      wind_sc     =json_read(msg,    "wind_sc");
     }
   };
   struct City{

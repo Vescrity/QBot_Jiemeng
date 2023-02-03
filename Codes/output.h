@@ -30,84 +30,141 @@ void poke(Msg_type);
 string caches[128];
 int cach_id;
 void sys(int id){
-  printf("caches[id]=%s\n",caches[id].c_str());
+  printf("caches[%d]=%s\n",id,caches[id].c_str());
   execmd(caches[id].c_str(),NULL);
 }
-void curlrun(string msg){
-  //printf("com=%s\n",msg.c_str());
-  msg="Comrun.exe "+msg+"\0";
-  caches[cach_id]=msg;
-  //printf("caches[cach_id]=%s\n",caches[cach_id].c_str());
-  system(msg.c_str());
-  //athss.detach();
-  if(cach_id>>7)cach_id=0;
-  return;
+void run_output_cmd(string msg){
+  char bf[1<<9]={0};
+  execmd(msg.c_str(),bf);
+  string status=json_read(bf,"status");
+
+  if(status=="ok"){
+    info_lable("[output]");
+    info_puts("Send ok!");
+    string msg_id=json_read(bf,"message_id");
+    Bot_Judge.push(msg_id);
+  }else{
+    string word=json_read(bf,"wording");
+    error_lable("[output]");
+    error_puts(word.c_str());
+  }
+
 }
 string message_chg2(Msg_type type,const char *msg);
 string message_chg(Msg_type type,const char *msg);
 thread th_opt[128];
 int thopid;
-
 void output(Msg_type type,const char *msg){
-  //try{
+    //color_print("[output][try]: ");
+    //color_puts(msg);
+    if(strlen(msg)>(1<<13)){output(type,"消息超长");return;}
     if(strlen(msg)>(1<<11)){
-      for(int i=0;i<(strlen(msg)>>11);i++){
+      for(int i=0;(i<<11)<=int(strlen(msg));i++){
         char opts[1<<12]={0};
         get_copy(i<<11,((i+1)<<11)>strlen(msg)?strlen(msg):((i+1)<<11),msg,opts);
         output(type,opts);
-        Sleep(1000);
+        Sleep(delay_time);
       }return;
     }
+    /**指定位置分条发送处理**/
+    int lcut,rcut;
+    if((lcut=get_st(msg,"[-cut-]"))!=-1){
+      char s_msg[1<<11]={0};
+      get_copy(0,lcut,msg,s_msg);
+      rcut=lcut+strlen("[-cut-]");
+      output(type,s_msg);
+      Sleep(delay_time);
+      output(type,msg+rcut);
+      return;
+    }
     char pt[6];
-    //printf("%d\n",OUTPORT);
     sprintf(pt,"%d",OUTPORT);
     string sid(type.sender_id);
-    if(sid==Self_ID)return;
-    string opt("curl \"");
-    string smsg=message_chg(type,msg);
-    if(smsg=="[on]"){main_switch=1;return;}
-    if(smsg=="[STOP]")return;
-    if(smsg=="[poke]"){poke(type);return;}
-    if(smsg=="[off]"){main_switch=0;return;}
-    if(smsg=="[Restart]"){keep_run=0;return;}
-    /*if(smsg=="[refresh]"){
-      grp.clear();
-      grp_num=all_ans_num=0;
-      read_ans();
-      output(type,"已重新加载词库");
-      return;
-    }*/
-    if(!main_switch||(!keep_run))return;
-    //if(smsg=="[Repeat]")smsg=Current_Msg;
-    if(smsg=="[CQ:image,file=]"){resend(type,"[NO image]");return;}
-    //if(smsg=="[moe_lp]"){printf("lp\n");lpscq(type);return;}
+    //if(sid==Self_ID)return;
+
+    string opt("curl -s \"");
+    string smsg=msg;
+    if(type.ord_lv>-1){
+      smsg=message_chg(type,msg);
+      if(smsg=="[on]"){main_switch=1;return;}
+      if(smsg=="[STOP]")return;
+      if(smsg=="[poke]"){poke(type);return;}
+      if(smsg=="[off]"){main_switch=0;return;}
+      if(smsg=="[Restart]"){keep_run=0;return;}
+      if(!main_switch||(!keep_run))return;
+      if(smsg=="[CQ:image,file=]"){resend(type,"[NO image]");return;}
+      color_lable("[output]");
+      color_puts(smsg.c_str());
+      if(string(type.grp_id)=="WHITE_LIST"){
+        for(int i=1;i<white_list_num;i++){
+          Msg_type stype=type;
+          strcpy(stype.grp_id,Grp_white_list[i].c_str());
+          output(stype,smsg.c_str());
+          Sleep(delay_time);
+        }
+        return;
+      }else if(string(type.sender_id)=="BROAD"){
+        for(int i=0;i<broad_pri_num;i++){
+          Msg_type stype=type;
+          strcpy(stype.sender_id,broad_pri[i].c_str());
+          output(stype,smsg.c_str());
+          Sleep(delay_time);
+        }
+        return;
+      }
+    }
+
+
+    if(REPORT_ID.length()>5||REPORT_GROUP.length()>5){
+      string rep_sid=type.sender_id;
+      string rep_gid=type.grp_id;
+      if(rep_sid==REPORT_ID||(rep_gid==REPORT_GROUP&&REPORT_GROUP.length()>5))goto out_report;
+      else{
+        Msg_type report_type;
+        get_copy(0,REPORT_ID.length(),REPORT_ID.c_str(),report_type.sender_id);
+        get_copy(0,REPORT_GROUP.length(),REPORT_GROUP.c_str(),report_type.grp_id);
+        report_type.ifgrp=REPORT_GROUP.length()>5;
+        string report_txxt="";
+        if(type.ifgrp){
+          report_txxt=report_txxt+"群聊："+type.grp_name+"\n";
+          report_txxt=report_txxt+"群号："+type.grp_id+"\n";
+        }
+        report_txxt=report_txxt+"对象："+type.sender_name+"\n";
+        report_txxt=report_txxt+"账号："+type.sender_id+"\n";
+        report_txxt=report_txxt+"消息："+"\n"+smsg;
+        output(report_type,report_txxt.c_str());
+        Sleep(delay_time);
+      }
+    }
+    out_report:
     smsg=message_chg2(type,smsg.c_str());
-    //puts(smsg.c_str());
     if(type.ifgrp){
       string tmp(type.grp_id);
-      //if(!ifwhite(type))return;
       opt=opt+IP_ADD+"send_group_msg?group_id="+tmp+"&message="+smsg+"\"";
     }
     else {
       if(strlen(type.sender_id)<2)return;
       string tmp(type.sender_id);
+      if(tmp==Self_ID&&(get_st(type.msgs.c_str(),"CQ:image")!=-1)){
+        return;
+      };
+      if(tmp==Self_ID){
+        tmp=type.target_id;
+      }
       opt=opt+IP_ADD+"send_private_msg?user_id="+tmp+"&message="+smsg+"\"";
     }
-    //printf("\n发送指令：");
-    //puts(opt.c_str());
-    th_opt[thopid]=thread(curlrun,opt);
-    th_opt[thopid++].detach();
+
+    if(type.msgs=="[OUTPUT_JOIN]"){
+      th_opt[thopid]=thread(run_output_cmd,opt);
+      th_opt[thopid++].join();
+    }else{
+      th_opt[thopid]=thread(run_output_cmd,opt);
+      th_opt[thopid++].detach();
+    }
+
     if(thopid>>7)thopid=0;
     msg_send_time++;
-  //}
-  /*catch(...){
-    string opts;
-    opts="ERROR_in_output()\n";
-    opts=opts+"type.sender_id="+type.sender_id+"\n";
-    opts=opts+"type.ifgrp="+(type.ifgrp?"1\n":"0\n");
-    opts=opts+"msg="+msg+"\n程序错误，请将上述错误信息上报给开发者。";
-    puts(opts.c_str());
-  }*/
+
 }
 /*void error_report(string errors){
   Msg_type type;
@@ -118,6 +175,7 @@ void output(Msg_type type,const char *msg){
 void poke(Msg_type type){
   string msg("[CQ:poke,qq=");
   string id(type.sender_id);
+  if(id==Self_ID)return;
   msg=msg+id;
   msg=msg+"]";
   output(type,msg.c_str());
@@ -131,6 +189,26 @@ void Keys::print(Msg_type type){
 void Group::print(Msg_type type){
     int r=rand()%this->ans_num;
     this->ans[r].print(type);
+}
+void ban(Msg_type type,int t){
+  string cmds="curl -s \"";
+  char pt[6];
+  sprintf(pt,"%d",OUTPORT);
+  char ttm[10]={0};
+  sprintf(ttm,"%d",t*60);
+  cmds=cmds+IP_ADD+"set_group_ban?group_id="
+      +type.grp_id+"&user_id="+type.sender_id
+      +"&duration="+ttm+"\"";
+  system(cmds.c_str());
+}
+void kick(Msg_type type){
+  string cmds="curl -s \"";
+  char pt[6];
+  sprintf(pt,"%d",OUTPORT);
+  cmds=cmds+IP_ADD+"set_group_kick?group_id="
+      +type.grp_id+"&user_id="+type.sender_id
+      +"\"";
+  system(cmds.c_str());
 }
 
 #define OUT_PUT_IF {\
@@ -197,6 +275,18 @@ void Group::print(Msg_type type){
     rt=ff;\
     return rt;\
   }\
+  l=get_st(msgs,"[ban:");\
+  if(l==0){flg=1;\
+    int tt;\
+    sscanf(msgs,"[ban:%d]",&tt);\
+    ban(type,tt);\
+    return "[STOP]";\
+  }\
+  l=get_st(msgs,"[KICK]");\
+  if(l==0){flg=1;\
+    kick(type);\
+    return "[STOP]";\
+  }\
   l=get_st(msgs,"[resend:");\
   if(l==0){flg=1;\
     l=8;\
@@ -223,7 +313,8 @@ void Group::print(Msg_type type){
     l=8;\
     r=strlen(msgs)-1;\
     get_copy(l,r,msgs,ff);\
-    Current_Msg=ff;\
+    type.ord_lv=100;\
+    type.msgs=ff;\
     resend(type,ff);\
     return "[STOP]";\
   }\
@@ -243,8 +334,9 @@ string message_chg(Msg_type type,const char *msg){
   ttmp[4]=0;
   memset(ff,0,sizeof ff);
   it=0;
-  strchg("[Repeat]",Current_Msg.c_str(),msgs);
-  strchg("[name]",type.sender_name,msgs);
+  strchg("[Repeat]",type.msgs.c_str(),msgs);
+  strchg("[name]",type.sender_name.c_str(),msgs);
+  strchg("[group_id]",type.grp_id,msgs);
   strchg("[qid]",type.sender_id,msgs);
   strchg("[\\n]","\n",msgs);
   strchg("[emoji_草]",ttmp,msgs);
@@ -264,15 +356,17 @@ string message_chg(Msg_type type,const char *msg){
       string CQ=MirlKoi();
       strchg_1("[MirlKoi]",CQ.c_str(),msgs);
     }
+  }l=get_st(msgs,"[HITOKOTO]");
+  if(l!=-1){
+    while(get_st(msgs,"[HITOKOTO]")!=-1){
+      string CQ=hitokoto();
+      strchg_1("[HITOKOTO]",CQ.c_str(),msgs);
+    }
   }
   l=get_st(msgs,"[RUA]");
   if(l!=-1){
     string CQ=RUA(type.sender_id);
     strchg("[RUA]",CQ.c_str(),msgs);
-  }l=get_st(msgs,"[HITOKOTO]");
-  if(l!=-1){
-    string CQ=hitokoto();
-    strchg("[HITOKOTO]",CQ.c_str(),msgs);
   }l=get_st(msgs,"[DAILY_NEWS]");
   if(l!=-1){
     string CQ=Daily_news();
@@ -286,7 +380,6 @@ string message_chg(Msg_type type,const char *msg){
   return rt;
 }
 string message_chg2(Msg_type type,const char*msg){
-  //printf("\n执行输出：\n%s\n",msg);
   char*ff=acl_url_encode(msg);
   string rt(ff);
   free(ff);

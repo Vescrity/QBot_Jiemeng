@@ -5,6 +5,7 @@
 #include<iostream>
 #include<stdlib.h>
 #include<thread>
+
 #include"Socket_Input.h"
 #include"Jie_Meng_Base.h"
 #include"Msg_type.h"
@@ -34,16 +35,17 @@ void print_test(){
 }
 struct thr_data{
   Msg_type tp;
-  string txt;
+  //string txt;
   thr_data(){}
 }dt[THR_NUM];
 //线程创建时直接传入结构体发现数据不能完整传入故定义全局
 int thrr[THR_NUM];
-void Thread(thr_data dta){
+void Thread(int thrid){
+  Msg_type dta=dt[thrid].tp;
   srand(time(NULL)+clock()+thr_id);
-  Msg_type type=dta.tp;
+  Msg_type type=dta;
   for(int i=0;i<grp_num;i++){
-    if(grp[i].crt(type,dta.txt.c_str())){
+    if(grp[i].crt(type,dta.msgs.c_str())){
       grp[i].print(type);
       return;
     }
@@ -62,12 +64,16 @@ void Conv(){
   char txxt[1<<15]={0};
   memset(txxt,0,sizeof txxt);
   Msg_type type;
-  type=init(txxt);
+  type=init();
+  //debug_puts("[conv]: ok!");
+  //type.show();
+  if(type.if_ignore)goto ed;
   if(type.grp_id[0]=='-')goto ed;
   dt[thr_id].tp=type;
-  dt[thr_id].txt=txxt;
-  thrr[thr_id]=thr_id;
-  th1[thr_id]=thread(Thread,dt[thr_id]);
+  //dt[thr_id].txt=txxt;
+  //printf("thr_id=%d",thr_id);
+  //thrr[thr_id]=thr_id;
+  th1[thr_id]=thread(Thread,thr_id);
   th1[thr_id++].detach();
   if(thr_id>>7)thr_id=0;
   ed:Sleep(sleep_time);
@@ -78,21 +84,42 @@ void Heart_Beat(){
     Sleep(10000);
   }
 }
+
 int main(){
+  int stt=clock();
   system("chcp 65001");
   read();
   char tmp[1<<12]={0};
   getcwd(tmp,sizeof tmp);
   RUN_PATH=tmp;
+
+  read_white_list();
+  freopen("CON","r",stdin);
+  //printf("当前词库信息如下：\n");
+  //print_test();
+
+  int trytime=0;
+  while(wsainit()==-1){
+    trytime++;
+    error_lable("[wsainit]");
+    error_puts("bind失败");
+
+    if(trytime>10){
+      error_lable("[start_up]");
+      error_puts("反复启动失败，程序结束。");
+      Sleep(10000);
+      return 0;
+    }
+  }
   thread HB(Heart_Beat);
   HB.detach();
   thread DL(Daily);
   DL.detach();
   start_time++;
-  read_white_list();
-  freopen("CON","r",stdin);
-  printf("当前词库信息如下：\n");
-  print_test();
+
+  int edt=clock();
+  sprintf(tmp,"启动成功，启动耗时%dms\n",edt-stt);
+  color_puts(tmp);
   for(;keep_run;){
     Conv();
   }

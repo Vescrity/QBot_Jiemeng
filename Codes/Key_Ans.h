@@ -4,11 +4,14 @@
 #include<vector>
 #include<stdio.h>
 #include<time.h>
-#include"Jie_Meng_Base.h"
+
 #include"Msg_type.h"
+#include"Jiemeng_Basic.h"
 using namespace std;
+
 struct Words{
-  char txt[1<<14];
+  char txt[1<<12];
+  void save_to_file(FILE*fp);
   bool crt(const char *s){
     int l=strlen(txt);
     for(int i=0;i<l;i++){
@@ -20,6 +23,7 @@ struct Keys{
   vector<Words>word;
   bool allcrt;
   int word_num;
+  void save_to_file(FILE*,bool);
   Keys(){word_num=allcrt=0;}
   bool crt(const char *s){
     if(allcrt){
@@ -35,7 +39,8 @@ struct Keys{
         int m=strlen(word[i].txt);
         for(int j=0;j<=n-m;j++){
           if(word[i].crt(s+j))flg=1;
-        }if(!flg)return 0;
+        }
+        if(!flg)return 0;
       }return 1;
     }return 0;
   }
@@ -52,12 +57,14 @@ struct Keys{
     }return opt;
   }
 };
+bool check_priv(const char*);
 struct Group{
   vector<Keys>key;
   vector<Keys>ans;
   int key_num,ans_num,pri;
   bool sp,sg,priv;
   string spid;
+  void save_to_file(FILE*fp);
   void insert_key(Keys a){key.push_back(a);key_num++;}
   void insert_ans(Keys a){ans.push_back(a);ans_num++;}
   bool crt(Msg_type type,const char *s){
@@ -81,5 +88,7 @@ struct Group{
   }
   Group(){priv=sg=sp=key_num=ans_num=pri=0;}
 };
+vector<Group> grp;
+int grp_num;
 bool operator <(Group a,Group b){return a.pri>b.pri;}
 #endif

@@ -5,6 +5,7 @@
   #include<stdlib.h>
   #include<windows.h>
   #include"Jie_Meng_Base.h"
+  int last_tm=2500;
   void Daily_check(){
     int hr,mn;
     time_t tmpcal_ptr;
@@ -16,15 +17,19 @@
     Msg_type type;
     type.ifgrp=1;
     get_copy(0,5,"ADMIN",type.sender_id);
+    int ctm=hr*100+mn;
+    if(ctm!=last_tm){
+      char ss[10]={0};
+      sprintf(ss,"[%02d:%02d]",hr,mn);
+      resend(type,ss);
+      last_tm=ctm;
+    }
 
-    char ss[10]={0};
-    sprintf(ss,"[%02d:%02d]",hr,mn);
-    resend(type,ss);
   }
   void Daily(){
     for(;;){
       Daily_check();
-      Sleep(59000);
+      Sleep(30000);
     }
   }
 #endif

@@ -98,7 +98,7 @@ struct Connect_Four{
       opt=(t==2)?1:2;
       mxx=mxpx=mxpv=mxv=-1;
       //int pts=-100;
-      printf("mxcnt%d=%d\n",t,mxcnt(t));
+      //printf("mxcnt%d=%d\n",t,mxcnt(t));
       for(int i=1;i<=Mx;i++){
         int mxtt,mxopt;
         int pts=0,mnpts=100;
@@ -156,7 +156,7 @@ struct Connect_Four{
       if(Mx<5||My<5||(ppp<1||ppp>3)||Mx>20||My>100){
         sprintf(opt+strlen(opt),"错误：参数不合理！");string rt(opt);return rt;
       }
-      printf("%d %d %d\n",ppp,Mx,My);
+      //printf("%d %d %d\n",ppp,Mx,My);
       ifr=1;
       if(ppp==1){
         ply[1].game_mode=1;
@@ -177,7 +177,7 @@ struct Connect_Four{
     }
     if(stat==1){
       CFst:int tt;
-      printf("stat=1\nifr=%d\ncrt_player=%d",ifr,crt_player);
+      //printf("stat=1\nifr=%d\ncrt_player=%d",ifr,crt_player);
       if(ply[crt_player].game_mode==2){
         tt=mmp.aly(crt_player,ply[crt_player]).x;
         m_insert(tt,ply[crt_player],crt_player);
@@ -193,14 +193,15 @@ struct Connect_Four{
           string rt(opt);return rt;
         }else{crt_player++;if(crt_player==3)crt_player-=2;string rt(opt);return rt;}
       }else if(!ifr){
-        printf("try getin\n");
+        //printf("try getin\n");
         sscanf(command,"%d",&tt);
         if(tt>Mx||tt<1){
           sprintf(opt+strlen(opt),"错误：参数不合理！");string rt(opt);return rt;
         }ifr=1;
         m_insert(tt,ply[crt_player],crt_player);
         //sprintf(opt+strlen(opt),"%s",mmp.prt().c_str());
-        if(!(mmp.mxcnt(1)<4&&mmp.mxcnt(2)<4)){
+        if(!((mmp.mxcnt(1)<4)&&(mmp.mxcnt(2)<4))){
+          sprintf(opt+strlen(opt),"%s",mmp.prt().c_str());
           sprintf(opt+strlen(opt),"[name] win!\n");stat=2;
           string rt(opt);return rt;
         }
