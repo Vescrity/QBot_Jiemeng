@@ -40,10 +40,11 @@ struct thr_data{
 }dt[THR_NUM];
 //线程创建时直接传入结构体发现数据不能完整传入故定义全局
 int thrr[THR_NUM];
-void Thread(int thrid){
-  Msg_type dta=dt[thrid].tp;
+void Thread(Msg_type dta){
+  //Msg_type dta=dt[thrid].tp;
   srand(time(NULL)+clock()+thr_id);
   Msg_type type=dta;
+  if(spj(type,type.msgs.c_str()))return;
   for(int i=0;i<grp_num;i++){
     if(grp[i].crt(type,dta.msgs.c_str())){
       grp[i].print(type);
@@ -69,11 +70,11 @@ void Conv(){
   //type.show();
   if(type.if_ignore)goto ed;
   if(type.grp_id[0]=='-')goto ed;
-  dt[thr_id].tp=type;
+  //dt[thr_id].tp=type;
   //dt[thr_id].txt=txxt;
   //printf("thr_id=%d",thr_id);
   //thrr[thr_id]=thr_id;
-  th1[thr_id]=thread(Thread,thr_id);
+  th1[thr_id]=thread(Thread,type);
   th1[thr_id++].detach();
   if(thr_id>>7)thr_id=0;
   ed:Sleep(sleep_time);
@@ -88,7 +89,12 @@ void Heart_Beat(){
 int main(){
   int stt=clock();
   system("chcp 65001");
-  read();
+  if(!read()){
+    error_lable("[File_Read]");
+    error_puts("配置文件存在问题，无法启动，请调整后重试。");
+    Sleep(10000);
+    return 0;
+  }
   char tmp[1<<12]={0};
   getcwd(tmp,sizeof tmp);
   RUN_PATH=tmp;
@@ -118,8 +124,14 @@ int main(){
   start_time++;
 
   int edt=clock();
+  sprintf(tmp,"title %s",TITLE.c_str());
+  string ttp=UTF8ToGBK(tmp);
+  system(ttp.c_str());
   sprintf(tmp,"启动成功，启动耗时%dms\n",edt-stt);
+  color_lable("[start_up]");
   color_puts(tmp);
+
+
   for(;keep_run;){
     Conv();
   }
