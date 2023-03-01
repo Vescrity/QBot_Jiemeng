@@ -10,14 +10,15 @@
 using namespace std;
 auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 default_random_engine _e(seed);
-int Rands(int l,int r){
-  uniform_int_distribution<int> u(l,r);
+#define Lint long long
+Lint Rands(Lint l,Lint r){
+  uniform_int_distribution<Lint> u(l,r);
   return u(_e);
 }
-int adb(int a,int b){
-  int rt=0;
+Lint adb(Lint a,Lint b){
+  Lint rt=0;
   if(a>1<<23)return 0;
-  for(int i=0;i<a;i++)
+  for(Lint i=0;i<a;i++)
     rt+=Rands(1,b);
   return rt;
 }
@@ -37,16 +38,16 @@ string calc_nkh(string Rstr){
     while (ret)
     {
         matc=m[0];
-        int l,r;
+        Lint l,r;
         if(matc[0]=='d'||matc[0]=='D'){
           l=1;
-          sscanf(matc.c_str(),"%*[dD]%d",&r);
+          sscanf(matc.c_str(),"%*[dD]%lld",&r);
         }else
-          sscanf(matc.c_str(),"%d%*[dD]%d",&l,&r);
-        //printf("%d,%d",l,r);
-        int rd=adb(l,r);
+          sscanf(matc.c_str(),"%lld%*[dD]%lld",&l,&r);
+        //printf("%lld,%lld",l,r);
+        Lint rd=adb(l,r);
         char ss[13]={0};
-        sprintf(ss,"%d",rd);
+        sprintf(ss,"%lld",rd);
         matc=ss;
 
         matc=prf+matc+suf;
@@ -69,11 +70,11 @@ string calc_nkh(string Rstr){
     while (ret)
     {
         matc=m[0];
-        int l,r;
-        sscanf(matc.c_str(),"%d^%d",&l,&r);
-        int rd=int(pow(l,r));
+        Lint l,r;
+        sscanf(matc.c_str(),"%lld^%lld",&l,&r);
+        Lint rd=(Lint)(pow(l,r));
         char ss[13]={0};
-        sprintf(ss,"%d",rd);
+        sprintf(ss,"%lld",rd);
         matc=ss;
         matc=prf+matc+suf;
         ret = std::regex_search(matc.c_str(), m, reg);
@@ -92,11 +93,11 @@ string calc_nkh(string Rstr){
     while (ret)
     {
         matc=m[0];
-        int l,r;
-        sscanf(matc.c_str(),"%d*%d",&l,&r);
-        int rd=l*r;
+        Lint l,r;
+        sscanf(matc.c_str(),"%lld*%lld",&l,&r);
+        Lint rd=l*r;
         char ss[13]={0};
-        sprintf(ss,"%d",rd);
+        sprintf(ss,"%lld",rd);
         matc=ss;
         matc=prf+matc+suf;
         ret = std::regex_search(matc.c_str(), m, reg);
@@ -115,14 +116,14 @@ string calc_nkh(string Rstr){
     while (ret)
     {
         matc=m[0];
-        int l,r;
+        Lint l,r;
         if(strstr(matc.c_str(),"+")==NULL){
-          sscanf(matc.c_str(),"%d-%d",&l,&r);
+          sscanf(matc.c_str(),"%lld-%lld",&l,&r);
           r=-r;
-        }else sscanf(matc.c_str(),"%d+%d",&l,&r);
-        int rd=l+r;
+        }else sscanf(matc.c_str(),"%lld+%lld",&l,&r);
+        Lint rd=l+r;
         char ss[13]={0};
-        sprintf(ss,"%d",rd);
+        sprintf(ss,"%lld",rd);
         matc=ss;
         matc=prf+matc+suf;
         ret = std::regex_search(matc.c_str(), m, reg);
@@ -150,13 +151,13 @@ string calc_nkh(string Rstr){
       int l,r;
       if(matc[0]=='d'||matc[0]=='D'){
         l=1;
-        sscanf(matc.c_str(),"%*[dD]%d",&r);
+        sscanf(matc.c_str(),"%*[dD]%lld",&r);
       }else
-        sscanf(matc.c_str(),"%d%*[dD]%d",&l,&r);
-      //printf("%d,%d",l,r);
+        sscanf(matc.c_str(),"%lld%*[dD]%lld",&l,&r);
+      //printf("%lld,%lld",l,r);
       int rd=adb(l,r);
       char ss[13]={0};
-      sprintf(ss,"%d",rd);
+      sprintf(ss,"%lld",rd);
       matc=ss;
 
       matc=prf+matc+suf;

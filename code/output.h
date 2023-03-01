@@ -56,7 +56,9 @@ int thopid;
 void output(Msg_type type,const char *msg){
     //color_print("[output][try]: ");
     //color_puts(msg);
+
     if(strlen(msg)>(1<<13)){output(type,"消息超长");return;}
+    if(strlen(msg)==0)return;
     if(strlen(msg)>(1<<11)){
       for(int i=0;(i<<11)<=int(strlen(msg));i++){
         char opts[1<<12]={0};
@@ -83,9 +85,9 @@ void output(Msg_type type,const char *msg){
 
     string opt("curl -s \"");
     string smsg=msg;
-    smsg=message_chg(type,msg);
-    if(type.ord_lv>-1){
 
+    if(type.ord_lv>-1){
+      smsg=message_chg(type,msg);
       if(smsg=="[on]"){main_switch=1;return;}
       if(smsg=="[STOP]")return;
       if(smsg=="[poke]"){poke(type);return;}
@@ -105,7 +107,8 @@ void output(Msg_type type,const char *msg){
     if(string(type.grp_id)=="WHITE_LIST"){
       for(int i=1;i<white_list_num;i++){
         Msg_type stype=type;
-        strcpy(stype.grp_id,Grp_white_list[i].c_str());
+        //strcpy(stype.grp_id.c_str(),Grp_white_list[i].c_str());
+        Grp_white_list[i]=stype.grp_id;
         output(stype,smsg.c_str());
         uni_sl(delay_time);
       }
@@ -113,7 +116,7 @@ void output(Msg_type type,const char *msg){
     }else if(string(type.sender_id)=="BROAD"){
       for(int i=0;i<broad_pri_num;i++){
         Msg_type stype=type;
-        strcpy(stype.sender_id,broad_pri[i].c_str());
+        stype.sender_id=broad_pri[i];
         output(stype,smsg.c_str());
         uni_sl(delay_time);
       }
@@ -127,8 +130,10 @@ void output(Msg_type type,const char *msg){
       if(rep_sid==REPORT_ID||(rep_gid==REPORT_GROUP&&REPORT_GROUP.length()>5))goto out_report;
       else{
         Msg_type report_type;
-        get_copy(0,REPORT_ID.length(),REPORT_ID.c_str(),report_type.sender_id);
-        get_copy(0,REPORT_GROUP.length(),REPORT_GROUP.c_str(),report_type.grp_id);
+        report_type.sender_id=REPORT_ID;
+        //get_copy(0,REPORT_ID.length(),REPORT_ID.c_str(),report_type.sender_id);
+        report_type.grp_id=REPORT_GROUP;
+        //get_copy(0,REPORT_GROUP.length(),REPORT_GROUP.c_str(),report_type.grp_id);
         report_type.ifgrp=REPORT_GROUP.length()>5;
         string report_txxt="";
         if(type.ifgrp){
@@ -143,13 +148,19 @@ void output(Msg_type type,const char *msg){
       }
     }
     out_report:
+    #ifdef _DEBUG_MODE_
+      if(get_st(msg,"[DEBUG_MODE]")!=0){
+        output(type,string(string("[DEBUG_MODE]")+msg).c_str());
+        return;
+      }
+    #endif
     smsg=message_chg2(type,smsg.c_str());
     if(type.ifgrp){
       string tmp(type.grp_id);
       opt=opt+IP_ADD+"send_group_msg?group_id="+tmp+"&message="+smsg+"\"";
     }
     else {
-      if(strlen(type.sender_id)<2)return;
+      if(type.sender_id.length()<2)return;
       string tmp(type.sender_id);
       if(tmp==Self_ID&&(get_st(type.msgs.c_str(),"CQ:image")!=-1)){
         return;
@@ -378,9 +389,9 @@ string message_chg(Msg_type type,const char *msg){
 
   strchg("[Repeat]",type.msgs.c_str(),msgs);
   strchg("[name]",type.sender_name.c_str(),msgs);
-  strchg("[group_id]",type.grp_id,msgs);
+  strchg("[group_id]",type.grp_id.c_str(),msgs);
   strchg("[group_name]",type.grp_name.c_str(),msgs);
-  strchg("[qid]",type.sender_id,msgs);
+  strchg("[qid]",type.sender_id.c_str(),msgs);
   strchg("[IP_AD]",ipad.c_str(),msgs);
   strchg("[\\n]","\n",msgs);
   strchg("[emoji_草]",ttmp,msgs);
@@ -424,7 +435,7 @@ string message_chg(Msg_type type,const char *msg){
   }
   l=get_st(msgs,"[RUA]");
   if(l!=-1){
-    string CQ=RUA(type.sender_id);
+    string CQ=RUA(type.sender_id.c_str());
     strchg("[RUA]",CQ.c_str(),msgs);
   }l=get_st(msgs,"[DAILY_NEWS]");
   if(l!=-1){
@@ -439,6 +450,7 @@ string message_chg(Msg_type type,const char *msg){
     OUT_PUT_IF;
   }
   rt=msgs;
+
   if(flg)return message_chg(type,rt.c_str());
   return rt;
 }

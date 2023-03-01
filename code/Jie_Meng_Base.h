@@ -85,8 +85,17 @@
     execmd(ord.c_str(),bf);
     this->grp_name=json_read(bf,"group_name");
   }
+  void Msg_type::get_sender_name(){//获取群聊名称
+    char pt[6];
+    sprintf(pt,"%d",OUTPORT);
+    char bf[1024];
+    memset(bf,0,sizeof bf);
+    string ord="curl -s ";ord=ord+IP_ADD+"get_stranger_info?user_id="+sender_id;
+    execmd(ord.c_str(),bf);
+    this->sender_name=json_read(bf,"nickname");
+  }
   string str_spj(const Msg_type&type, const char*msg);
-  bool spj(Msg_type,const char*);
+  bool spj(const Msg_type&,const char*);
   void resend(Msg_type type,const char*msg);
   /*bool spj(Msg_type,const char*,const char*);//特殊功能
   void resend(Msg_type type,const char*msg){

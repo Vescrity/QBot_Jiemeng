@@ -72,7 +72,7 @@ void Conv(){
   Msg_type type;
   type=init();
   if(type.if_ignore)goto ed;
-  if(type.grp_id[0]=='-')goto ed;
+  //if(type.grp_id[0]=='-')goto ed;
   th1[thr_id]=thread(Thread,type);
   th1[thr_id++].detach();
   if(thr_id>>7)thr_id=0;

@@ -104,7 +104,7 @@ bool ifwhite(Msg_type type){
       //reward();
       if(strLen>((1<<12)-8)){uni_sl(sleep_time);goto ss;}
       Msg_type type,emp;
-      emp.grp_id[0]='-';
+      emp.if_ignore=1;
 
       if(strlen(buffer)==0){color_lable("[init]");color_puts("len=0!");return emp;}
       type.get_msg_type(buffer);

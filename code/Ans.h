@@ -5,6 +5,7 @@
   #include"Msg_type.h"
   #ifdef JIE_MENG_BASE
   #include"Spj_Ans.h"
+  bool no_str_spj(Msg_type type,const char*msg);
   #endif
   #include<regex>
   using namespace std;
@@ -54,25 +55,40 @@
     return sttmtxt;
   }
   string output_msg_chg(const Msg_type&type,string content);
-  string get_output(const Msg_type&type,const char*msg){
-    string spjstr=str_spj(type,msg);
-    if(spjstr!="[SPJ_CONTINUE]")return spjstr;
+  string get_output(const Msg_type&type,const char*msg,int x){
+    if(x==0){
+      if(no_str_spj(type,msg))return "";
+      string spjstr=str_spj(type,msg);
+      if(spjstr!="[SPJ_CONTINUE]")return spjstr;
+    }
     int n=ans_gp.size();
-    for(int i=0;i<n;i++){
+    for(int i=(x==0?0:x);i<n;i++){
       if(ans_gp[i].check(type,msg)){
         //return ans_gp[i].opt();
         string str=ans_gp[i].opt();
         if(str=="[IGNORE]")continue;
+        //str=str_strchg("[FAILED]","",str.c_str());
+        while(get_st(str.c_str(),"[IGNORE]")!=-1){
+          string nstr=get_output(type,msg,i+1);
+          str=str_strchg_1("[IGNORE]",nstr.c_str(),str.c_str());
+        }
+        str=str_strchg("[FAILED]","",str.c_str());
+
         return output_msg_chg(type,str);
       }
     }
     return "[FAILED]";
+  }
+  string get_output(const Msg_type&type,const char*msg){
+    return get_output(type,msg,0);
   }
   string output_msg_chg(const Msg_type&type,string content){
     //cout<<content<<endl;
     regex reg(R"(\{%(.*?)\})");
     //string content=ans_gp[i].opt();
     smatch m;
+    //content=str_strchg("\n"," ",content.c_str());
+    //content=str_strchg("\r"," ",content.c_str());
     auto pos=content.cbegin();
     auto end=content.cend();
     int counts=0;
@@ -107,7 +123,10 @@
   bool Ans_grp::check(const Msg_type&type,const char*msg){
     if(!type_check(type))return 0;
     regex reg(reg_str);
-    auto ret = regex_search(msg,reg);
+    string _1line;
+    _1line=str_strchg("\n"," ",msg);
+    _1line=str_strchg("\r"," ",_1line.c_str());
+    auto ret = regex_search(_1line.c_str(),reg);
     return ret;
   }
 

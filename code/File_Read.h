@@ -229,6 +229,8 @@ void read_ans(){
   json js=json::parse(fread);
   json ss=js["Ans_grp"];
   Ans_init(ss);
+  info_lable("[File_Read]");
+  info_print("应答库加载成功！\n");
 }
 void read_white_list(){
   info_lable("[File_Read]");
@@ -266,7 +268,7 @@ void read_white_list(){
   line_get(txt);
   Pri_blackorwhite=txt[0]=='b'?0:1;
   info_lable("[File_Read]");
-  info_print(Pri_blackorwhite?"白名单\n":"黑名单\n");
+  info_print(Pri_blackorwhite?"配置设置为白名单\n":"配置设置为黑名单\n");
   for(;;){
     memset(txt,0,sizeof txt);
     line_get(txt);
@@ -306,6 +308,33 @@ void read_priv(){
       //color_puts(txt);
     }
   }
+}
+#define IF_FP_OK \
+if(fp==NULL)return 0;
+bool save_config(){
+  info_lable("[File_Save]");
+  info_puts("开始保存名单配置");
+  FILE*fp;
+  fp=fopen("white_list.lst","w");IF_FP_OK
+  for(int i=1;i<white_list_num;i++){
+    fprintf(fp,"%s\n",Grp_white_list[i].c_str());
+  }
+  fprintf(fp,"//end");
+  fclose(fp);
+  fp=fopen("pri_white_list.lst","w");IF_FP_OK
+  fprintf(fp,"%s\n",Pri_blackorwhite?"white":"black");
+  for(int i=0;i<Pri_white_list_num;i++){
+    fprintf(fp,"%s\n",Pri_white_list[i].c_str());
+  }
+  fprintf(fp,"//end");
+  fclose(fp);
+  fp=fopen("black_list.lst","w");IF_FP_OK
+  for(int i=0;i<black_list_num;i++){
+    fprintf(fp,"%s\n",black_list[i].c_str());
+  }
+  fprintf(fp,"//end");
+  fclose(fp);
+  return 1;
 }
 bool read(){
   if(!read_config())return 0;

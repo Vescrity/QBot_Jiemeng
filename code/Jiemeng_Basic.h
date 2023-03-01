@@ -2,12 +2,12 @@
   #define JIEMENG_BASIC
 
   #ifdef LINUX_V
-    #define CURRENT_VERSION ("Jiemeng_Linux v21.0.1.139")
+    #define CURRENT_VERSION ("Jiemeng_Linux v21.1.0.203")
   #else
-    #define CURRENT_VERSION ("Jiemeng v21.0.1.139")
+    #define CURRENT_VERSION ("Jiemeng v21.1.0.203")
   #endif
   #define UPDATE_TIME __DATE__+" "+__TIME__
-  #define CHECK (string(type.sender_id)=="ADMIN"||check_priv(type.sender_id)||type.ord_lv>99)
+  #define CHECK (type.sender_id=="ADMIN"||check_priv(type.sender_id.c_str())||type.ord_lv>99)
   #include<string.h>
   #include<stdio.h>
   #include"opstring.h"
@@ -47,9 +47,13 @@
   }inline void msg_puts(const char*s){
     printf("\033[0m\033[1;36m%s\n\033[0m",s);
   }inline void debug_print(const char*s){
+    #ifdef _DEBUG_MODE_
     printf("\033[0m\033[7;32m%s\033[0m",s);
+    #endif
   }inline void debug_puts(const char*s){
+    #ifdef _DEBUG_MODE_
     printf("\033[0m\033[7;32m%s\n\033[0m",s);
+    #endif
   }inline void info_lable(const char*s){
     print_time_mark();
     printf("\033[0m\033[1;7;32m%s\033[0m",s);

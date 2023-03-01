@@ -56,7 +56,7 @@
       }
       return bstr;
   }inline void strchg_1(const char *oldstr,const char *newstr,char *str){
-      char bstr[1<<18];
+      char bstr[1<<15];
       bool ifcpy=0;
       memset(bstr,0,sizeof(bstr));
       for(int i = 0;i < strlen(str);i++){
@@ -70,6 +70,20 @@
       }
       strcpy(str,bstr);
       return;
+  }inline string str_strchg_1(const char *oldstr,const char *newstr,const char *str){
+      char bstr[1<<15];
+      bool ifcpy=0;
+      memset(bstr,0,sizeof(bstr));
+      for(int i = 0;i < strlen(str);i++){
+          if((!strncmp(str+i,oldstr,strlen(oldstr)))&&!ifcpy){
+              strcat(bstr,newstr);
+              i+=strlen(oldstr) - 1;
+              ifcpy=1;
+          }else{
+          	strncat(bstr,str+i,1);
+  	    }
+      }
+      return bstr;
   }
   static unsigned char enc_tab[]="0123456789ABCDEF";
   inline char*acl_url_encode(const char*str){

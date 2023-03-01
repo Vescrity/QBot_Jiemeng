@@ -15,7 +15,7 @@
     mn=tmp_ptr->tm_min;
     Msg_type type;
     type.ifgrp=1;
-    get_copy(0,5,"ADMIN",type.sender_id);
+    type.sender_id="ADMIN";
     int ctm=hr*100+mn;
     if(ctm!=last_tm){
       char ss[10]={0};
