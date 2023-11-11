@@ -1,6 +1,7 @@
 build/*
 password.cpp
-*?test*
+*test*
 *.o
 Connect.cpp
 test_Otheruse/
+*.exe
