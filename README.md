@@ -20,11 +20,8 @@ Windows 64位 / Linux
 ## 构建
 
 仅提供 Linux 编译方案：  
-环境条件：确保安装boost库，以及安装了 g++。(测试了13.2.1版本)  
-编译指令：
-```bash
-g++ ./code/Jiemeng.cpp -lcurl -o ./build/Jiemeng
-```
+环境条件：确保安装boost库，以及安装了 g++。(测试了12/13版本)  
+执行`./build.sh`可在`build`目录下构建基础的工作文件夹。
 
 ## 组成
 
