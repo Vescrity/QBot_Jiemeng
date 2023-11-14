@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import argparse
-
+import os
+current_dir = os.getcwd()
 def insert_newlines(string, every=80):
     lines = string.split('\n')
     new_lines = []
@@ -23,7 +24,7 @@ with open(args.file, 'r', encoding='utf-8', newline='\r\n') as f:
     text = f.read().replace('\r','')
 text = insert_newlines(text)
 # 设置字体
-font = ImageFont.truetype('msyh.ttc', 20)  # 使用中文字体文件
+font = ImageFont.truetype('./txt2img/msyh.ttc', 20)  # 使用中文字体文件
 
 # 计算图片的大小和行高
 margin = 20
@@ -52,4 +53,4 @@ for line in text.split('\n'):
 
 # 保存图片
 canvas.save(args.output)
-print('[CQ:image,file=file:///{}]'.format(args.output), end='')
+print('[CQ:image,file=file:///{}/{}]'.format(current_dir, args.output), end='')
