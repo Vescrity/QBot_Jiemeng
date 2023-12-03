@@ -111,7 +111,7 @@ string cpp_runner(const string &code)
 {
   FILE *fi;
   fi = fopen("test.cpp", "w");
-#ifndef LINUX_V
+#ifdef _WIN32
   fprintf(fi, "#include<stdio.h>\n#include<stdlib.h>\n#include<thread>\n#include<windows.h>\n");
   fprintf(fi, "void calc();\n");
   fprintf(fi, "void tm(){Sleep(200);printf(\"\\nTLE\\n\");exit(1);}\n");
@@ -123,7 +123,11 @@ string cpp_runner(const string &code)
   fprintf(fi, "int main(){std::thread t(tm);t.detach();calc();return 0;}\n");
   fprintf(fi, "%s", code.c_str());
   fclose(fi);
+#ifdef _WIN32
   return execmd("g++ 2>&1 test.cpp -o test.exe") + execmd("test.exe");
+#else
+  return execmd("g++ 2>&1 test.cpp -o test") + execmd("./test");
+#endif
 }
 /// @brief Try to run the given python code with a 3s time limit
 /// @param code the python code
