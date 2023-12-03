@@ -126,7 +126,9 @@ string cpp_runner(const string &code)
 #ifdef _WIN32
   return execmd("g++ 2>&1 test.cpp -o test.exe") + execmd("test.exe");
 #else
-  return execmd("g++ 2>&1 test.cpp -o test") + execmd("./test");
+  string aa = execmd("g++ 2>&1 test.cpp -o test");
+  aa = aa + execmd("./test");
+  return aa;
 #endif
 }
 /// @brief Try to run the given python code with a 3s time limit
