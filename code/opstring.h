@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string>
 #include <sstream>
-#ifndef LINUX_V
+#ifdef _WIN32
 #include <windows.h>
 #endif
 using namespace std;
@@ -25,7 +25,7 @@ string num2str(long long num)
 
 inline int get_st(const char *a, const char *sub_str)
 {
-#ifndef LINUX_V
+#ifdef _WIN32
   char *d = strstr(a, sub_str);
   if (d == NULL)
     return -1;
@@ -188,7 +188,7 @@ std::string GBKToUTF8(const char *strGBK)
     return conv.to_bytes(wstr);
 }*/
 
-#ifndef LINUX_V
+#ifdef _WIN32
 string GBKToUTF8(const char *strGBK)
 {
   int len = MultiByteToWideChar(CP_ACP, 0, strGBK, -1, NULL, 0);
@@ -417,8 +417,6 @@ string change_to_regex(const string &str)
   sss = str_strchg("|", "\\|", sss.c_str());
   return sss;
 }
-#include <string>
-
 bool hasNonUTF8(const std::string &str)
 {
   for (size_t i = 0; i < str.length(); i++)
