@@ -24,7 +24,7 @@ string run_plugin(const Message_Type &type, const string &plugin_name, bool is_p
   }
   else
   {
-#ifdef LINUX_V
+#ifndef _WIN32
     commd = "./plugin/";
     commd = commd + plugin_name + "/" + plugin_name;
 #else
