@@ -5,7 +5,6 @@
   **  注意事项：所有通过stdout流输出的内容都会作为输出消息
 
 ***************************/
-#define LINUX_V
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>

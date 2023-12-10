@@ -23,7 +23,7 @@
 #include "r_adb.h"
 inline void minisleep(const int x)
 {
-#ifdef LINUX_V
+#ifndef _WIN32
   usleep(x * 1000);
 #else
   Sleep(x);

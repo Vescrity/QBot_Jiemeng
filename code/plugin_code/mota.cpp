@@ -5,7 +5,6 @@
   **  注意事项：所有通过stdout流输出的内容都会作为输出消息
 
 ***************************/
-#define LINUX_V
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
@@ -15,7 +14,9 @@ const std::string PLUGIN_PATH = ".\\plugin\\" + PLUGIN_NAME; // 插件路径，�
 std::string plugin_function(std::string);
 int main(int a, char **ss)
 {
+#ifdef _WIN32
   WinExec("chcp 65001", SW_HIDE);
+#endif
   FILE *fp;
   fp = fopen("Current_msg.txt", "r");
   int c;
