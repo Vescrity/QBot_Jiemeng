@@ -1,4 +1,3 @@
-
 #ifndef R_ADB
 #define R_ADB
 #include <stdio.h>

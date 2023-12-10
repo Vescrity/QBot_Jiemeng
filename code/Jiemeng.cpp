@@ -5,7 +5,7 @@ void Heart_Beat()
   for (;;)
   {
     int tn = Main_thr_num.get_new_num();
-#ifndef LINUX_V
+#ifdef _WIN32
     Main_thread_list[tn] = thread(WinExec, configs.SYMBOL_NAME.c_str(), SW_HIDE);
 #else
     Main_thread_list[tn] = thread(system, string("./" + configs.SYMBOL_NAME).c_str());
@@ -18,11 +18,11 @@ void Heart_Beat()
 int main()
 {
   int st = clock();
-#ifndef LINUX_V
+#ifdef _WIN32
   system("chcp 65001");
 #endif
   Config_File_Read();
-#ifndef LINUX_V
+#ifdef _WIN32
   system(("title "s + configs.TITLE).c_str());
 #endif
 

@@ -1,5 +1,5 @@
 #include "Jiemeng_Basic.h"
-#ifndef LINUX_V
+#ifdef _WIN32
 #include <psapi.h>
 #include <tlhelp32.h>
 #endif
@@ -13,7 +13,7 @@ char txxt[1000];
 bool IsProcessRun(char *pName)
 {
 
-#ifdef LINUX_V
+#ifndef _WIN32
 	{
 		FILE *fp = NULL;
 		char command[150];
@@ -70,7 +70,7 @@ bool IsProcessRun(char *pName)
 void thr(string s) { system(s.c_str()); }
 int main()
 {
-#ifndef LINUX_V
+#ifdef _WIN32
 	system("chcp 65001");
 #endif
 	info_lable("[Start]");
@@ -117,11 +117,11 @@ int main()
 	string start_go(go_name);
 
 	start_go = start_go + " -faststart";
-#ifdef LINUX_V
+#ifndef _WIN32
 	start_go = "./" + start_go;
 #endif
 
-#ifndef LINUX_V
+#ifdef _WIN32
 	if (show_or_hide[0] == 'h')
 		start_go = start_go + " 2>NUL 1>NUL";
 #else
@@ -130,7 +130,7 @@ int main()
 #endif
 
 	string stop_cmd(txxt);
-#ifdef LINUX_V
+#ifndef _WIN32
 	stop_cmd = "killall -9 " + stop_cmd;
 #else
 	stop_cmd = "taskkill /im " + stop_cmd + " /f";
@@ -150,7 +150,7 @@ int main()
 			info_lable("[Start]");
 			info_puts("未检测到主程序运行，将执行启动");
 			string main_name(txxt);
-#ifdef LINUX_V
+#ifndef _WIN32
 			main_name = "./" + main_name;
 #endif
 			thread athr(thr, main_name);

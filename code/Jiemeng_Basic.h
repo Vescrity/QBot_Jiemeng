@@ -131,7 +131,7 @@ string execmd(const string &commd)
     output += buf;
   }
   pclose(fp);
-#ifndef LINUX_V
+#ifdef _WIN32
   if (hasNonUTF8(output))
   {
 
@@ -157,7 +157,7 @@ bool execmd(const char *cmd, char *result)
       cnt++;
     }
   }
-#ifndef LINUX_V
+#ifdef _WIN32
   if (hasNonUTF8(string(result)))
   {
     string str = GBKToUTF8(result);
