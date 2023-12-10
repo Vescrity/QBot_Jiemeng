@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir build
 g++ ./code/Jiemeng.cpp -lcurl -o ./build/Jiemeng
 
 cp code/*.m build
