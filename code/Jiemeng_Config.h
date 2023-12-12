@@ -3,8 +3,9 @@
 #include "json.hpp"
 #include "Jiemeng_Basic.h"
 #include "Jiemeng_Algorithm.h"
+#include "Jiemeng_Config_Class.h"
 #include <string>
-#define GOCQ_URL "http://127.0.0.1:"
+
 using json = nlohmann::json;
 using namespace std;
 #define Vec_Find(a, b) (find((a).begin(), (a).end(), b) != (a).end())
@@ -47,80 +48,49 @@ void js_getval(T &a, const json &js, const string &str, const T &b)
     }
   }
 }
-class List_Config
+
+void  List_Config::add_group_list(const string &id)   { group_list.push_back(id); }
+void  List_Config::add_private_list(const string &id) { private_list.push_back(id); }
+void  List_Config::add_black_list(const string &id)   { black_list.push_back(id); }
+void  List_Config::del_group_list(const string &id)   { vec_remove_first_value(group_list, id); }
+void  List_Config::del_private_list(const string &id) { vec_remove_first_value(private_list, id); }
+void  List_Config::del_black_list(const string &id)   { vec_remove_first_value(black_list, id); }
+bool  List_Config::private_white(const string &id)    { return private_ifblack ^ Vec_Find(private_list, id); }
+bool  List_Config::group_white(const string &id)      { return Vec_Find(group_list, id); }
+bool  List_Config::is_black(const string &id)         { return Vec_Find(black_list, id); }
+int   List_Config::get_admin_level(const string &id)  { return admin_list.count(id) ? int(admin_list[id]) : 0; }
+void  List_Config::init(const json &js)
 {
-private:
-  bool private_ifblack;
-
-public:
-  json admin_list;
-  vector<string> private_list;
-  vector<string> black_list;
-  vector<string> group_list;
-  vector<string> broad_list;
-  void add_group_list(const string &id) { group_list.push_back(id); }
-  void add_private_list(const string &id) { private_list.push_back(id); }
-  void add_black_list(const string &id) { black_list.push_back(id); }
-  void del_group_list(const string &id) { vec_remove_first_value(group_list, id); }
-  void del_private_list(const string &id) { vec_remove_first_value(private_list, id); }
-  void del_black_list(const string &id) { vec_remove_first_value(black_list, id); }
-  bool private_white(const string &id) { return private_ifblack ^ Vec_Find(private_list, id); }
-  bool group_white(const string &id) { return Vec_Find(group_list, id); }
-  bool is_black(const string &id) { return Vec_Find(black_list, id); }
-  int get_admin_level(const string &id) { return admin_list.count(id) ? int(admin_list[id]) : 0; }
-
-  void init(const json &js)
+  try
   {
-    try
-    {
-      private_ifblack = bool(js["private_ifblack"]);
-      admin_list = js["admin_list"];
-      private_list = js["private_list"].get<vector<string>>();
-      black_list = js["black_list"].get<vector<string>>();
-      group_list = js["group_list"].get<vector<string>>();
-      if (js.count("broad_List"))
-        broad_list = js["broad_list"].get<vector<string>>();
-    }
-    catch (std::exception &e)
-    {
-      std::string msg = "Error at List_Config read:\n   Exception caught: ";
-      msg += e.what();
-      error_lable("[Config]");
-      error_puts(msg.c_str());
-      exit(1);
-    }
+    private_ifblack = bool(js["private_ifblack"]);
+    admin_list = js["admin_list"];
+    private_list = js["private_list"].get<vector<string>>();
+    black_list = js["black_list"].get<vector<string>>();
+    group_list = js["group_list"].get<vector<string>>();
+    if (js.count("broad_List"))
+      broad_list = js["broad_list"].get<vector<string>>();
   }
-  json save()
+  catch (std::exception &e)
   {
-    json js;
-    js["private_ifblack"] = private_ifblack;
-    js["private_list"] = private_list;
-    js["admin_list"] = admin_list;
-    js["black_list"] = black_list;
-    js["group_list"] = group_list;
-    js["broad_list"] = broad_list;
-    return js;
+    std::string msg = "Error at List_Config read:\n   Exception caught: ";
+    msg += e.what();
+    error_lable("[Config]");
+    error_puts(msg.c_str());
+    exit(1);
   }
-};
-class All_Config
+}
+json List_Config::save()
 {
-private:
-  void config_init(const json &js);
-
-public:
-  int INPORT, OUTPORT, sleep_time, delay_time, MAX_TEXT_LENGTH, MAX_SINGLE_MESSAGE_LENGTH, MAX_MESSAGE_LENGTH, pswd;
-  string Self_ID, SYMBOL_NAME, ANS_FILENAME, NOTE_FILENAME, TITLE, REPORT_ID, REPORT_GROUP;
-  json custom_config;
-  List_Config list_config;
-
-  void init(const json &js)
-  {
-    config_init(js["Config"]);
-    list_config.init(js["List_Config"]);
-    custom_config = js["Custom_Config"];
-  }
-  json save();
-} configs;
+  json js;
+  js["private_ifblack"] = private_ifblack;
+  js["private_list"] = private_list;
+  js["admin_list"] = admin_list;
+  js["black_list"] = black_list;
+  js["group_list"] = group_list;
+  js["broad_list"] = broad_list;
+  return js;
+}
 
 void All_Config::config_init(const json &js)
 {
@@ -130,6 +100,7 @@ void All_Config::config_init(const json &js)
     js_getval(OUTPORT, js, "OUTPORT");
     js_getval(sleep_time, js, "sleep_time", 50);
     js_getval(delay_time, js, "delay_time", 2000);
+    js_getval(Time_Check_Delay, js, "Time_Check_Delay", 30000);
     js_getval(Self_ID, js, "Self_ID", "0"s);
     js_getval(REPORT_ID, js, "REPORT_ID", "0"s);
     js_getval(REPORT_GROUP, js, "REPORT_GROUP", "0"s);
@@ -157,6 +128,7 @@ json All_Config::save()
   js["OUTPORT"] = OUTPORT;
   js["sleep_time"] = sleep_time;
   js["delay_time"] = delay_time;
+  js["Time_Check_Delay"] = Time_Check_Delay;
   js["Self_ID"] = Self_ID;
   js["REPORT_ID"] = REPORT_ID;
   js["REPORT_GROUP"] = REPORT_GROUP;

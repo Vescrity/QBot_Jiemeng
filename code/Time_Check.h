@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include "Jiemeng_Config_Class.h"
 #include "Orders.h"
 static int last_tm = 2500;
 
@@ -35,7 +36,7 @@ void Time_Main()
   for (;;)
   {
     Time_Check();
-    minisleep(30000);
+    minisleep(configs.Time_Check_Delay);
   }
 }
 #endif
