@@ -1,14 +1,16 @@
 #ifndef JIEMENG_ALGORITHM
 #define JIEMENG_ALGORITHM
+
 #include <algorithm>
 #include <vector>
-#include "json.hpp"
 #include "opstring.h"
 #include "r_adb.h"
 #include "Jiemeng_Basic.h"
 #include <sstream>
 using string = std::string;
-using json = nlohmann::json;
+
+
+#define Vec_Find(a, b) (find((a).begin(), (a).end(), b) != (a).end())
 /// @brief Removes the first element equal to a given value from the given vector.
 /// @tparam T Any type that has overloaded the equality (==) operator
 /// @param vec The given vector
@@ -99,6 +101,10 @@ ff:
     goto ff;
   }
 }
+
+#ifdef INCLUDE_NLOHMANN_JSON_HPP_
+
+using json = nlohmann::json;
 /// @brief According to the json_pointer between `begin` and `end`, replace the given string.
 /// @param begin The beginning delimiter for the text to be replaced.
 /// @param end The ending delimiter for the text to be replaced.
@@ -143,5 +149,6 @@ std::string string_format_with_json(const string &begin, const string &end, cons
         return str;
       });
 }
+#endif
 
 #endif

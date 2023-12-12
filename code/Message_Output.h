@@ -11,7 +11,7 @@
 #include "Message_Type.h"
 #include "txt2img_api.h"
 #include "Bot_Send_Check.h"
-#include "Jiemeng_Config.h"
+#include "Jiemeng_Config_Class.h"
 #include "Time_Struct.h"
 #include "Orders.h"
 #include "r_adb.h"

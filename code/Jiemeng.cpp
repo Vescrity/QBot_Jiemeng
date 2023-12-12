@@ -38,7 +38,7 @@ int main()
   Main_thread_list[thrnum].detach();
   info_lable("[Start]");
   char *buf = new char[1 << 10];
-  sprintf(buf, "启动成功，耗时%dms", int((clock() - st) * 1000.0 / CLOCKS_PER_SEC));
+  sprintf(buf, "启动成功，耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
   info_puts(buf);
   delete[] buf;
   start_server(configs.INPORT);
