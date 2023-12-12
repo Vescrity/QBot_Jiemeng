@@ -3,7 +3,7 @@
 #include <string>
 #include <stdio.h>
 #include "opstring.h"
-#include "Jiemeng_Config.h"
+#include "Jiemeng_Config_Class.h"
 #include "Message_Output.h"
 #include "Get_Base_64.h"
 #include <queue>

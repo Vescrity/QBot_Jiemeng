@@ -13,7 +13,7 @@
 #include "Encrypt.h"
 #include "json.hpp"
 #include <string>
-#include "Jiemeng_Config.h"
+#include "Jiemeng_Config_Class.h"
 using json = nlohmann::json;
 using string = std::string;
 

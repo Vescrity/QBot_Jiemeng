@@ -8,7 +8,7 @@
 
 using json = nlohmann::json;
 using namespace std;
-#define Vec_Find(a, b) (find((a).begin(), (a).end(), b) != (a).end())
+
 /// @brief Try to extract the value from a JSON by the given key and store it in the given var
 /// @tparam T The type of the given var
 /// @param a The var to store the value

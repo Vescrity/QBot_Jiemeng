@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
-#include "Jiemeng_Config.h"
+#include "Jiemeng_Config_Class.h"
 using boost::asio::ip::tcp;
 void Main_Task(const std::string &);
 

@@ -9,7 +9,7 @@
  *                                    |___/
  */
 #include "urls.h"
-#include "Jiemeng_Config.h"
+#include "Jiemeng_Config_Class.h"
 void Message_Delete(const string &msid)
 {
   json js;
