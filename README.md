@@ -26,13 +26,14 @@ Windows 64位 / Linux
 ## 组成
 
 桔梦的工作需要以下文件：
-- 主体程序(默认名称Jiemeng.exe)
+- 主体程序(默认名称Jiemeng)
 	- 负责进行消息处理等任务
 - `go-cqhttp` 及其相关文件
 	- 用于接收、发送消息
-- 启动器 `start.exe`
-	- 启动程序
-- symbol程序
+- 启动器 `start` (可选)
+	- 启动程序，若桔梦崩溃可提供自动重启功能
+	- 当前稳定性相对较好，基本不需要
+- symbol程序(搭配start)
 	- 作为标记表明程序正常运行
 - 配置文件 `Config.json`
 - 词库文件
@@ -47,7 +48,7 @@ Windows 64位 / Linux
 #### 下载
 
 1. 下载新版桔梦release
-2. 按release中说明下载[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)
+2. 按release中说明下载并配置[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)
 
 #### 配置
 
@@ -69,19 +70,20 @@ Windows 64位 / Linux
 	- 分为三个 json 对象：
   	- `Config`
   	- 
-      | 字段            | 类型   | 说明                           | 默认值          |
-      | --------------- | ------ | ------------------------------ | --------------- |
-      | Self_ID         | string | bot qq号                       | 0               |
-      | REPORT_ID       | string | 上报人 qq号                    | 0               |
-      | REPORT_GROUP    | string | 上报群 qq号                    | 0               |
-      | INPORT          | int    | 反向HTTP中的端口号             | 必填            |
-      | OUTPORT         | int    | 监听端口                       | 必填            |
-      | sleep_time      | int    | 每次做出应答后的冷却时间(ms)   | 50              |
-      | delay_time      | int    | 发送多条消息时的间隔时间(ms)   | 2000            |
-      | MAX_TEXT_LENGTH | int    | 文本形式发送的最大单条消息长度 | 2048            |
-      | TITLE           | string | 程序标题                       | Jiemeng+Self_ID |
-      | ANS_FILENAME    | string | 应答库文件名                   | Ans.json        |
-      | SYMBOL_NAME     | string | symbol程序的文件名             | 必填            |
+      | 字段             | 类型   | 说明                           | 默认值          |
+      | ---------------- | ------ | ------------------------------ | --------------- |
+      | Self_ID          | string | bot qq号                       | 0               |
+      | REPORT_ID        | string | 上报人 qq号                    | 0               |
+      | REPORT_GROUP     | string | 上报群 qq号                    | 0               |
+      | INPORT           | int    | 反向HTTP中的端口号             | 必填            |
+      | OUTPORT          | int    | 监听端口                       | 必填            |
+      | sleep_time       | int    | 每次做出应答后的冷却时间(ms)   | 50              |
+      | delay_time       | int    | 发送多条消息时的间隔时间(ms)   | 2000            |
+      | Time_Check_Delay | int    | 定时消息时钟更新时间间隔(ms)   | 300000          |
+      | MAX_TEXT_LENGTH  | int    | 文本形式发送的最大单条消息长度 | 2048            |
+      | TITLE            | string | 程序标题                       | Jiemeng+Self_ID |
+      | ANS_FILENAME     | string | 应答库文件名                   | Ans.json        |
+      | SYMBOL_NAME      | string | symbol程序的文件名             | 必填            |
 
 		- > 上报功能暂未支持
 
