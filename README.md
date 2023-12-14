@@ -23,6 +23,13 @@ Windows 64位 / Linux
 环境条件：确保安装boost库，以及安装了 g++。(测试了12/13版本)  
 执行`./build.sh`可在`build`目录下构建基础的工作文件夹。
 
+## 运行依赖
+
+- boost
+- go-cqhttp
+- python(可选)
+- python-pillow(可选) 用于txt2img功能支持
+
 ## 组成
 
 桔梦的工作需要以下文件：
