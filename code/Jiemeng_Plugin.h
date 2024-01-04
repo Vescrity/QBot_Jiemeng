@@ -1,7 +1,7 @@
 #ifndef JIEMENG_PLUGIN
 #define JIEMENG_PLUGIN
 #include <string>
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 #include "Message_Type.h"
 using string = std::string;
 using json = nlohmann::json;

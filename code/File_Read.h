@@ -2,7 +2,7 @@
 #define FILE_READ
 #include <algorithm>
 #include <fstream>
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 #include "Jiemeng_Ans.h"
 #include "Jiemeng_Config.h"
 /// @brief Read the config from `config.json`
