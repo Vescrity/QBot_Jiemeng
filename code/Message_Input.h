@@ -17,12 +17,12 @@
 using json = nlohmann::json;
 using string = std::string;
 
-void Message_Type::init(const string &msg)
+void Message_Type::init(const json &Event)
 {
   // info_puts(msg.c_str());
-  json Event = json::parse(msg);
+  // json Event = json::parse(msg);
   // btype.ifgroup = Event.count("group_id");
-  json &post_type = Event["post_type"];
+  const json &post_type = Event["post_type"];
   int &admin_level = btype.admin_level;
   if (post_type == "message" || post_type == "message_sent")
   {
@@ -33,7 +33,7 @@ void Message_Type::init(const string &msg)
     }
     btype.ifgroup = Event["message_type"] == "group";
     btype.message = Event["raw_message"];
-    json &sender = Event["sender"];
+    const json &sender = Event["sender"];
     btype.user_id = to_string(Event["user_id"]);
     if (btype.ifgroup)
     {
@@ -44,7 +44,8 @@ void Message_Type::init(const string &msg)
         goto role_check;
       }
     }
-    user_name = btype.ifgroup ? sender["card"] : sender["nickname"];
+    user_name = (btype.ifgroup && (!sender["card"].is_null())) ? sender["card"] : sender["nickname"];
+    cout << "PASS!" << endl;
     if (!user_name.length())
       user_name = sender["nickname"];
   role_check:
@@ -63,7 +64,7 @@ void Message_Type::init(const string &msg)
   }
   else if (post_type == "notice")
   {
-    json &ntype = Event["notice_type"];
+    const json &ntype = Event["notice_type"];
     if (ntype == "friend_recall" || ntype == "group_recal")
     {
       btype.message = "[recall]";
@@ -106,7 +107,11 @@ void Message_Type::init(const string &msg)
     btype.message = "[request]\n"s + "[type]=" + to_string(Event["request_type"]) + "\n[flag]=" + to_string(Event["flag"]);
   }
   else
+  {
+    cout << "\nHIT!: " << Event << endl;
     btype.message = "[INVALID EVENT]";
+    return;
+  }
 
   if (btype.user_id.length() < 1)
     btype.user_id = "10000";

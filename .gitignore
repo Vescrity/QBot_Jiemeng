@@ -5,3 +5,4 @@ password.cpp
 Connect.cpp
 test_Otheruse/
 *.exe
+*vscode

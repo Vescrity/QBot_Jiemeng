@@ -10,6 +10,8 @@
  *                                    |___/
  */
 #include <string>
+#include "Sockets_IO.h"
+#include <nlohmann/json.hpp>
 using string = std::string;
 class Basic_Message_Type
 {
@@ -37,7 +39,7 @@ public:
   bool white;
   Message_Type() { white = 1; }
   void get_name();
-  void init(const string &);
+  void init(const json &);
   void show() const;
 };
 /// @brief Print the info of the message
@@ -64,32 +66,25 @@ void Message_Type::show() const
 /// @brief Get the user's name of the message
 void Message_Type::get_name()
 {
-  if (btype.user_id == "ADMIN")
+  if (btype.user_id == "ADMIN" || btype.user_id == "10000")
     return;
   try
   {
     if (btype.ifgroup && group_name.length() == 0)
     {
       json js;
-      js["group_id"] = btype.group_id;
-      Request *rq = new Request;
-      rq->set_api("/get_group_info");
-      rq->set_url("http://127.0.0.1:"s + num2str(configs.OUTPORT));
-      rq->set_data(js);
-      js = rq->js_post();
-      delete rq;
+      js["params"]["group_id"] = stoi(btype.group_id);
+      js["action"] = "get_group_info";
+      js = SendJsonMessage(js);
+      cout << "GET_NAME_RETURN" << js << endl;
       group_name = js["data"]["group_name"];
     }
     if (user_name.length() == 0)
     {
       json js;
-      js["user_id"] = btype.user_id;
-      Request *rq = new Request;
-      rq->set_api("/get_stranger_info");
-      rq->set_url("http://127.0.0.1:"s + num2str(configs.OUTPORT));
-      rq->set_data(js);
-      js = rq->js_post();
-      delete rq;
+      js["params"]["user_id"] = stoi(btype.user_id);
+      js["action"] = "get_stranger_info";
+      js = SendJsonMessage(js);
       user_name = js["data"]["nickname"];
     }
   }

@@ -43,10 +43,12 @@ int main()
   delete[] buf;
   start_server(configs.INPORT);
 }
-void Main_Task(const string &req)
+void Main_Task(const json &event)
 {
   Message_Type *type = new Message_Type;
-  type->init(req);
+  type->init(event);
+  if (type->btype.message == "[INVALID EVENT]"s)
+    return;
   if (type->white)
     if (type->btype.is_white())
       Message_Operate(*type);
