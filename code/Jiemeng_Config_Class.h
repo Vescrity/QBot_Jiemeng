@@ -1,8 +1,7 @@
 #ifndef JIEMENG_CONFIG_CLASS
 #define JIEMENG_CONFIG_CLASS
-#include "json.hpp"
 #include "Jiemeng_Basic.h"
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 #include <string>
 #define GOCQ_URL "http://127.0.0.1:"
 

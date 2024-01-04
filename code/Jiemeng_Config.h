@@ -1,6 +1,6 @@
 #ifndef JIEMENG_CONFIG
 #define JIEMENG_CONFIG
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 #include "Jiemeng_Basic.h"
 #include "Jiemeng_Algorithm.h"
 #include "Jiemeng_Config_Class.h"

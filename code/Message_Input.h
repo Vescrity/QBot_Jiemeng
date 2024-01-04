@@ -11,7 +11,7 @@
 #include "Message_Type.h"
 #include "Bot_Send_Check.h"
 #include "Encrypt.h"
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 #include <string>
 #include "Jiemeng_Config_Class.h"
 using json = nlohmann::json;
@@ -34,6 +34,7 @@ void Message_Type::init(const json &Event)
     btype.ifgroup = Event["message_type"] == "group";
     btype.message = Event["raw_message"];
     const json &sender = Event["sender"];
+
     btype.user_id = to_string(Event["user_id"]);
     if (btype.ifgroup)
     {
@@ -44,10 +45,13 @@ void Message_Type::init(const json &Event)
         goto role_check;
       }
     }
-    user_name = (btype.ifgroup && (!sender["card"].is_null())) ? sender["card"] : sender["nickname"];
-    cout << "PASS!" << endl;
-    if (!user_name.length())
-      user_name = sender["nickname"];
+    if (btype.ifgroup)
+    {
+      user_name = (btype.ifgroup && (!sender["card"].is_null())) ? sender["card"] : sender["nickname"];
+      if (!user_name.length())
+        user_name = sender["nickname"];
+    }
+
   role_check:
     if (btype.ifgroup)
     {
@@ -59,8 +63,11 @@ void Message_Type::init(const json &Event)
     }
     else
     {
-      btype.target_id = to_string(Event["target_id"]);
+      // lagrange没有 target_id 实现
+      // btype.target_id = to_string(Event["target_id"]);
+      btype.target_id = to_string(Event["user_id"]);
     }
+    cout << "PASS!!!" << endl;
   }
   else if (post_type == "notice")
   {
