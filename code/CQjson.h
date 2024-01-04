@@ -68,7 +68,9 @@ json CQ2json(const string &message)
         feqPos = cqCode.find("=", fstPos);
         cqKey = cqCode.substr(fstPos + 1, feqPos - fstPos - 1);
         fstPos = cqCode.find(",", feqPos);
-        fedPos = (fedPos == string::npos) ? cqCode.size() - 1 : fstPos;
+        fedPos=fstPos;
+        fedPos = (fedPos == string::npos) ? (cqCode.length() - 1) : fstPos;
+        cout << fedPos << endl;
         value = cqCode.substr(feqPos + 1, fedPos - feqPos - 1);
         cqData[cqKey] = value;
       } while (fstPos != string::npos);
