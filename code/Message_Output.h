@@ -16,44 +16,51 @@
 #include "Orders.h"
 #include "r_adb.h"
 #include "urls.h"
+#include "CQjson.h"
 #include <string>
 /// @brief Send the message given without any change
 /// @param data Message type
 /// @param msg The message need to send
-/// @return a JSON string with information about the details on the server response.
-string Basic_Message_Output(const Basic_Message_Type &data, const string &msg)
+/// @return a JSON with information about the details on the server response.
+json Basic_Message_Output(const Basic_Message_Type &data, const string &msg)
 {
+  cout << "Basic_Message_Output" << endl;
   json send_data;
-  Request *rq = new Request;
-  if (data.ifgroup)
-  {
-    send_data["group_id"] = data.group_id;
-    rq->set_api("/send_group_msg");
-  }
-  else
-  {
-    send_data["user_id"] = data.user_id;
-    rq->set_api("/send_private_msg");
-  }
+  // Request *rq = new Request;
   try
   {
-    send_data["message"] = msg;
+    if (data.ifgroup)
+    {
+      send_data["params"]["group_id"] = stoi(data.group_id);
+      send_data["action"] = "send_group_msg";
+    }
+    else
+    {
+      send_data["params"]["user_id"] = stoi(data.user_id);
+      send_data["action"] = "send_private_msg";
+    }
+  }catch(...){}
+
+  try
+  {
+    send_data["params"]["message"] = CQ2json(msg);
   }
   catch (...)
   {
     send_data["message"] = "Code Error";
   }
-
-  rq->set_url("http://127.0.0.1:"s + num2str(configs.OUTPORT));
+  cout << send_data << endl;
+  return SendJsonMessage(send_data);
+  /*rq->set_url("http://127.0.0.1:"s + num2str(configs.OUTPORT));
   rq->set_data(send_data);
   string rt = rq->Post();
   delete rq;
-  return rt;
+  return rt;*/
 }
 /// @brief Send the message given without any change
 /// @param data Message type contains the message need to send
-/// @return a JSON string with information about the details on the server response.
-string Basic_Message_Output(const Basic_Message_Type &data)
+/// @return a JSON with information about the details on the server response.
+json Basic_Message_Output(const Basic_Message_Type &data)
 {
   return Basic_Message_Output(data, data.message);
 }
@@ -97,8 +104,7 @@ bool Message_Output(const Basic_Message_Type &data, const string &msg)
         continue;
       }*/
 
-      str = Basic_Message_Output(data, tmp);
-      json js = json::parse(str);
+      json js = Basic_Message_Output(data, tmp);
       if (js["status"] == "ok")
       {
         bot_check.in(js["data"]["message_id"]);

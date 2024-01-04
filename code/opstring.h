@@ -23,6 +23,18 @@ string num2str(long long num)
   return slfid;
 }
 
+
+void str_replace(std::string &str, const std::string &from, const std::string &to)
+{
+  size_t startPos = 0;
+  size_t foundPos;
+  while ((foundPos = str.find(from, startPos)) != std::string::npos)
+  {
+    str.replace(foundPos, from.length(), to);
+    startPos = foundPos + to.length();
+  }
+}
+
 inline int get_st(const char *a, const char *sub_str)
 {
 #ifdef _WIN32
