@@ -1,14 +1,13 @@
 # QBot_Jiemeng
-借助go-cqhttp，使用C++开发的QQ聊天机器人程序
+使用 lagrange 作为后端，使用C++开发的QQ聊天机器人程序
 
-- 本说明适用于v22.0
-- 由于过于频繁的风控暂时放弃维护。~~相关版本尚未发布，请耐心等候。预计7月前会发布。~~
+- 本说明适用于v23.0，正在做迁移至lagrange的适配。故功能不全。
 - 项目主要用于个人开发练习。
 - 本说明用于介绍桔梦基本功能，组成，并帮助您快速上手。
 - 具体的详细说明请参照进阶说明。
 
 ## 简介
-桔梦(QBot_Jiemeng)是一个借助[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)来达到QQ聊天功能的机器人程序。使用者可通过桔梦来实现检测关键词并做出特定回复的功能。词库可自定义。
+桔梦(QBot_Jiemeng)是一个使用 lagrange 来达到QQ聊天功能的机器人程序。使用者可通过桔梦来实现检测关键词并做出特定回复的功能。词库可自定义。
 
 ## ~~开发者的一些废话~~
 ~~非计算机相关专业，纯业余开发，技术稀烂，代码可读性极差，总之图一乐~~
@@ -20,28 +19,35 @@ Windows 64位 / Linux
 ## 构建
 
 仅提供 Linux 编译方案：  
-环境条件：确保安装boost库，以及安装了 g++。(测试了12/13版本)  
+环境条件：确保安装boost库，curl 库，nlohmann json库，以及安装了 g++。(测试了12/13版本)   
+例如 `Arch Linux` 下：
+```
+pacman -S boost nlohmann-json
+# curl gcc 一般已预装，故不列出。
+```
 执行`./build.sh`可在`build`目录下构建基础的工作文件夹。
 
 ## 运行依赖
 
 - boost
-- go-cqhttp
+- lagrange
 - python(可选)
 - python-pillow(可选) 用于txt2img功能支持
+- ...
 
 ## 组成
 
 桔梦的工作需要以下文件：
 - 主体程序(默认名称Jiemeng)
 	- 负责进行消息处理等任务
-- `go-cqhttp` 及其相关文件
+- `lagrange` 及其相关文件
 	- 用于接收、发送消息
-- 启动器 `start` (可选)
-	- 启动程序，若桔梦崩溃可提供自动重启功能
-	- 当前稳定性相对较好，基本不需要
-- symbol程序(搭配start)
-	- 作为标记表明程序正常运行
+- 以下旧版内容，可能未来会恢复支持。
+  - 启动器 `start` (可选)
+  	- 启动程序，若桔梦崩溃可提供自动重启功能
+  	- 当前稳定性相对较好，基本不需要
+  - symbol程序(搭配start)
+  	- 作为标记表明程序正常运行
 - 配置文件 `Config.json`
 - 词库文件
 - 插件及其附属文件(非必须)
@@ -55,25 +61,15 @@ Windows 64位 / Linux
 #### 下载
 
 1. 下载新版桔梦release
-2. 按release中说明下载并配置[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)
+2. ~~按release中说明下载并配置[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)~~ 配置安装 lagrange
 
 #### 配置
 
-以下适用于 Windows 配置参考。
+【待补充】
 
-1. 打开go-cq程序以生成.bat文件
-
-2. 配置go-cqhttp相关配置[config.yml]
-	- a.账号密码
-	- b.监听端口与反向HTTP端口
-		- 监听端口设置为任意空闲端口【参考：5702】
-		- 反向HTTP POST：
-			- url: `http://127.0.0.1:任意空闲端口（不可为监听端口）/`
-			- 【参考：5703】
-	- c.完成配置后请运行go-cqhttp.bat并按提示完成登陆
-
-2. 配置Jiemeng相关配置[config.json]
+1. 配置Jiemeng相关配置[config.json]
 	- (可参考预设文件)
+	- 尚未更新，可能不适用当前版本。
 	- 分为三个 json 对象：
   	- `Config`
   	- 
@@ -108,11 +104,14 @@ Windows 64位 / Linux
 		- `Custom_Config`
   		- 任意自定义量。
 
-3. 配置start相关配置[start.cfg]
+
+<del>
+1. 配置start相关配置[start.cfg]
 	- 第一行: Jiemeng主程序的文件名
 	- 第二行: go-cqhttp的exe文件名
 	- 第三行：是否显示来自go-cqhttp的信息(show/hide)
 	- 第四行: symbol程序的文件名
+</del>
 
 #### 应答库文件
 
@@ -165,7 +164,8 @@ Windows 64位 / Linux
 
 ### 开始使用：
 - 请确保已完成所有配置
-- 将Jiemeng的全部文件内容放到和go-cqhttp同一文件夹下，运行start.exe即可
+- ~~将Jiemeng的全部文件内容放到和go-cqhttp同一文件夹下，运行start.exe即可~~
+- 分别启动 lagrange 与 桔梦。
 
 
 ---
