@@ -27,8 +27,6 @@ void ProcessMessage(const std::string &message)
 
   json ev = json::parse(message);
   raw_generate(ev);
-  cout << "\nRAWOUT: " << ev << endl
-       << endl;
   std::thread t(Main_Task, ev);
   t.detach();
 }
@@ -102,6 +100,49 @@ void SendJsonMessage(const nlohmann::json &json, const std::string &serverHost, 
     std::cerr << "Exception: " << e.what() << std::endl;
   }
 }*/
+
+json ws_json_send(json &js)
+{
+  boost::asio::io_context io_send;
+
+  // 创建解析器和WebSocket对象
+  tcp::resolver send_res(io_send);
+  websocket::stream<tcp::socket> ws_send(io_send);
+  boost::asio::ip::basic_resolver_results<boost::asio::ip::tcp> send_server_result;
+  send_server_result = send_res.resolve(serverHost, serverPort);
+  boost::asio::connect(ws_send.next_layer(), send_server_result.begin(), send_server_result.end());
+
+  // WebSocket握手
+  ws_send.handshake(serverHost, "/api");
+  static short ids = 0;
+  js["echo"] = ids;
+  json rt;
+
+  ws_send.write(boost::asio::buffer(js.dump()));
+  int x = 0;
+  // 接收服务器的响应
+  do
+  {
+
+    boost::beast::flat_buffer buffer;
+    ws_send.read(buffer);
+    std::string response(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
+    rt = json::parse(response);
+    if (!rt["echo"].is_null())
+    {
+      if (rt["echo"] == ids)
+        break;
+    }
+  } while ((x++) < 15);
+
+  // 将响应解析为JSON对象并返回
+  if (ids++ == 128)
+    ids = 0;
+  ws_send.close(websocket::close_code::normal);
+  return rt;
+}
+
+/*
 nlohmann::json SendJsonMessage(const nlohmann::json &json, const std::string &serverHost, const std::string &serverPort)
 {
   try
@@ -145,7 +186,7 @@ nlohmann::json SendJsonMessage(const nlohmann::json &json, const std::string &se
 json SendJsonMessage(const json &data)
 {
   return SendJsonMessage(data, serverHost, serverPort);
-}
+}*/
 void start_server(int port)
 {
   try

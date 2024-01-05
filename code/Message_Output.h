@@ -24,9 +24,7 @@
 /// @return a JSON with information about the details on the server response.
 json Basic_Message_Output(const Basic_Message_Type &data, const string &msg)
 {
-  cout << "Basic_Message_Output" << endl;
   json send_data;
-  // Request *rq = new Request;
   try
   {
     if (data.ifgroup)
@@ -50,7 +48,7 @@ json Basic_Message_Output(const Basic_Message_Type &data, const string &msg)
     send_data["message"] = "Code Error";
   }
   cout << send_data << endl;
-  return SendJsonMessage(send_data);
+  return ws_json_send(send_data);
   /*rq->set_url("http://127.0.0.1:"s + num2str(configs.OUTPORT));
   rq->set_data(send_data);
   string rt = rq->Post();

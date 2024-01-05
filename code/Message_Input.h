@@ -67,7 +67,6 @@ void Message_Type::init(const json &Event)
       // btype.target_id = to_string(Event["target_id"]);
       btype.target_id = to_string(Event["user_id"]);
     }
-    cout << "PASS!!!" << endl;
   }
   else if (post_type == "notice")
   {
@@ -115,7 +114,6 @@ void Message_Type::init(const json &Event)
   }
   else
   {
-    cout << "\nHIT!: " << Event << endl;
     btype.message = "[INVALID EVENT]";
     return;
   }
