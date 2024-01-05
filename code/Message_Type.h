@@ -75,7 +75,7 @@ void Message_Type::get_name()
       json js;
       js["params"]["group_id"] = stoi(btype.group_id);
       js["action"] = "get_group_info";
-      js = SendJsonMessage(js);
+      js = ws_json_send(js);
       cout << "GET_NAME_RETURN" << js << endl;
       group_name = js["data"]["group_name"];
     }
@@ -84,7 +84,7 @@ void Message_Type::get_name()
       json js;
       js["params"]["user_id"] = stoi(btype.user_id);
       js["action"] = "get_stranger_info";
-      js = SendJsonMessage(js);
+      js = ws_json_send(js);
       user_name = js["data"]["nickname"];
     }
   }
