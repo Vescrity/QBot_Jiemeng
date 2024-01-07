@@ -23,9 +23,9 @@ std::string json2CQ(const json &message)
     if (cqType == "text")
     {
       std::string text = cqData["text"];
+      str_replace(text, "&", "&amp;");
       str_replace(text, "[", "&#91;");
       str_replace(text, "]", "&#93;");
-      str_replace(text, "&", "&amp;");
       cqCode += text;
       continue;
     }
@@ -34,9 +34,9 @@ std::string json2CQ(const json &message)
     {
       std::string key = it.key();
       std::string value = it.value();
+      str_replace(value, "&", "&amp;");
       str_replace(value, "[", "&#91;");
       str_replace(value, "]", "&#93;");
-      str_replace(value, "&", "&amp;");
       cqCode += "," + key + "=" + value;
     }
     cqCode += "]";
