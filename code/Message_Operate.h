@@ -95,7 +95,7 @@ string str_Oper_Explain(const Message_Type &type, const Oper_List &oplist, bool 
         const string paras = i.msgread ? type.btype.message.substr(type.btype.message.find("#") + 1) : i.str.substr(i.str.find("#") + 1);
         const string orders = i.msgread
                                   ? i.str
-                                  : i.str.substr(0, i.str.find("#"));
+                                  : i.str.substr(0, i.str.find("#"));;
         tmp = Order(type, orders, paras);
       }
       if (tmp == "[-clear-]")

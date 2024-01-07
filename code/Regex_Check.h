@@ -4,6 +4,7 @@
 
 #include <nlohmann/json.hpp>
 #include "Func_Timeout.h"
+#include "Jiemeng_Exception.h"
 #include <boost/regex.hpp>
 using json = nlohmann::json;
 using namespace std;
@@ -63,8 +64,8 @@ bool reg_check(const char *msg, const json &regs)
   }
   catch (const std::exception &e)
   {
-    cerr << e.what() << endl
-         << regs << endl;
+    JM_EXCEPTION("[Regex]")
+    cerr << regs << endl;
     return 0;
   }
 }

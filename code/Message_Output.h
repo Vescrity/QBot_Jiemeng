@@ -37,7 +37,10 @@ json Basic_Message_Output(const Basic_Message_Type &data, const string &msg)
       send_data["params"]["user_id"] = stoi(data.user_id);
       send_data["action"] = "send_private_msg";
     }
-  }catch(...){}
+  }
+  catch (...)
+  {
+  }
 
   try
   {
@@ -47,7 +50,6 @@ json Basic_Message_Output(const Basic_Message_Type &data, const string &msg)
   {
     send_data["message"] = "Code Error";
   }
-  cout << send_data << endl;
   return ws_json_send(send_data);
   /*rq->set_url("http://127.0.0.1:"s + num2str(configs.OUTPORT));
   rq->set_data(send_data);

@@ -7,24 +7,22 @@
 #include <boost/beast/websocket.hpp>
 #include <thread>
 #include <nlohmann/json.hpp>
+#include "Jiemeng_Exception.h"
 #include "CQjson.h"
 #include "Jiemeng_Config_Class.h"
-using boost::asio::ip::tcp;
 
+using boost::asio::ip::tcp;
 using namespace boost::asio;
 using tcp = boost::asio::ip::tcp;
-namespace websocket = boost::beast::websocket;
 
+namespace websocket = boost::beast::websocket;
 static std::string serverHost;
 static std::string serverPort;
 
 void Main_Task(const json &);
-
 void ProcessMessage(const std::string &message)
 {
   // 在这里处理接收到的消息
-  std::cout << "Received message: " << message << std::endl;
-
   json ev = json::parse(message);
   raw_generate(ev);
   std::thread t(Main_Task, ev);
@@ -65,7 +63,7 @@ void WebSocketClient(const std::string &serverHost, const std::string &serverPor
   }
   catch (const std::exception &e)
   {
-    std::cerr << "Exception: " << e.what() << std::endl;
+    JM_EXCEPTION("[Socket_Client]")
   }
 }
 /*
@@ -123,7 +121,6 @@ json ws_json_send(json &js)
   // 接收服务器的响应
   do
   {
-
     boost::beast::flat_buffer buffer;
     ws_send.read(buffer);
     std::string response(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
@@ -134,7 +131,6 @@ json ws_json_send(json &js)
         break;
     }
   } while ((x++) < 15);
-
   // 将响应解析为JSON对象并返回
   if (ids++ == 128)
     ids = 0;
@@ -183,10 +179,7 @@ nlohmann::json SendJsonMessage(const nlohmann::json &json, const std::string &se
     return nlohmann::json(); // 返回空的JSON对象表示出现异常
   }
 }
-json SendJsonMessage(const json &data)
-{
-  return SendJsonMessage(data, serverHost, serverPort);
-}*/
+*/
 void start_server(int port)
 {
   try

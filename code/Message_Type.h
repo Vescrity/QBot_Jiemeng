@@ -76,7 +76,6 @@ void Message_Type::get_name()
       js["params"]["group_id"] = stoi(btype.group_id);
       js["action"] = "get_group_info";
       js = ws_json_send(js);
-      cout << "GET_NAME_RETURN" << js << endl;
       group_name = js["data"]["group_name"];
     }
     if (user_name.length() == 0)
@@ -90,10 +89,7 @@ void Message_Type::get_name()
   }
   catch (exception &e)
   {
-    std::string msg = "Exception caught: ";
-    msg += e.what();
-    error_lable("[get_name]");
-    error_puts(msg.c_str());
+    JM_EXCEPTION("[get_name]")
   }
 }
 

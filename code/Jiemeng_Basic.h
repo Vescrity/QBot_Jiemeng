@@ -4,7 +4,7 @@
 #define LINUX_V
 #endif
 
-#define JIEMENG_VERSION ("v22.9.953")
+#define JIEMENG_VERSION ("v22.9.973")
 #ifdef _WIN32
 #define JIEMENG_PLATFORM "Jiemeng"
 #else
@@ -21,6 +21,7 @@
 #include <time.h>
 #include <thread>
 #include "r_adb.h"
+#include "Jiemeng_Exception.h"
 inline void minisleep(const int x)
 {
 #ifndef _WIN32
