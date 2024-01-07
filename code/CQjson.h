@@ -1,5 +1,13 @@
 #ifndef CQJSON
 #define CQJSON
+
+/*
+ * 用于 CQ 码与 json 格式的转换。
+ * 自 go-cqhttp 转换为 lagrange 
+ * 由于 lagrange 不支持 CQ 码
+ * 故开发此库做为兼容层。
+ */
+
 #include <string>
 #include <nlohmann/json.hpp>
 #include "opstring.h"
@@ -33,10 +41,8 @@ std::string json2CQ(const json &message)
     }
     cqCode += "]";
   }
-
   return cqCode;
 }
-
 json CQ2json(const string &message)
 {
   json result;
@@ -84,10 +90,8 @@ json CQ2json(const string &message)
   } while (endPos != string::npos);
   return result;
 }
-
 void raw_generate(json &message)
 {
   message["raw_message"] = json2CQ(message["message"]);
 }
-
 #endif
