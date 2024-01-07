@@ -18,6 +18,11 @@ void Heart_Beat()
 int main()
 {
   int st = clock();
+
+    // TODO: WORKDIR CHECK:
+#ifndef _WIN32
+  execmd("mkdir tmp"s);
+#endif
 #ifdef _WIN32
   system("chcp 65001");
 #endif

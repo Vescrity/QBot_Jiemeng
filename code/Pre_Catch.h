@@ -135,6 +135,5 @@ void Pre_Catch_Init()
     )"_json;
     pre_catch_list.push(_ORDER);
   }
-  debug_puts("Pre_Catch_INIT OK!");
 }
 #endif
