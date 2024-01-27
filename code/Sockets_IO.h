@@ -20,6 +20,8 @@ static std::string serverHost;
 static std::string serverPort;
 
 void Main_Task(const json &);
+
+/// @brief Process message and creat a task thread to handle it.
 void ProcessMessage(const std::string &message)
 {
   // 在这里处理接收到的消息
@@ -66,38 +68,7 @@ void WebSocketClient(const std::string &serverHost, const std::string &serverPor
     JM_EXCEPTION("[Socket_Client]")
   }
 }
-/*
-void SendJsonMessage(const nlohmann::json &json, const std::string &serverHost, const std::string &serverPort)
-{
-  try
-  {
-    // 创建IO上下文
-    boost::asio::io_context ioContext;
 
-    // 创建解析器和WebSocket对象
-    tcp::resolver resolver(ioContext);
-    websocket::stream<tcp::socket> ws(ioContext);
-
-    // 解析服务器地址
-    auto const results = resolver.resolve(serverHost, serverPort);
-
-    // 连接到服务器
-    boost::asio::connect(ws.next_layer(), results.begin(), results.end());
-
-    // WebSocket握手
-    ws.handshake(serverHost, "/");
-
-    // 发送JSON消息
-    ws.write(boost::asio::buffer(json.dump()));
-
-    // 关闭WebSocket连接
-    ws.close(websocket::close_code::normal);
-  }
-  catch (const std::exception &e)
-  {
-    std::cerr << "Exception: " << e.what() << std::endl;
-  }
-}*/
 
 json ws_json_send(json &js)
 {
@@ -138,48 +109,6 @@ json ws_json_send(json &js)
   return rt;
 }
 
-/*
-nlohmann::json SendJsonMessage(const nlohmann::json &json, const std::string &serverHost, const std::string &serverPort)
-{
-  try
-  {
-    // 创建IO上下文
-    boost::asio::io_context ioContext;
-
-    // 创建解析器和WebSocket对象
-    tcp::resolver resolver(ioContext);
-    websocket::stream<tcp::socket> ws(ioContext);
-
-    // 解析服务器地址
-    auto const results = resolver.resolve(serverHost, serverPort);
-
-    // 连接到服务器
-    boost::asio::connect(ws.next_layer(), results.begin(), results.end());
-
-    // WebSocket握手
-    ws.handshake(serverHost, "/api");
-
-    // 发送JSON消息
-    ws.write(boost::asio::buffer(json.dump()));
-
-    // 接收服务器的响应
-    boost::beast::flat_buffer buffer;
-    ws.read(buffer);
-    std::string response(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
-
-    // 关闭WebSocket连接
-    ws.close(websocket::close_code::normal);
-
-    // 将响应解析为JSON对象并返回
-    return nlohmann::json::parse(response);
-  }
-  catch (const std::exception &e)
-  {
-    std::cerr << "Exception: " << e.what() << std::endl;
-    return nlohmann::json(); // 返回空的JSON对象表示出现异常
-  }
-}
-*/
 void start_server(int port)
 {
   try

@@ -4,7 +4,7 @@
 #define LINUX_V
 #endif
 
-#define JIEMENG_VERSION ("v22.9.973")
+#define JIEMENG_VERSION ("v23.0.0")
 #ifdef _WIN32
 #define JIEMENG_PLATFORM "Jiemeng"
 #else
@@ -142,35 +142,7 @@ string execmd(const string &commd)
 #endif
   return output;
 }
-/*
-bool execmd(const char *cmd, char *result)
-{
-  FILE *pipe = popen(cmd, "r");
-  if (!pipe)
-    return 0;
-  int cnt = 0;
-  char buffer[1 << 13];
-  while (!feof(pipe) && cnt < 1000)
-  {
-    if (fgets(buffer, 128, pipe))
-    {
-      strcat(result, buffer);
-      cnt++;
-    }
-  }
-#ifdef _WIN32
-  if (hasNonUTF8(string(result)))
-  {
-    string str = GBKToUTF8(result);
-    strcpy(result, str.c_str());
-  }
-  _pclose(pipe);
-#else
-  pclose(pipe);
-#endif
-  return 1;
-}
-*/
+
 #define MAX_MAIN_THR_NUM 512
 thread Main_thread_list[MAX_MAIN_THR_NUM];
 struct Thread_num

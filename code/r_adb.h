@@ -47,7 +47,6 @@ std::string calc_nkh(std::string Rstr)
       }
       else
         sscanf(matc.c_str(), "%lld%*[dD]%lld", &l, &r);
-      // printf("%lld,%lld",l,r);
       Lint rd = adb(l, r);
       matc = num2str(rd);
 

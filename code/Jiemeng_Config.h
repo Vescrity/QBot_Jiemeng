@@ -73,10 +73,7 @@ void  List_Config::init(const json &js)
   }
   catch (std::exception &e)
   {
-    std::string msg = "Error at List_Config read:\n   Exception caught: ";
-    msg += e.what();
-    error_lable("[Config]");
-    error_puts(msg.c_str());
+    JM_EXCEPTION("[Config]")
     exit(1);
   }
 }

@@ -106,7 +106,7 @@ void Pre_Catch_Init()
   {
     string version_info = string(JIEMENG_PLATFORM) + " " + JIEMENG_VERSION;
     version_info = version_info +
-                   "\nUpdate at " + UPDATE_TIME +
+                   "\nCompile at " + UPDATE_TIME +
                    "\nDeveloped by Yukitoha\n"
                    "More information at https://github.com/Vescrity/QBot_Jiemeng\n"
                    "Do not use me too hard♡";
