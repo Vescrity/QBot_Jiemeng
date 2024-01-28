@@ -82,6 +82,7 @@ void Message_Type::get_name()
     {
       json js;
       js["params"]["user_id"] = stoi(btype.user_id);
+      // lagrange 未支持此API
       js["action"] = "get_stranger_info";
       js = ws_json_send(js);
       user_name = js["data"]["nickname"];
