@@ -81,11 +81,11 @@ json List_Config::save()
 {
   json js;
   js["private_ifblack"] = private_ifblack;
-  js["private_list"] = private_list;
-  js["admin_list"] = admin_list;
-  js["black_list"] = black_list;
-  js["group_list"] = group_list;
-  js["broad_list"] = broad_list;
+  js["private_list"]    = private_list;
+  js["admin_list"]      = admin_list;
+  js["black_list"]      = black_list;
+  js["group_list"]      = group_list;
+  js["broad_list"]      = broad_list;
   return js;
 }
 
@@ -93,21 +93,22 @@ void All_Config::config_init(const json &js)
 {
   try
   {
-    js_getval(INPORT, js, "INPORT");
-    js_getval(OUTPORT, js, "OUTPORT");
-    js_getval(sleep_time, js, "sleep_time", 50);
-    js_getval(delay_time, js, "delay_time", 2000);
-    js_getval(Time_Check_Delay, js, "Time_Check_Delay", 30000);
-    js_getval(Self_ID, js, "Self_ID", "0"s);
-    js_getval(REPORT_ID, js, "REPORT_ID", "0"s);
-    js_getval(REPORT_GROUP, js, "REPORT_GROUP", "0"s);
-    js_getval(SYMBOL_NAME, js, "SYMBOL_NAME");
-    js_getval(ANS_FILENAME, js, "ANS_FILENAME", "Ans.json"s);
-    js_getval(MAX_TEXT_LENGTH, js, "MAX_TEXT_LENGTH", 1 << 10);
-    js_getval(MAX_SINGLE_MESSAGE_LENGTH, js, "MAX_SINGLE_MESSAGE_LENGTH", 1 << 11);
-    js_getval(MAX_MESSAGE_LENGTH, js, "MAX_MESSAGE_LENGTH", 1 << 14);
-    js_getval(TITLE, js, "TITLE", "Jiemeng"s + Self_ID);
-    js_getval(pswd, js, "pswd", 1234);
+////js_getval(VAR,                        js, CONFIG_VAR,                   <DEFAULT_VALUE>     );
+    js_getval(INPORT,                     js, "INPORT"                                          );
+    js_getval(OUTPORT,                    js, "OUTPORT"                                         );
+    js_getval(sleep_time,                 js, "sleep_time",                 50                  );
+    js_getval(delay_time,                 js, "delay_time",                 2000                );
+    js_getval(Time_Check_Delay,           js, "Time_Check_Delay",           30000               );
+    js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
+    js_getval(REPORT_ID,                  js, "REPORT_ID",                  "0"s                );
+    js_getval(REPORT_GROUP,               js, "REPORT_GROUP",               "0"s                );
+    js_getval(SYMBOL_NAME,                js, "SYMBOL_NAME"                                     );
+    js_getval(ANS_FILENAME,               js, "ANS_FILENAME",               "Ans.json"s         );
+    js_getval(MAX_TEXT_LENGTH,            js, "MAX_TEXT_LENGTH",            1 << 10             );
+    js_getval(MAX_SINGLE_MESSAGE_LENGTH,  js, "MAX_SINGLE_MESSAGE_LENGTH",  1 << 11             );
+    js_getval(MAX_MESSAGE_LENGTH,         js, "MAX_MESSAGE_LENGTH",         1 << 14             );
+    js_getval(TITLE,                      js, "TITLE",                      "Jiemeng"s + Self_ID);
+    js_getval(pswd,                       js, "pswd",                       1234                );
   }
   catch (const std::exception &e)
   {
@@ -121,21 +122,21 @@ json All_Config::save()
 {
   json ajs;
   json &js = ajs["Config"];
-  js["INPORT"] = INPORT;
-  js["OUTPORT"] = OUTPORT;
-  js["sleep_time"] = sleep_time;
-  js["delay_time"] = delay_time;
-  js["Time_Check_Delay"] = Time_Check_Delay;
-  js["Self_ID"] = Self_ID;
-  js["REPORT_ID"] = REPORT_ID;
-  js["REPORT_GROUP"] = REPORT_GROUP;
-  js["SYMBOL_NAME"] = SYMBOL_NAME;
-  js["NOTE_FILENAME"] = NOTE_FILENAME;
-  js["NOTE_FILENAME"] = NOTE_FILENAME;
-  js["TITLE"] = TITLE;
+  js["INPORT"]            = INPORT;
+  js["OUTPORT"]           = OUTPORT;
+  js["sleep_time"]        = sleep_time;
+  js["delay_time"]        = delay_time;
+  js["Time_Check_Delay"]  = Time_Check_Delay;
+  js["Self_ID"]           = Self_ID;
+  js["REPORT_ID"]         = REPORT_ID;
+  js["REPORT_GROUP"]      = REPORT_GROUP;
+  js["SYMBOL_NAME"]       = SYMBOL_NAME;
+  js["NOTE_FILENAME"]     = NOTE_FILENAME;
+  js["NOTE_FILENAME"]     = NOTE_FILENAME;
+  js["TITLE"]             = TITLE;
 
-  ajs["Custom_Config"] = custom_config;
-  ajs["List_Config"] = list_config.save();
+  ajs["Custom_Config"]    = custom_config;
+  ajs["List_Config"]      = list_config.save();
   return ajs;
 }
 

@@ -19,9 +19,8 @@ using string = std::string;
 
 void Message_Type::init(const json &Event)
 {
-  // info_puts(msg.c_str());
-  // json Event = json::parse(msg);
-  // btype.ifgroup = Event.count("group_id");
+  // cout<<Event<<endl<<endl;
+
   const json &post_type = Event["post_type"];
   int &admin_level = btype.admin_level;
   if (post_type == "message" || post_type == "message_sent")
