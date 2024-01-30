@@ -1,5 +1,6 @@
 #ifndef JM_EXCEPTION
 #include <string>
+#include "Jiemeng_Basic.h"
 #define JM_EXCEPTION(LABLE) \
 std::string msg = "Exception caught: ";\
 msg += e.what();\

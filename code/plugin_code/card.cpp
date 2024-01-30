@@ -47,14 +47,20 @@ int Rands(int l, int r)
 struct Card
 {
   json js;
+  /// @brief 维护标记不得再次抽取
   map<string, map<int, bool>> mp;
 
+  /// @brief 随机含权数组
+  /// @param ss json 键值
+  /// @return 索引，返回随机结果对应的索引
   int r_js(const char *ss)
   {
     int n = js[ss].size();
+    if (n == 0)
+      throw invalid_argument(string(ss) + " not found.");
     string s;
     int n_lst[n + 1];
-    memset(n_lst,0,sizeof n_lst);
+    memset(n_lst, 0, sizeof n_lst);
     int t;
     for (int i = 0; i < n; i++)
     {
@@ -76,7 +82,12 @@ struct Card
   }
   string get_output(string str)
   {
-
+#ifdef DEBUG
+    cerr << endl
+         << "=>get_output():" << endl
+         << str << endl
+         << endl;
+#endif
     if (get_st(str.c_str(), "::") == 0)
     {
       int q = get_st(str.c_str() + 2, "::");
@@ -84,42 +95,50 @@ struct Card
     }
     string opt = "";
     int l, r;
+
+    /// 由 `%` 而需用来调节偏移
+    /// 同时用来控制是否重复抽取，含%表示可重复抽取，否则不重复抽取
     bool if_flg = 0;
+    /// 获取复制起点
     l = get_st(str.c_str(), "{");
-    if (str[l + 1] != '%')
-    {
-      if_flg = 1;
-    }
     char ss[1 << 12];
     while (l != -1)
     {
+      if_flg = (str[l + 1] != '%');
       get_copy(0, l, str.c_str(), ss);
       opt += ss;
       r = get_st(str.c_str() + l, "}") + l;
-      l += 2;
-      l -= if_flg;
+      l += 2 - if_flg;
       get_copy(l, r, str.c_str(), ss);
-
       int rjs;
       int clc = clock();
-      do
+      try
       {
-        rjs = r_js(ss);
-        if ((clock() - clc) * 1000.0 / CLOCKS_PER_SEC > 100)
-          return "TIME_OUT";
-      } while (mp[ss][rjs]);
-      mp[ss][rjs] = if_flg;
+        do
+        {
+          /// 抽取索引
+          rjs = r_js(ss);
+          if ((clock() - clc) * 1000.0 / CLOCKS_PER_SEC > 100)
+            return "TIME_OUT";
+        } while (!mp[ss][rjs]); // 检查是否允许抽取
+        /// 标记是否允许再次抽取
+        mp[ss][rjs] = if_flg;
+        /// 递归式获取结果
+        opt = opt + get_output(string(js[ss][rjs]));
+      }
+      catch (std::exception &e)
+      {
+        std::string msg = "Exception caught: ";
+        msg += e.what();
+        cerr << msg << endl;
+        opt = opt + "{" + ss + "}";
+      }
 
-      opt = opt + get_output(string(js[ss][rjs]));
+      /// 向后移位
       str = str.c_str() + r + 1;
       l = get_st(str.c_str(), "{");
-      if (str[l + 1] != '%')
-      {
-        if_flg = 1;
-      }
-      else
-        if_flg = 0;
     }
+    /// 合并余下部分
     return opt + str;
   }
 };

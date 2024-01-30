@@ -111,6 +111,17 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       order == "type_reRecv" ? type_reRecv(btype, paras[2]) : type_rePost(btype, paras[2]);
       return "";
     }
+#ifdef JIEMENG_DECK
+    else if (order =="draw_deck")
+    {
+      return decks.draw(para_list);
+    }
+    else if (order =="deck_reload")
+    {
+      decks.init();
+      return "";
+    }
+#endif
     else if (order == "del_msg")
     {
       Message_Delete_Order(type.btype.message);
@@ -130,6 +141,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
 
       return "";
     }
+
     else if (order == "cpp_run")
     {
       return cpp_runner(para_list);

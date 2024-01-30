@@ -56,7 +56,11 @@ inline bool pfct(const char *a, const char *b)
 {
   return get_st(a, b) == 0;
 }
-/**********区间字符串复制**********/
+/// @brief 区间字符串复制 [l,r)
+/// @param l 左索引
+/// @param r 右索引
+/// @param txt 原字符串
+/// @param copy 复制至这里
 inline void get_copy(int l, int r, const char *txt, char *copy)
 {
   memset(copy, 0, sizeof copy);
