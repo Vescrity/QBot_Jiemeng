@@ -39,6 +39,9 @@ int main()
   Main_thread_list[thrnum].detach();
   thrnum = Main_thr_num.get_new_num();
 #endif
+#ifdef JIEMENG_DECK
+  decks.init();
+#endif
   Main_thread_list[thrnum] = thread(Time_Main);
   Main_thread_list[thrnum].detach();
   info_lable("[Start]");

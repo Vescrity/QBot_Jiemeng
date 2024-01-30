@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <thread>
 
+#include "Jiemeng_Deck.h"
 #include "Jiemeng_Basic.h"
 #include "urls.h"
 #include "Jiemeng_Config.h"
