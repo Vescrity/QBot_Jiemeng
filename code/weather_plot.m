@@ -50,8 +50,8 @@ function [] = weather_plot(tmp)
 
     %saveas(gcf, 'qwq.jpg');
 
-    print('qwq.png','-dpng');
+    print('../tmp/qwq.png','-dpng');
     close all;
-    A = imread('qwq.png');
-    imwrite(white_to_ground(A, get_pic()), 'qwq.png');
+    A = imread('../tmp/qwq.png');
+    imwrite(white_to_ground(A, get_pic()), '../tmp/qwq.png');
 end
