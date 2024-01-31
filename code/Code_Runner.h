@@ -84,7 +84,7 @@ string Matlab_runner(const string &code)
   fclose(fp);
   return strText;
 #else
-  string comm = "python octave_launch.py";
+  string comm = "./octave_launch";
   return String_Cmd_Run(comm.c_str());
 #endif
 }
