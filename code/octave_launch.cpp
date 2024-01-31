@@ -3,7 +3,7 @@
 #include <iostream>
 void funcs()
 {
-  cout << execmd("octave-cli mat_code.m");
+  cout << execmd("octave-cli tmp/mat_code.m");
   exit(0);
 }
 void timer()

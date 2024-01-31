@@ -2,6 +2,8 @@
 #define WEATHER_REPORT
 #include <string>
 #include "Jiemeng_Basic.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 using namespace std;
 struct _1day_report
 {
@@ -80,7 +82,7 @@ struct City
 #ifdef MATLABEXE
     sprintf(para, "plot.exe ");
 #else
-    sprintf(para, R"(octave --no-gui --eval 'pkg load image; weather_plot(")");
+    sprintf(para, R"(cd jm_script; octave --no-gui --eval 'pkg load image; weather_plot(")");
 #endif
 
     sprintf(para + strlen(para), "%d,7,", day_cnt);
@@ -99,7 +101,7 @@ struct City
 #ifndef MATLABEXE
     sprintf(para + strlen(para), R"(")')");
 #endif
-    cerr << para << endl;
+
     system(para);
   }
   void get_24hplot()
@@ -108,7 +110,7 @@ struct City
 #ifdef MATLABEXE
     sprintf(para, "plot.exe ");
 #else
-    sprintf(para, R"(octave --no-gui --eval 'pkg load image; weather_plot(")");
+    sprintf(para, R"(cd jm_script; octave --no-gui --eval 'pkg load image; weather_plot(")");
 #endif
     sprintf(para + strlen(para), "%d,24,", day_cnt);
     for (int i = 0; i < day_cnt; i++)
@@ -132,7 +134,7 @@ struct City
 #ifdef _WIN32
     strchg("\\", "/", file_path);
 #endif
-    string rt = rt + "[CQ:image,file=file:///" + file_path + "/qwq.png]";
+    string rt = rt + "[CQ:image,file=file:///" + file_path + "/tmp/qwq.png]";
     return rt;
   }
   string _24hprint()

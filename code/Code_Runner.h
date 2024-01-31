@@ -61,15 +61,16 @@ string fortran_runner(const string &code)
 string Matlab_runner(const string &code)
 {
   FILE *fi, *fp;
+  /*
   fp = fopen("outtmp.txt", "w");
   fprintf(fp, "");
-  fclose(fp);
-  fi = fopen("mat_code.m", "w");
+  fclose(fp);*/
+  fi = fopen("tmp/mat_code.m", "w");
   fprintf(fi, "%s", code.c_str());
   fclose(fi);
   char strText[1 << 16] = {0};
 #ifdef _WIN32
-  string comm = "mat_run.exe";
+  /*string comm = "mat_run.exe";
 
   system(comm.c_str());
   fp = fopen("outtmp.txt", "r");
@@ -82,9 +83,9 @@ string Matlab_runner(const string &code)
   fp = fopen("outtmp.txt", "w");
   fprintf(fp, "");
   fclose(fp);
-  return strText;
+  return strText;*/
 #else
-  string comm = "./octave_launch";
+  string comm = "./jm_script/octave_launch";
   return String_Cmd_Run(comm.c_str());
 #endif
 }
@@ -111,8 +112,8 @@ string cpp_runner(const string &code)
 #ifdef _WIN32
   return execmd("g++ 2>&1 test.cpp -o test.exe") + execmd("test.exe");
 #else
-  string aa = execmd("g++ 2>&1 test.cpp -o test");
-  aa = aa + execmd("./test");
+  string aa = execmd("g++ 2>&1 test.cpp -o tmp/test");
+  aa = aa + execmd("tmp/test");
   return aa;
 #endif
 }
@@ -123,7 +124,7 @@ string py_runner(const string &code)
 {
   FILE *fi;
   string scode = str_strchg("\n", "\n  ", code.c_str());
-  fi = fopen("test.py", "w");
+  fi = fopen("tmp/test.py", "w");
   fprintf(fi, "import time\nfrom func_timeout import func_set_timeout\n\n");
   fprintf(fi, "import sys, io\nsys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')\n");
   fprintf(fi, "@func_set_timeout(3)\ndef task():\n");
@@ -131,7 +132,7 @@ string py_runner(const string &code)
   fprintf(fi, "if __name__ == '__main__':\n  task()");
   fclose(fi);
   string buf;
-  buf = execmd("python 2>&1 test.py");
+  buf = execmd("python 2>&1 tmp/test.py");
   if ((buf.length()) == 0)
     return "OK!";
   return buf;
@@ -143,14 +144,14 @@ string R_runner(const string &code)
 {
   FILE *fi;
   string scode = str_strchg("\r", "", code.c_str());
-  fi = fopen("test.r", "w");
+  fi = fopen("tmp/test.r", "w");
   fprintf(fi, "require('R.oo',quietly=TRUE,warn.conflicts=FALSE)\nrequire('R.utils',quietly=TRUE,warn.conflicts=FALSE)\n");
   fprintf(fi, "fexe <- function() {");
   fprintf(fi, "%s\n", scode.c_str());
   fprintf(fi, "}\nres <- withTimeout({\n  fexe()\n}, timeout = 3, onTimeout = \"silent\")");
   fclose(fi);
   string buf;
-  buf = execmd("Rscript 2>&1 test.r");
+  buf = execmd("Rscript 2>&1 tmp/test.r");
   if ((buf.length()) == 0)
     return "OK!";
   return buf;
