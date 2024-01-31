@@ -8,17 +8,23 @@
  *  \___/|_|\___|_| |_| |_|\___|_| |_|\__, |
  *                                    |___/
  */
-#include "urls.h"
+#include "Jiemeng_Exception.h"
 #include "Jiemeng_Config_Class.h"
 void Message_Delete(const string &msid)
 {
-  json js;
-  js["message_id"] = msid;
-  Request *rq = new Request;
-  rq->set_url(string(GOCQ_URL) + num2str(configs.OUTPORT));
-  rq->set_api("/delete_msg");
-  rq->set_data(js);
-  rq->Get();
+  try
+  {
+    json js;
+    js["params"]["message_id"] = msid;
+    js["action"] = "delete_msg";
+    ws_json_send(js);
+    return;
+  }
+  catch (std::exception &e)
+  {
+    JM_EXCEPTION("[Delete]")
+    return;
+  }
 }
 void Message_Delete_Order(const string &order)
 {

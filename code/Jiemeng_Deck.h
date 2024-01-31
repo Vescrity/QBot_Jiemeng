@@ -130,10 +130,23 @@ public:
   }
   /// @brief 以默认路径(./deck)初始化牌堆json
   void init() { init("./deck"); }
-  string draw(const string &str)
+  string draw(const string &str, int times = 1)
   {
-    return get_output(string("{%") + str + "}");
+    string rt;
+    for (int i = times; i > 0; i--)
+      rt += get_output(string("{%") + str + "}")+(i>0?"\n":"");
     mp.clear();
+    return rt;
+  }
+  string list()
+  {
+    string rt;
+    for (auto it = js.begin(); it != js.end(); ++it)
+    {
+      if (it.key()[0] != '_')
+        rt += it.key() + "\n";
+    }
+    return rt;
   }
 } decks;
 

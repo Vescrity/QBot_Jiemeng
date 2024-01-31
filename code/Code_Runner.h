@@ -5,29 +5,9 @@
 #include "Func_Timeout.h"
 using namespace std;
 
-/*string String_Cmd_Run(const char *msg)
-{
-  char buf[1 << 15] = {0};
-  execmd(msg, buf + strlen(buf));
-  return buf;
-}
-string Time_Limited_Run(const char *msg)
-{
-  try
-  {
-    auto rs = call_with_timeout(std::function<string(const char *)>(String_Cmd_Run), 500, msg);
-    return rs.get();
-  }
-  catch (const std::exception &e)
-  {
-#ifdef _WIN32
-    system(("taskkill /im "s + msg + " /f").c_str());
-#else
-    system(("killall -9 "s + msg).c_str());
-#endif
-    return "TLE";
-  }
-}*/
+/// @brief Run command
+/// @param msg
+/// @return
 string String_Cmd_Run(const char *msg)
 {
   return execmd(msg);
@@ -75,7 +55,7 @@ string fortran_runner(const string &code)
   return rt;
 }
 
-/// @brief Try to run the given Matlab code with a 200ms time limit
+/// @brief Try to run the given Matlab code with a 5s time limit
 /// @param code the Matlab code
 /// @return the result
 string Matlab_runner(const string &code)
@@ -87,11 +67,12 @@ string Matlab_runner(const string &code)
   fi = fopen("mat_code.m", "w");
   fprintf(fi, "%s", code.c_str());
   fclose(fi);
+  char strText[1 << 16] = {0};
+#ifdef _WIN32
   string comm = "mat_run.exe";
-  // comm=comm+sstr+"\"";
+
   system(comm.c_str());
   fp = fopen("outtmp.txt", "r");
-  char strText[1 << 16] = {0};
   char sstrt[1 << 8];
   while (fgets(sstrt, 1 << 8, fp) != NULL)
     sprintf(strText + strlen(strText), "%s", sstrt);
@@ -102,6 +83,10 @@ string Matlab_runner(const string &code)
   fprintf(fp, "");
   fclose(fp);
   return strText;
+#else
+  string comm = "python octave_launch.py";
+  return String_Cmd_Run(comm.c_str());
+#endif
 }
 
 /// @brief Try to run the given c++ code with a 200ms time limit

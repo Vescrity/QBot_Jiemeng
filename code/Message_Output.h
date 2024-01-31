@@ -179,7 +179,7 @@ bool Standard_Message_Output(const Message_Type &type, const string &msg)
   }
   catch (std::exception &e)
   {
-    exception_show("[Output]", e.what());
+    JM_EXCEPTION("[Output]")
     return 0;
   }
   return 1;

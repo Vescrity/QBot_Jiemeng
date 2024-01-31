@@ -6,6 +6,7 @@
 #include "opstring.h"
 #include "r_adb.h"
 #include "Jiemeng_Basic.h"
+#include "Jiemeng_Exception.h"
 #include <sstream>
 using string = std::string;
 
@@ -126,10 +127,7 @@ std::string string_format_with_json(const string &begin, const string &end, cons
         }
         catch (std::exception &e)
         {
-          std::string msg = "Exception caught: ";
-          msg += e.what();
-          error_lable("[Format]");
-          error_puts(msg.c_str());
+          JM_EXCEPTION("[Format]")
           str = "[invalid]";
           return str;
         }
