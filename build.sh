@@ -7,4 +7,6 @@ mkdir build/background
 mkdir build/plugin
 mkdir build/tmp
 mkdir build/txt2img
+mkdir build/deck
 cp code/txt2img.py build/txt2img
+

@@ -231,13 +231,15 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     {
       Request *rq = new Request;
       rq->set_url("https://v2.alapi.cn/api");
-      rq->set_api("/weather/forecast");
+      rq->set_api("/tianqi/seven");
       rq->add_Headers("Content-Type: application/json");
-      rq->set_msgs(R"({"location":")"s + para_list + R"(","token":")" + string(configs.custom_config["AL_TOKEN"]) + "\"}");
-      string rt = rq->Post();
+      rq->set_msgs(R"({"city":")"s + para_list + R"(","token":")" + string(configs.custom_config["AL_TOKEN"]) + "\"}");
+      //string rt = rq->Post();
+      json jrt=rq->js_post();
+      string rt;
+
       City city;
-      city.city_7d_init(rt.c_str());
-      rt.clear();
+      city.city_7d_init(jrt);
       rt = city._7dprint();
       delete rq;
       if (configs.custom_config.count("IF_HAVE_MATLAB"))
@@ -253,9 +255,9 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     {
       Request *rq = new Request;
       rq->set_url("https://v2.alapi.cn/api");
-      rq->set_api("/weather/hourly");
+      rq->set_api("/tianqi");
       rq->add_Headers("Content-Type: application/json");
-      rq->set_msgs(R"({"location":")"s + para_list + R"(","token":")" + string(configs.custom_config["AL_TOKEN"]) + "\"}");
+      rq->set_msgs(R"({"city":")"s + para_list + R"(","token":")" + string(configs.custom_config["AL_TOKEN"]) + "\"}");
       string rt = rq->Post();
       City city;
       city.city_24h_init(rt.c_str());

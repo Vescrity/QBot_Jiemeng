@@ -1,6 +1,4 @@
 function [] = weather_plot(tmp)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
     tm=sscanf(tmp,"%d,");
     day_cnt=tm(1);
     stat=tm(2);
@@ -18,36 +16,42 @@ function [] = weather_plot(tmp)
     l=r+1;
     r=l+day_cnt-1;
     pop=tm(l:r);
-    
+
     figure('Visible','off');
-    %set(gcf,'Color',[0,0,0]);
-    hold on;
-    yyaxis left;
-    plot((1:day_cnt),max_tmp,'Color',[255 100 100]/255,'LineStyle','-');
-    for(i=1:day_cnt)
-        text(i,max_tmp(i),[num2str(max_tmp(i)),'℃'],'Color',[255 100 100]/255);
-    end
+    axes1 = axes('Parent',gcf);
+    hold(axes1,'on');
+
+    % 绘制气温数据
+    [ax, h1, h2] = plotyy(1:day_cnt, max_tmp, 1:day_cnt, pop);
     if(stat==7)
-        plot((1:day_cnt),min_tmp,'Color',[100 100 255]/255,'LineStyle','-');
+        plot(ax(1),(1:day_cnt),min_tmp,'Color',[100 100 255]/255,'LineStyle','-');
         for(i=1:day_cnt)
-            text(i,min_tmp(i),[num2str(min_tmp(i)),'℃'],'Color',[100 100 255]/255);
+            text(ax(1),i,min_tmp(i),[num2str(min_tmp(i)),'℃'],'Color',[100 100 255]/255);
         end
     end
-    title('气温-降水概率趋势图','Color',[160,160,160]/255,'FontWeight','bold');
-    xlabel('时间','Color',[160,160,160]/255,'FontWeight','bold');
-    ylabel('气温','Color',[160,160,160]/255,'FontWeight','bold');
-    ylim([min_min-2,max_max+2]);
-    yyaxis right;
-    plot(1:day_cnt,pop,'Color','#EE82EE','LineStyle','--');
+    set(h1, 'Color', [255 100 100]/255, 'LineStyle', '-');
+    set(h2, 'Color', '#EE82EE', 'LineStyle', '--');
+
+    % 设置坐标轴标签和标题
+    xlabel('时间', 'Color', [160,160,160]/255, 'FontWeight', 'bold');
+    ylabel(ax(1), '气温', 'Color', [160,160,160]/255, 'FontWeight', 'bold');
+    ylabel(ax(2), '本来是降水概率', 'Color', [200,200,200]/255, 'FontWeight', 'bold');
+    title('气温趋势图', 'Color', [160,160,160]/255, 'FontWeight', 'bold');
+
+    % 设置y轴范围
+    ylim(ax(1), [min_min-2, max_max+2]);
+    ylim(ax(2), [0, 100]);
     xlim([0,day_cnt+1]);
-    ylim([0,100]);
-    for(i=1:day_cnt)
-            text(i,pop(i),[num2str(pop(i)),'%'],'Color',[100 255 100]/255);
-        end
-    ylabel('降水概率','Color',[200,200,200]/255,'FontWeight','bold');
-    %fname='C:\Users\Vescr\Desktop\pics';
-    saveas(gcf,'qwq.jpg');
+    % 添加文本标签
+    for i = 1:day_cnt
+        text(ax(1),i, max_tmp(i), [num2str(max_tmp(i)),'℃'], 'Color', [255 100 100]/255);
+        text(ax(2),i, pop(i), [num2str(pop(i)),'%'], 'Color', [100 255 100]/255);
+    end
+
+    %saveas(gcf, 'qwq.jpg');
+
+    print('qwq.png','-dpng');
     close all;
-    A=imread('qwq.jpg');
-    imwrite(white_to_ground(A,get_pic()),'qwq.jpg')
+    A = imread('qwq.png');
+    imwrite(white_to_ground(A, get_pic()), 'qwq.png');
 end
