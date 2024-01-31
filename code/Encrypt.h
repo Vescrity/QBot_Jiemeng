@@ -79,7 +79,7 @@ struct Encrypt
       tx_n[i] += tm[it_s++];
       it_t %= 4;
       it_s %= n_id;
-    } // printf("\n");
+    }
     string rt = "";
     for (int i = 0; i < txxt.length(); i++)
     {

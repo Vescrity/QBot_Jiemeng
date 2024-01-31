@@ -19,8 +19,6 @@ using string = std::string;
 
 void Message_Type::init(const json &Event)
 {
-  // cout<<Event<<endl<<endl;
-
   const json &post_type = Event["post_type"];
   int &admin_level = btype.admin_level;
   if (post_type == "message" || post_type == "message_sent")
@@ -89,7 +87,6 @@ void Message_Type::init(const json &Event)
       }
       if (Event.count("user_id"))
         btype.user_id = to_string(Event["user_id"]);
-      // btype.message = ntype;
       if (ntype == "notify")
       {
         if (Event["sub_type"] == "poke")

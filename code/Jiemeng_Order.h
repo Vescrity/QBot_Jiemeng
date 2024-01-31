@@ -112,14 +112,28 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       return "";
     }
 #ifdef JIEMENG_DECK
-    else if (order =="draw_deck")
+    else if (order == "draw_deck")
     {
-      return decks.draw(para_list);
+      vector<string> paras;
+      try
+      {
+        Get_Para(para_list, 2, &paras, " ");
+      }
+      catch (std::runtime_error &e)
+      {
+        return decks.draw(para_list);
+      }
+      int n = stoi(paras[1]);
+      return decks.draw(paras[0], n);
     }
-    else if (order =="deck_reload")
+    else if (order == "deck_reload")
     {
       decks.init();
-      return "";
+      return "Deck 模块重裁完成！";
+    }
+    else if (order == "ls_deck")
+    {
+      return decks.list();
     }
 #endif
     else if (order == "del_msg")
@@ -135,7 +149,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       }
       catch (std::exception &e)
       {
-        exception_show("[AI_Draw]", e.what());
+        JM_EXCEPTION("[AI_Draw]")
         return e.what();
       }
 
@@ -260,14 +274,11 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     else if (order == "Restart")
       exit(1);
 
-    throw invalid_argument("Undefined Order "s + order);
+    throw invalid_argument("Undefined Order: "s + order);
   }
   catch (std::exception &e)
   {
-    std::string msg = "Exception caught: ";
-    msg += e.what();
-    error_lable("[Order]");
-    error_puts(msg.c_str());
+    JM_EXCEPTION("[Order]")
     return "";
   }
 

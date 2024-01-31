@@ -1,6 +1,9 @@
 #ifndef JM_EXCEPTION
 #include <string>
 #include "Jiemeng_Basic.h"
+
+/// @brief 通用异常打印宏
+/// @param LABLE 标签/类别
 #define JM_EXCEPTION(LABLE) \
 std::string msg = "Exception caught: ";\
 msg += e.what();\
