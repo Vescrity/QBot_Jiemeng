@@ -7,15 +7,22 @@
 #include <stdlib.h>
 #include <thread>
 
-#include "Jiemeng_Deck.h"
+
 #include "Jiemeng_Basic.h"
 #include "urls.h"
 #include "Jiemeng_Config.h"
+
+#include "Jiemeng_Deck.h"
+#include "Jiemeng_Status.h"
+
+#include "Jiemeng_Order.h"
+
 #include "File_Read.h"
 #include "Sockets_IO.h"
-#include "Message_Type.h"
 #include "Message_Input.h"
 #include "Message_Operate.h"
 #include "Time_Check.h"
 #include "Pre_Catch.h"
+
+
 #endif

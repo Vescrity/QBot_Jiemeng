@@ -105,6 +105,7 @@ class Deck
   }
 
 public:
+  int size() { return js.size(); }
   /// @brief 初始化牌堆json
   /// @param folderPath 牌堆路径
   void init(const string &folderPath)
@@ -134,7 +135,7 @@ public:
   {
     string rt;
     for (int i = times; i > 0; i--)
-      rt += get_output(string("{%") + str + "}")+(i>0?"\n":"");
+      rt += get_output(string("{%") + str + "}") + (i > 0 ? "\n" : "");
     mp.clear();
     return rt;
   }

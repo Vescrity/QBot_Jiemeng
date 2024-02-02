@@ -11,14 +11,13 @@ struct _1day_report
       sun_rise, moon_rise, sun_set, precipitation,
       max_tmp, min_tmp, cloud, air, air_level,
       wind_sc, wind_day, wind_day_levle, wind_night, wind_night_level;
-  string _7dprint()
+  string _dprint()
   {
     string rt;
-    rt = rt + date + "\n" + "日间：" + cond_day + " " + max_tmp + "℃ " + wind_day + wind_day_levle + "\n";
-    rt = rt + "夜间：" + cond_night + " " + min_tmp + "℃" + wind_night + wind_night_level + "\n";
-    rt = rt + "空气: " + air + air_level + "\n";
-    rt = rt + "降水量：" + precipitation + "\n";
-    rt = rt + "日出：" + sun_rise + " 日落：" + sun_set + "\n";
+    rt = rt + date + "\n" + "日间：" + cond_day + " " + max_tmp + "℃ " + wind_day + wind_day_levle + " 日出：" + sun_rise + "\n";
+    rt = rt + "夜间：" + cond_night + " " + min_tmp + "℃ " + wind_night + wind_night_level + " 日落：" + sun_set + "\n";
+    rt = rt + "空气: " + air + " " + air_level + " 降水量：" + precipitation + "\n";
+    rt = rt + "\n\n";
     return rt;
   }
   string _24hprint()
@@ -27,7 +26,7 @@ struct _1day_report
     rt = rt + date + "\n" + cond_day + " " + max_tmp + "℃" + "  ";
     return rt;
   }
-  void _7dinit(const json &js)
+  void _dinit(const json &js)
   {
     cond_day = js["wea_day"];
     cond_night = js["wea_night"];
@@ -51,7 +50,7 @@ struct _1day_report
 struct City
 {
   string locat, parent, admin_area, lat, lon;
-  _1day_report report[20];
+  _1day_report report[50];
   int day_cnt;
   bool ok;
   string basic_print()
@@ -62,7 +61,7 @@ struct City
     rt = rt + " " + admin_area + " " + parent + " " + locat + "\n";
     return rt;
   }
-  string _7dprint()
+  string _dprint()
   {
     if (!ok)
       return "ERROR";
@@ -70,13 +69,13 @@ struct City
     rt = basic_print();
     for (int i = 0; i < day_cnt; i++)
     {
-      rt = rt + report[i]._7dprint() + "\n";
+      rt = rt + report[i]._dprint() + "\n";
     }
 
     return rt;
   }
 
-  void get_7dplot()
+  void get_dplot()
   {
     char para[1 << 10] = {0};
 #ifdef MATLABEXE
@@ -161,7 +160,7 @@ struct City
     // lon = json_read(ss, "lon");
   }
 
-  void city_7d_init(const json &js)
+  void city_d_init(const json &js, int day = 7)
   {
     string msgg;
 
@@ -175,11 +174,11 @@ struct City
     int l, r;
     city_basic_init(js["data"][0]);
     char ss[1 << 15] = {0};
-    day_cnt = 7;
+    day_cnt = day;
 
     for (int i = 0; i < day_cnt; i++)
     {
-      report[i]._7dinit(js["data"][i]);
+      report[i]._dinit(js["data"][i]);
     }
   }
   void city_24h_init(const json &js)
@@ -205,4 +204,23 @@ struct City
   }
 };
 
+#define WEATHER_ORDER(API, DAYS)                                                                                    \
+  Request *rq = new Request;                                                                                        \
+  rq->set_url("https://v2.alapi.cn/api");                                                                           \
+  rq->set_api((API));                                                                                               \
+  rq->add_Headers("Content-Type: application/json");                                                                \
+  rq->set_msgs(R"({"city":")"s + para_list + R"(","token":")" + string(configs.custom_config["AL_TOKEN"]) + "\"}"); \
+  json jrt = rq->js_post();                                                                                         \
+  string rt;                                                                                                        \
+  City city;                                                                                                        \
+  city.city_d_init(jrt, (DAYS));                                                                                    \
+  rt = city._dprint();                                                                                              \
+  delete rq;                                                                                                        \
+  if (configs.custom_config.count("IF_HAVE_MATLAB"))                                                                \
+    if (configs.custom_config["IF_HAVE_MATLAB"])                                                                    \
+    {                                                                                                               \
+      city.get_dplot();                                                                                             \
+      return rt + "[-cut-]" + city.outplot();                                                                       \
+    }                                                                                                               \
+  return rt;
 #endif
