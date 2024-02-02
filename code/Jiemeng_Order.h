@@ -202,6 +202,13 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       Ans_Read();
       return "";
     }
+#ifdef JIEMENG_STATUS
+    else if (order == "status")
+    {
+      return jm_status();
+    }
+#endif
+
     else if (order.find("Add_") == 0 || order.find("Del_") == 0)
     {
       if (order == "Add_Grouplist")
@@ -229,27 +236,11 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     }
     else if (order == "7d_Weather")
     {
-      Request *rq = new Request;
-      rq->set_url("https://v2.alapi.cn/api");
-      rq->set_api("/tianqi/seven");
-      rq->add_Headers("Content-Type: application/json");
-      rq->set_msgs(R"({"city":")"s + para_list + R"(","token":")" + string(configs.custom_config["AL_TOKEN"]) + "\"}");
-      //string rt = rq->Post();
-      json jrt=rq->js_post();
-      string rt;
-
-      City city;
-      city.city_7d_init(jrt);
-      rt = city._7dprint();
-      delete rq;
-      if (configs.custom_config.count("IF_HAVE_MATLAB"))
-        if (configs.custom_config["IF_HAVE_MATLAB"])
-        {
-          city.get_7dplot();
-          return rt + "[-cut-]" + city.outplot();
-        }
-
-      return rt;
+      WEATHER_ORDER("/tianqi/seven", 7)
+    }
+    else if (order == "40d_Weather")
+    {
+      WEATHER_ORDER("/tianqi/forty", 40)
     }
     else if (order == "24h_Weather")
     {

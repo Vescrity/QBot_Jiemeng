@@ -6,6 +6,29 @@
 #include "Jiemeng_Algorithm.h"
 using namespace std;
 
+void replaceStringValue(json &data, const json &para, int para_num)
+{
+  for (json::iterator it = data.begin(); it != data.end(); ++it)
+  {
+    if (it.value().type_name() == "string")
+    {
+      string str = it.value();
+      if (str.find("##") == 0)
+      {
+        int n;
+        sscanf(str.c_str(), "##%d", &n);
+        if (n > para_num || n < 1)
+          throw std::out_of_range("an invalid n is given at run_api order");
+        it.value() = para[n - 1];
+      }
+    }
+    else if (it.value().is_object() || it.value().is_array())
+    {
+      replaceStringValue(it.value(), para, para_num); // 递归调用以处理嵌套的JSON对象
+    }
+  }
+}
+
 std::string url_ans_format(const json &js, const std::string &format);
 std::string url_order(const string &msg, const string &order, const json &js)
 {
@@ -24,21 +47,7 @@ std::string url_order(const string &msg, const string &order, const json &js)
     else
       throw std::invalid_argument("the input string does not contain expected character '#'");
   }
-  for (json::iterator it = data.begin(); it != data.end(); ++it)
-  {
-    if (it.value().type_name() == "string")
-    {
-      string str = it.value();
-      if (str.find("##") == 0)
-      {
-        int n;
-        sscanf(str.c_str(), "##%d", &n);
-        if (n > para_num || n < 1)
-          throw std::out_of_range("an invalid n is given at run_api order");
-        it.value() = para[n - 1];
-      }
-    }
-  }
+  replaceStringValue(data,para,para_num);
   rq->set_data(data);
   if (js.count("Get"))
     data = rq->js_get();
@@ -52,6 +61,6 @@ std::string url_order(const string &msg, const string &order, const json &js)
 }
 std::string url_ans_format(const json &js, const std::string &format)
 {
-  return string_format_with_json("{$","}",js,format);
+  return string_format_with_json("{$", "}", js, format);
 }
 #endif
