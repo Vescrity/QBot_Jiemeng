@@ -11,6 +11,7 @@ mkdir tmp
 mkdir txt2img
 mkdir deck
 mkdir jm_script
+mkdir Answer
 
 g++ ../code/octave_launch.cpp -o ./jm_script/octave_launch
 
