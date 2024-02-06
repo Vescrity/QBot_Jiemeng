@@ -134,8 +134,11 @@ public:
   string draw(const string &str, int times = 1)
   {
     string rt;
+    if (times > 20 || times <= 0)
+      return "Invalid Times";
+
     for (int i = times; i > 0; i--)
-      rt += get_output(string("{%") + str + "}") + (i > 0 ? "\n" : "");
+      rt += get_output(string("{%") + str + "}") + (i > 1 ? "\n" : "");
     mp.clear();
     return rt;
   }
