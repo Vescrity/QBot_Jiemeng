@@ -1,0 +1,62 @@
+{
+  "Answers": [
+    {
+      "anss": [
+        "嗯……那就用这个开头罢！\n[1d7][1d7][1d7]"
+      ],
+      "pri": 95,
+      "regex": ["^随机三音$","来点灵感"]
+    },
+    {
+      "anss": [
+        {
+          "order":"run_api",
+          "weight":15,
+          "data":{
+            "url":"https://v2.alapi.cn/api",
+            "api":"/hitokoto",
+            "data":{
+              "token":"{~/AL_TOKEN}"
+            },
+            "form":"{$/data/hitokoto}\n    ——{$/data/from}"
+          }
+        },
+        "歇歇罢，没有一言了。\n    ——桔梦",
+        {
+          "anss":[{"order":"reRecv#.draw#ask"},"\n   ——桔梦"],
+          "weight":5
+        }
+        
+      ],
+      "pri": 105,
+      "regex": "^一言$"
+    },
+    
+    {
+      "regex":"^7d#",
+      "anss":[{"order":"7d_Weather","msgread":true}],
+      "pri": 105
+    },
+    {
+      "regex":"^24h#",
+      "anss":[{"order":"24h_Weather","msgread":true}],
+      "pri": 105
+    },
+    
+    {
+      "regex": "^\\.draw#",
+      "anss":[
+        {"order": "draw_deck", "msgread": true}
+      ],
+      "pri": 105
+    },
+    {
+      "anss": [
+        {"order":"txt2img","msgread":true}
+      ],
+      "pri": 100,
+      "regex": "^\\.txt2img#"
+    }
+    
+  ]
+}

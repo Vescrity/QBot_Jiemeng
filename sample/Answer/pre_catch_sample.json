@@ -1,0 +1,27 @@
+{
+  "Answers": [
+    {
+      "说明": [
+        "收到 你拍一 后，输出 我拍一 ，并执行 pre_catch 指令",
+        "该指令用于创建一个新的 pre_catch，具体的内容在 data 字段中定义",
+        "只有 regex 和 anss 字段为必填，其余字段均有默认值",
+        "其中：level=0 suvive=false type='same'",
+        "其中 same 的要求是同一用户在同一聊天中才能触发这个 pre_catch"
+      ],
+      "anss":[
+        [
+          "我拍一",
+          {
+            "order":"pre_catch",
+            "data":{
+              "regex":"^你拍二$",
+              "anss":["我拍二"]
+            }
+          }
+        ]
+      ],
+      "pri":100,
+      "regex":["^你拍一$"]
+    }
+  ]
+}

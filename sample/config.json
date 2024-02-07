@@ -1,0 +1,27 @@
+{
+  "Config": {
+    "INPORT": 5705,
+    "OUTPORT": 1111,
+    "sleep_time": 50,
+    "Self_ID": "12345678",
+    "MAX_TEXT_LENGTH": 800,
+    "MAX_MESSAGE_LENGTH": 20000
+  },
+  "List_Config": {
+    "private_ifblack": true,
+    "private_list": [
+    ],
+    "admin_list": {
+      "81281997": 100
+    },
+    "black_list": [
+      "87654321",
+      "987654321"
+    ],
+    "group_list": [
+    ]
+  },
+  "Custom_Config": {
+    "Test_Flag": "123456789"
+  }
+}

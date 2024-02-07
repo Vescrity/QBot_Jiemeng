@@ -95,15 +95,15 @@ void All_Config::config_init(const json &js)
   {
 ////js_getval(VAR,                        js, CONFIG_VAR,                   <DEFAULT_VALUE>     );
     js_getval(INPORT,                     js, "INPORT"                                          );
-    js_getval(OUTPORT,                    js, "OUTPORT"                                         );
+  //js_getval(OUTPORT,                    js, "OUTPORT"                                         );
     js_getval(sleep_time,                 js, "sleep_time",                 50                  );
     js_getval(delay_time,                 js, "delay_time",                 2000                );
     js_getval(Time_Check_Delay,           js, "Time_Check_Delay",           30000               );
     js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
     js_getval(REPORT_ID,                  js, "REPORT_ID",                  "0"s                );
     js_getval(REPORT_GROUP,               js, "REPORT_GROUP",               "0"s                );
-    js_getval(SYMBOL_NAME,                js, "SYMBOL_NAME"                                     );
-    js_getval(ANS_FILENAME,               js, "ANS_FILENAME",               "Ans.json"s         );
+  //js_getval(SYMBOL_NAME,                js, "SYMBOL_NAME"                                     );
+  //js_getval(ANS_FILENAME,               js, "ANS_FILENAME",               "Ans.json"s         );
     js_getval(MAX_TEXT_LENGTH,            js, "MAX_TEXT_LENGTH",            1 << 10             );
     js_getval(MAX_SINGLE_MESSAGE_LENGTH,  js, "MAX_SINGLE_MESSAGE_LENGTH",  1 << 11             );
     js_getval(MAX_MESSAGE_LENGTH,         js, "MAX_MESSAGE_LENGTH",         1 << 14             );
