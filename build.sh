@@ -18,4 +18,7 @@ g++ ../code/octave_launch.cpp -o ./jm_script/octave_launch
 cp ../code/*.m jm_script
 cp ../code/msyh.ttc txt2img
 cp ../code/txt2img.py txt2img
+cp ../README.md .
+cp ../进阶说明.md .
+cp ../LICENSE .
 

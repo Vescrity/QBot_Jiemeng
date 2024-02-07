@@ -39,7 +39,7 @@ private:
   void config_init(const json &js);
 
 public:
-  int INPORT, OUTPORT, sleep_time, delay_time, Time_Check_Delay, MAX_TEXT_LENGTH, MAX_SINGLE_MESSAGE_LENGTH, MAX_MESSAGE_LENGTH, pswd;
+  int PORT, OUTPORT, sleep_time, delay_time, Time_Check_Delay, MAX_TEXT_LENGTH, MAX_SINGLE_MESSAGE_LENGTH, MAX_MESSAGE_LENGTH, pswd;
   string Self_ID, SYMBOL_NAME, ANS_FILENAME, NOTE_FILENAME, TITLE, REPORT_ID, REPORT_GROUP;
   json custom_config;
   List_Config list_config;

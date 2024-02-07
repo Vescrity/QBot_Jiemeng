@@ -2,7 +2,7 @@
 #include "Jiemeng.hpp"
 void Heart_Beat()
 {
-  for (;;)
+  /*for (;;)
   {
     int tn = Main_thr_num.get_new_num();
 #ifdef _WIN32
@@ -12,7 +12,7 @@ void Heart_Beat()
 #endif
     Main_thread_list[tn].detach();
     minisleep(10000);
-  }
+  }*/
 }
 
 int main()
@@ -35,9 +35,9 @@ int main()
   Pre_Catch_Init();
   int thrnum = Main_thr_num.get_new_num();
 #ifndef NO_HB
-  Main_thread_list[thrnum] = thread(Heart_Beat);
+  /*Main_thread_list[thrnum] = thread(Heart_Beat);
   Main_thread_list[thrnum].detach();
-  thrnum = Main_thr_num.get_new_num();
+  thrnum = Main_thr_num.get_new_num();*/
 #endif
 #ifdef JIEMENG_DECK
   decks.init();
@@ -49,7 +49,7 @@ int main()
   sprintf(buf, "启动成功，耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
   info_puts(buf);
   delete[] buf;
-  start_server(configs.INPORT);
+  start_server(configs.PORT);
 }
 void Main_Task(const json &event)
 {
