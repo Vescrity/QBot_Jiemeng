@@ -1,7 +1,6 @@
 {
   "Config": {
-    "INPORT": 5705,
-    "OUTPORT": 1111,
+    "PORT": 5705,
     "sleep_time": 50,
     "Self_ID": "12345678",
     "MAX_TEXT_LENGTH": 800,
