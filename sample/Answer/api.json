@@ -1,0 +1,65 @@
+{
+  "Answers": [
+    {
+      "anss": [
+        {
+          "order":"run_api",
+          "weight":5,
+          "data":{
+            "url":"https://v2.alapi.cn/api",
+            "api":"/zaobao",
+            "data":{
+              "token":"{~/AL_TOKEN}",
+              "format":"json"
+            },
+            "form":"[CQ:image,file={$/data/image}]"
+          }
+        }
+      ],
+      "pri": 999,
+      "regex": "^今日新闻$"
+    },
+    {
+      "anss": [
+        {
+          "order":"run_api",
+          "data":{
+            "url":"https://api.wer.plus/api",
+            "api":"/dub",
+            "para_num":1,
+            "Get":1,
+            "data":{
+              "t":"##1"
+            },
+            "form":"{$/data/text}\n[CQ:image,file={$/data/img_url}]"
+          }
+        }
+      ],
+      "pri": 105,
+      "regex": "^百科#"
+    },
+    
+    {
+      "anss": [
+        {
+          "order":"run_api",
+          "data":{
+            "url":"http://dict.youdao.com",
+            "api":"/suggest",
+            "para_num":1,
+            "Get":1,
+            "data":{
+              "q":"##1",
+              "num":1,
+              "doctype":"json"
+            },
+            "form":"{$/data/entries/0/entry}\n{$/data/entries/0/explain}\n来源：http://dict.youdao.com"
+          }
+        }
+      ],
+      "pri": 105,
+      "regex": "^查词#"
+    }
+    
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "Answers": [
+    {
+      "anss": [
+        {"order":"cpp_run","msgread":true}
+      ],
+      "pri": 105,
+      "regex": ["^\\.c\\+\\+","^\\.cpp#"]
+    },
+    {
+      "anss": [
+        {"order":"fortran_run","msgread":true}
+      ],
+      "pri": 105,
+      "regex": ["^\\.f#"]
+    },
+    {
+      "anss": [
+        {"order":"py_run","msgread":true}
+      ],
+      "pri": 105,
+      "regex": "\\.py#"
+    },
+    {
+      "anss": [
+        {"order":"r_run","msgread":true}
+      ],
+      "pri": 105,
+      "regex": "^\\.r#"
+    },
+    {
+      "anss": [
+        {"order":"mat_run","msgread":true}
+      ],
+      "pri": 105,
+      "regex": "^calc#"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "Answers": [
+    {
+      "text":"========================屏蔽词设定=======================",
+      "anss": [
+        "【警告】违法操作"
+      ],
+      "pri": 999,
+      "regex": [
+        [
+          [
+            "calc#","c\\+\\+#","\\.r#","\\.py#","\\.f"
+          ],
+          [
+            "system","pathlib","dos","eval","shut","open\\(","-cut-",
+            "subprocess","execmd","exec","config\\.","from *os","import *os"
+          ]
+        ]
+      ],
+      "user": [
+        "-1","12345678"
+      ]
+    }
+    
+  ]
+}

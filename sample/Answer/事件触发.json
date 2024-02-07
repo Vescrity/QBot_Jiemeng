@@ -1,0 +1,43 @@
+{
+  "Answers": [
+    {
+      "anss": [
+        "qwq"
+      ],
+      "pri": 100,
+      "regex": "^\\[group_decrease"
+    },
+    {
+      "anss": [
+        "恭喜恭喜恭喜你吖恭喜恭喜恭喜你"
+      ],
+      "pri": 100,
+      "regex": "^\\[honor"
+    },
+    {
+      "anss": [
+        "[CQ:at,qq=[user_id]]欢迎欢迎欢迎混音混音混音糊音糊音糊音魂魂魂！"
+      ],
+      "pri": 100,
+      "regex": "^\\[group_increase\\]$"
+    },
+    {
+      "anss": [
+        "不要乱设精口牙！！"
+      ],
+      "pri": 100,
+      "regex": "^\\[essence\\]$"
+    },
+    {
+      "anss": [
+        {
+          "order":"ignore",
+          "weight":5
+        },
+        "你撤回的我都知道哦~"
+      ],
+      "pri": 100,
+      "regex": "^\\[group_recall\\]$"
+    }
+  ]
+}
