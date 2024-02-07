@@ -21,4 +21,6 @@ cp ../code/txt2img.py txt2img
 cp ../README.md .
 cp ../进阶说明.md .
 cp ../LICENSE .
+cp -r ../sample .
+cp ./sample/config.json .
 
