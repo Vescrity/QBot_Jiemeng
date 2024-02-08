@@ -94,7 +94,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       return reRecv(type, para_list);
     else if (order == "rePost")
       return para_list;
-    else if (order == "run_cmd")
+    else if (order == "sh")
     {
       return execmd(para_list);
     }
