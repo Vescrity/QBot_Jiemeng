@@ -48,14 +48,29 @@
 
 ## 构建
 
-仅提供 Linux 编译方案：  
+### Linux 编译方案：  
 环境条件：确保安装boost库，curl 库，nlohmann json库，以及安装了 g++。(测试了12/13版本)   
 例如 `Arch Linux` 下：
-```
+```shell
 pacman -S boost nlohmann-json
 # curl gcc 一般已预装，故不列出。
 ```
 执行`./build.sh`可在`build`目录下构建基础的工作文件夹。
+
+### Windows 编译方案
+
+~~作者太菜了不理解 Windows 的奇葩编译环境故~~不提供于 Windows 环境下编译 Windows 版的方案。  
+
+请于 Linux 环境下使用交叉编译工具。
+
+```shell
+# 于项目根目录执行：
+x86_64-w64-mingw32-g++ code/Jiemeng.cpp -lws2_32 -o ./build/Jiemeng.exe  --static --std=c++20
+```
+
+请确保已安装编译工具，并安装好库。包括：nolhmann json以及boost库。  
+
+使用到curl库相关功能的~~由于作者太菜了所以~~已被禁用。故无需安装 curl 库。
 
 ## 运行依赖
 
