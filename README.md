@@ -68,7 +68,7 @@ pacman -S boost nlohmann-json
 ./winbuild.sh
 ```
 
-请确保已安装编译工具，并安装好库。包括：nolhmann json以及boost库。  
+请确保已安装编译工具，并安装好库。包括：nlohmann json以及boost库。  
 
 使用到curl库相关功能的~~由于作者太菜了所以~~已被禁用。故无需安装 curl 库。
 
