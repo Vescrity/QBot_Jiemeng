@@ -84,6 +84,7 @@ string Matlab_runner(const string &code)
   fprintf(fp, "");
   fclose(fp);
   return strText;*/
+  return "Unsupport.";
 #else
   string comm = "./jm_script/octave_launch";
   return String_Cmd_Run(comm.c_str());
@@ -96,7 +97,7 @@ string Matlab_runner(const string &code)
 string cpp_runner(const string &code)
 {
   FILE *fi;
-  fi = fopen("test.cpp", "w");
+  fi = fopen("tmp/test.cpp", "w");
 #ifdef _WIN32
   fprintf(fi, "#include<stdio.h>\n#include<stdlib.h>\n#include<thread>\n#include<windows.h>\n");
   fprintf(fi, "void calc();\n");
@@ -112,7 +113,7 @@ string cpp_runner(const string &code)
 #ifdef _WIN32
   return execmd("g++ 2>&1 test.cpp -o test.exe") + execmd("test.exe");
 #else
-  string aa = execmd("g++ 2>&1 test.cpp -o tmp/test");
+  string aa = execmd("g++ 2>&1 tmp/test.cpp -o tmp/test");
   aa = aa + execmd("tmp/test");
   return aa;
 #endif

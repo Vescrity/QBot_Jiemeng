@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #ifndef MODULE_DRAW
 #define MODULE_DRAW
 #include <string>
@@ -266,4 +267,5 @@ string AI_Para::AI_txt2img()
   string path = file_path_chg(string(configs.custom_config["AI_PATH"]).c_str());
   return "[CQ:image,file="s + path + file_name + "]";
 }
+#endif
 #endif

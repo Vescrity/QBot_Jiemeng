@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #ifndef GET_BASE_64
 #define GET_BASE_64
 #include "urls.h"
@@ -61,4 +62,5 @@ string get_base64_from_message(const string &msg){
   return get_base64_from_url(get_img_url(msg));
 }
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #ifndef BAIDU_TRANS_API
 #define BAIDU_TRANS_API
 #include "md5.h"
@@ -63,4 +64,5 @@ public:
   }
 } baidu_trans;
 
+#endif
 #endif
