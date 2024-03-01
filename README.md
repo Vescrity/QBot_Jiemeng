@@ -64,8 +64,8 @@ pacman -S boost nlohmann-json
 请于 Linux 环境下使用交叉编译工具。
 
 ```shell
-# 于项目根目录执行：
-x86_64-w64-mingw32-g++ code/Jiemeng.cpp -lws2_32 -o ./build/Jiemeng.exe  --static --std=c++20
+# 于项目根目录执行可在`winbuild`目录下构建基础的工作文件夹。：
+./winbuild.sh
 ```
 
 请确保已安装编译工具，并安装好库。包括：nolhmann json以及boost库。  
