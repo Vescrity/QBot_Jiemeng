@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #ifndef URL_ORDERS
 #define URL_ORDERS
 #include <string>
@@ -63,4 +64,5 @@ std::string url_ans_format(const json &js, const std::string &format)
 {
   return string_format_with_json("{$", "}", js, format);
 }
+#endif
 #endif

@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #ifndef URLS
 #define URLS
 #include <sstream>
@@ -252,4 +253,5 @@ string Request::curl_post()
   return execmd(cmds);
 }
 
+#endif
 #endif

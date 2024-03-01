@@ -62,7 +62,7 @@ void Message_Type::show() const
   msg_puts(btype.message.c_str());
 }
 #ifdef JIEMENG_CONFIG
-#ifdef URLS
+
 /// @brief Get the user's name of the message
 void Message_Type::get_name()
 {
@@ -94,7 +94,7 @@ void Message_Type::get_name()
   }
 }
 
-#endif
+
 
 bool Basic_Message_Type::is_white()
 {

@@ -5,11 +5,14 @@
 #include "Jiemeng_Basic.h"
 #include "File_Read.h"
 #include "Message_Type.h"
+#include "Message_Output.h"
 #include "Code_Runner.h"
 #include "Pre_Catch.h"
 #include "Orders.h"
 #include <nlohmann/json.hpp>
+#ifndef _WIN32
 #include "urls.h"
+#endif
 #include "Get_Base_64.h"
 #include "Module_Draw.h"
 using json = nlohmann::json;
@@ -21,9 +24,16 @@ string Order(const Message_Type &type, const string &order, const json &js)
   const string &msg = type.btype.message;
   try
   {
+  #ifdef URLS
     if (order == "run_api")
       return url_order(msg, order, js);
-    else if (order == "pre_catch")
+    else if (order == "AI_img2img")
+    {
+      AI_draw.start_img2img(type.btype, js);
+      return "";
+    }
+  #endif
+    if (order == "pre_catch")
     {
       Pre_Catch *pc = new Pre_Catch;
       pc->type = type.btype;
@@ -31,11 +41,7 @@ string Order(const Message_Type &type, const string &order, const json &js)
       pre_catch_list.push(pc);
       return "";
     }
-    else if (order == "AI_img2img")
-    {
-      AI_draw.start_img2img(type.btype, js);
-      return "";
-    }
+    
     else if (order == "formPost")
     {
       int para_num = 0;
@@ -129,7 +135,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     else if (order == "deck_reload")
     {
       decks.init();
-      return "Deck 模块重裁完成！";
+      return "Deck 模块重载完成！";
     }
     else if (order == "ls_deck")
     {
@@ -141,6 +147,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       Message_Delete_Order(type.btype.message);
       return "";
     }
+#ifndef _WIN32
     else if (order == "AI_draw")
     {
       try
@@ -152,10 +159,9 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
         JM_EXCEPTION("[AI_Draw]")
         return e.what();
       }
-
       return "";
     }
-
+#endif
     else if (order == "cpp_run")
     {
       return cpp_runner(para_list);
@@ -226,6 +232,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
 
       return "";
     }
+#ifdef URLS
     else if (order == "Baidu_Trans")
     {
       string id, sc;
@@ -242,6 +249,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     {
       WEATHER_ORDER("/tianqi/forty", 40)
     }
+    
     else if (order == "24h_Weather")
     {
       Request *rq = new Request;
@@ -264,6 +272,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
 
       return rt;
     }
+#endif
     else if (order == "Restart")
       exit(1);
 
