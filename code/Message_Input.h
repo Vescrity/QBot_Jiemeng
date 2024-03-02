@@ -61,9 +61,10 @@ void Message_Type::init(const json &Event)
     else
     {
       // lagrange没有 target_id 实现
-      // TODO: 若实现后启用这里
-      // btype.target_id = to_string(Event["target_id"]);
-      btype.target_id = to_string(Event["user_id"]);
+      if (Event["target_id"].is_null())
+        btype.target_id = to_string(Event["user_id"]);
+      else
+        btype.target_id = to_string(Event["target_id"]);
     }
   }
   else if (post_type == "notice")
