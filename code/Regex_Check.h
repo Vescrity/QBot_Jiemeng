@@ -48,23 +48,17 @@ bool reg_or_check(const char *msg, const json &regs)
   else
     return reg_str_check(msg, string(regs));
 }
-bool regCheck(const string &msg, const string &regs)
-{
-  return reg_or_check(msg.c_str(), json::parse(regs));
-}
+
 bool reg_check(const char *msg, const json &regs)
 {
   try
   {
     return reg_or_check(msg, regs);
-
-    //???
-    /*auto rs = call_with_timeout(std::function<bool(string, string)>(regCheck), 50, string(msg), to_string(regs));
-    return rs.get();*/
   }
   catch (const std::exception &e)
   {
     JM_EXCEPTION("[Regex]")
+    error_print("The json reg is: ");
     cerr << regs << endl;
     return 0;
   }
