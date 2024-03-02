@@ -43,12 +43,17 @@ std::string url_order(const string &msg, const string &order, const json &js)
   if (js.count("para_num"))
   {
     para_num = js["para_num"];
+    if (para_num == 0)
+    {
+      goto sdata;
+    }
     if (msg.find("#") != string::npos)
       Get_Para(msg.substr(msg.find("#") + 1), para_num, &para);
     else
       throw std::invalid_argument("the input string does not contain expected character '#'");
   }
-  replaceStringValue(data,para,para_num);
+  replaceStringValue(data, para, para_num);
+sdata:
   rq->set_data(data);
   if (js.count("Get"))
     data = rq->js_get();
