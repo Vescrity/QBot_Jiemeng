@@ -1,4 +1,5 @@
-build/*
+build
+winbuild
 password.cpp
 *test*
 *.o

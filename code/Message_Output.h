@@ -114,9 +114,10 @@ bool Message_Output(const Basic_Message_Type &data, const string &msg)
       else
       {
         error_lable("[Output]");
-        error_puts(string(js["wording"]).c_str());
+        error_puts("Failed. Try to send in img.");
+        /*error_puts(string(js["wording"]).c_str());
         // 发送失败操作
-        if (string(js["wording"]).find("blocked by server") != string::npos)
+        if (string(js["wording"]).find("blocked by server") != string::npos)*/
           Basic_Message_Output(data, txt2img(tmp.c_str()));
       }
       minisleep(configs.delay_time);
