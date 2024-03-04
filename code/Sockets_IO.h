@@ -24,7 +24,7 @@ void Main_Task(const json &);
 /// @brief Process message and creat a task thread to handle it.
 void ProcessMessage(const std::string &message)
 {
-  debug_lable("[Reciev]");
+  debug_lable("[Recive]");
   dout << message << "\n";
   json ev = json::parse(message);
   // raw_generate(ev);
