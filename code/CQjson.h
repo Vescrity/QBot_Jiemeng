@@ -3,7 +3,7 @@
 
 /*
  * 用于 CQ 码与 json 格式的转换。
- * 自 go-cqhttp 转换为 lagrange 
+ * 自 go-cqhttp 转换为 lagrange
  * 由于 lagrange 不支持 CQ 码
  * 故开发此库做为兼容层。
  */
@@ -68,13 +68,19 @@ json CQ2json(const string &message)
       size_t fstPos = cqCode.find(",", colonPos);
       size_t feqPos, fedPos;
       string cqKey, value;
+      if (fstPos == string::npos)
+      {
+        cqType = cqCode.substr(colonPos + 1, endPos - colonPos - 2);
+        cqData = json::object();
+        goto ret;
+      }
       cqType = cqCode.substr(colonPos + 1, fstPos - colonPos - 1);
       do
       {
         feqPos = cqCode.find("=", fstPos);
         cqKey = cqCode.substr(fstPos + 1, feqPos - fstPos - 1);
         fstPos = cqCode.find(",", feqPos);
-        fedPos=fstPos;
+        fedPos = fstPos;
         fedPos = (fedPos == string::npos) ? (cqCode.length() - 1) : fstPos;
         value = cqCode.substr(feqPos + 1, fedPos - feqPos - 1);
         cqData[cqKey] = value;
@@ -83,8 +89,11 @@ json CQ2json(const string &message)
     else
     {
       cqType = "text";
+      if (cqCode.length() == 0)
+        continue;
       cqData["text"] = cqCode;
     }
+  ret:
     startPos = endPos;
     result.push_back({{"type", cqType}, {"data", cqData}});
   } while (endPos != string::npos);

@@ -60,7 +60,7 @@ void Message_Type::init(const json &Event)
     }
     else
     {
-      if (Event["target_id"].is_null())
+      if (!Event.contains("target_id"))
         btype.target_id = to_string(Event["user_id"]);
       else
         btype.target_id = to_string(Event["target_id"]);

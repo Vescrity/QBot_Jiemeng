@@ -4,7 +4,7 @@
 #define LINUX_V
 #endif
 
-#define JIEMENG_VERSION ("v24.11.2")
+#define JIEMENG_VERSION ("v24.11.15")
 #ifdef _WIN32
 #define JIEMENG_PLATFORM "Jiemeng_Windows (Limited Feature)"
 #else
@@ -22,6 +22,10 @@
 #include <thread>
 #include "r_adb.h"
 #include "Jiemeng_Exception.h"
+#include <iostream>
+
+bool Debug_Mode = 0;
+
 inline void minisleep(const int x)
 {
 #ifndef _WIN32
@@ -57,15 +61,13 @@ inline void msg_puts(const char *s)
 }
 inline void debug_print(const char *s)
 {
-#ifdef _DEBUG_MODE_
-  printf("\033[0m\033[7;32m%s\033[0m", s);
-#endif
+  if (Debug_Mode)
+    printf("\033[0m\033[7;32m%s\033[0m", s);
 }
 inline void debug_puts(const char *s)
 {
-#ifdef _DEBUG_MODE_
-  printf("\033[0m\033[7;32m%s\n\033[0m", s);
-#endif
+  if (Debug_Mode)
+    printf("\033[0m\033[7;32m%s\n\033[0m", s);
 }
 inline void func_show(const char *s)
 {
