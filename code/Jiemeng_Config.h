@@ -130,7 +130,7 @@ json All_Config::save()
   js["NOTE_FILENAME"]     = NOTE_FILENAME;
   js["NOTE_FILENAME"]     = NOTE_FILENAME;
   js["TITLE"]             = TITLE;
-
+  js["Debug_Mode"]        = Debug_Mode;
   ajs["Custom_Config"]    = custom_config;
   ajs["List_Config"]      = list_config.save();
   return ajs;

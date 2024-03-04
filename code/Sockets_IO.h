@@ -24,7 +24,8 @@ void Main_Task(const json &);
 /// @brief Process message and creat a task thread to handle it.
 void ProcessMessage(const std::string &message)
 {
-  // 在这里处理接收到的消息
+  debug_lable("[Reciev]");
+  dout << message << "\n";
   json ev = json::parse(message);
   // raw_generate(ev);
   std::thread t(Main_Task, ev);
@@ -72,6 +73,7 @@ void WebSocketClient(const std::string &serverHost, const std::string &serverPor
 json ws_json_send(json &js)
 {
   boost::asio::io_context io_send;
+  debug_lable("[ws_send]");
   debug_puts(js.dump().c_str());
 
   // 创建解析器和WebSocket对象
