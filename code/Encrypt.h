@@ -107,7 +107,7 @@ struct Encrypt
       tx_n[i] += dx[(i << 1) | 1];
       tx_n[i] -= tm[it_t++];
       tx_n[i] -= tm[it_s++] + 128;
-      it_t &= 3; //it_t %= 4;
+      it_t &= 3;
       it_s %= n_id;
       rt = rt + char(tx_n[i]);
     }
