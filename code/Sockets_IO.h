@@ -26,7 +26,7 @@ void ProcessMessage(const std::string &message)
 {
   // 在这里处理接收到的消息
   json ev = json::parse(message);
-  raw_generate(ev);
+  // raw_generate(ev);
   std::thread t(Main_Task, ev);
   t.detach();
 }
@@ -69,10 +69,10 @@ void WebSocketClient(const std::string &serverHost, const std::string &serverPor
   }
 }
 
-
 json ws_json_send(json &js)
 {
   boost::asio::io_context io_send;
+  debug_puts(js.dump().c_str());
 
   // 创建解析器和WebSocket对象
   tcp::resolver send_res(io_send);

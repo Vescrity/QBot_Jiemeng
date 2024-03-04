@@ -106,6 +106,7 @@ void All_Config::config_init(const json &js)
     js_getval(MAX_MESSAGE_LENGTH,         js, "MAX_MESSAGE_LENGTH",         1 << 14             );
     js_getval(TITLE,                      js, "TITLE",                      "Jiemeng"s + Self_ID);
     js_getval(pswd,                       js, "pswd",                       1234                );
+    js_getval(Debug_Mode,                 js, "Debug_Mode",                 false               );
   }
   catch (const std::exception &e)
   {
