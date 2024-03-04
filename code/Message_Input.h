@@ -60,7 +60,6 @@ void Message_Type::init(const json &Event)
     }
     else
     {
-      // lagrange没有 target_id 实现
       if (Event["target_id"].is_null())
         btype.target_id = to_string(Event["user_id"]);
       else

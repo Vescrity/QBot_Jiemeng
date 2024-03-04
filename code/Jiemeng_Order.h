@@ -24,7 +24,7 @@ string Order(const Message_Type &type, const string &order, const json &js)
   const string &msg = type.btype.message;
   try
   {
-  #ifdef URLS
+#ifdef URLS
     if (order == "run_api")
       return url_order(msg, order, js);
     else if (order == "AI_img2img")
@@ -32,7 +32,7 @@ string Order(const Message_Type &type, const string &order, const json &js)
       AI_draw.start_img2img(type.btype, js);
       return "";
     }
-  #endif
+#endif
     if (order == "pre_catch")
     {
       Pre_Catch *pc = new Pre_Catch;
@@ -41,7 +41,7 @@ string Order(const Message_Type &type, const string &order, const json &js)
       pre_catch_list.push(pc);
       return "";
     }
-    
+
     else if (order == "formPost")
     {
       int para_num = 0;
@@ -249,7 +249,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
     {
       WEATHER_ORDER("/tianqi/forty", 40)
     }
-    
+
     else if (order == "24h_Weather")
     {
       Request *rq = new Request;
@@ -273,6 +273,17 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       return rt;
     }
 #endif
+    else if (order == "ws_send")
+    {
+      string str = Para_list;
+      str_replace(str, "&#91;", "[");
+      str_replace(str, "&#93;", "]");
+      str_replace(str, "&amp;", "&");
+      json data = json::parse(str);
+      json rt;
+      rt = ws_json_send(data);
+      return rt.dump();
+    }
     else if (order == "Restart")
       exit(1);
 
