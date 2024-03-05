@@ -4,7 +4,7 @@
 #define LINUX_V
 #endif
 
-#define JIEMENG_VERSION ("v24.11.17")
+#define JIEMENG_VERSION ("v24.11.18")
 #ifdef _WIN32
 #define JIEMENG_PLATFORM "Jiemeng_Windows (Limited Feature)"
 #else
