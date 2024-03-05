@@ -20,7 +20,8 @@ using namespace std;
 
 string Order(const Message_Type &type, const string &order, const json &js)
 {
-
+  debug_lable("[Order]");
+  dout << "Call [" << order << "]\nwith js=" << js << "\n";
   const string &msg = type.btype.message;
   try
   {
@@ -74,6 +75,8 @@ string Order(const Message_Type &type, const string &order, const json &js)
 }
 string Order(const Message_Type &type, const string &order, const string &Para_list)
 {
+  debug_lable("[Order]");
+  dout << "Call [" << order << "]\nwith Para_list=" << Para_list << "\n";
   string para_list = Para_list;
   para_list = str_strchg("&#91;", "[", para_list.c_str());
   para_list = str_strchg("&#93;", "]", para_list.c_str());
