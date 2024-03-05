@@ -17,7 +17,7 @@ struct _1day_report
     rt = rt + date + "\n" + "日间：" + cond_day + " " + max_tmp + "℃ " + wind_day + wind_day_levle + " 日出：" + sun_rise + "\n";
     rt = rt + "夜间：" + cond_night + " " + min_tmp + "℃ " + wind_night + wind_night_level + " 日落：" + sun_set + "\n";
     rt = rt + "空气: " + air + " " + air_level + " 降水量：" + precipitation + "\n";
-    rt = rt + "\n\n";
+    rt = rt + "\n";
     return rt;
   }
   string _24hprint()
@@ -133,7 +133,7 @@ struct City
 #ifdef _WIN32
     strchg("\\", "/", file_path);
 #endif
-    string rt = rt + "[CQ:image,file=file:///" + file_path + "/tmp/qwq.png]";
+    string rt = rt + "[CQ:image,file=file://" + file_path + "/tmp/qwq.png]";
     return rt;
   }
   string _24hprint()
