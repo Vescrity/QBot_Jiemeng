@@ -135,7 +135,7 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       int n = stoi(paras[1]);
       return decks.draw(paras[0], n);
     }
-    else if (order == "deck_reload")
+    else if (order == "Deck_Reload")
     {
       decks.init();
       return "Deck 模块重载完成！";
