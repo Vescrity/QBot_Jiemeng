@@ -37,13 +37,14 @@ class All_Config
 {
 private:
   void config_init(const json &js);
+  
 
 public:
-  int PORT, OUTPORT, sleep_time, delay_time, Time_Check_Delay, MAX_TEXT_LENGTH, MAX_SINGLE_MESSAGE_LENGTH, MAX_MESSAGE_LENGTH, pswd;
-  string Self_ID, SYMBOL_NAME, ANS_FILENAME, NOTE_FILENAME, TITLE, REPORT_ID, REPORT_GROUP;
+  int PORT, sleep_time, delay_time, Time_Check_Delay, MAX_TEXT_LENGTH, MAX_SINGLE_MESSAGE_LENGTH, MAX_MESSAGE_LENGTH, pswd;
+  string Self_ID, TITLE;
   json custom_config;
   List_Config list_config;
-
+  void config_file_save();
   void init(const json &js)
   {
     config_init(js["Config"]);

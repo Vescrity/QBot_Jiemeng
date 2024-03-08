@@ -205,6 +205,12 @@ string Order(const Message_Type &type, const string &order, const string &Para_l
       Config_File_Read();
       return "";
     }
+    else if (order == "Save_Config")
+    {
+      configs.config_file_save();
+      return "";
+    }
+    
     else if (order == "Ans_Reload")
     {
       answers.clear();
