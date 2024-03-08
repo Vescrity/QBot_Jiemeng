@@ -55,7 +55,6 @@ json ans_merge(const std::string &folderPath)
   {
     mergedJson["Answers"].insert(mergedJson["Answers"].end(), answers.begin(), answers.end());
   }
-  //cerr << mergedJson << endl;
   return mergedJson;
 }
 
@@ -67,7 +66,6 @@ void Ans_Read()
     std::ostringstream oss;
     oss << ans_merge("Answer");
     string strdata = oss.str();
-    //cerr << strdata << endl;
     strdata = string_format_with_json("{~", "}", configs.custom_config, strdata);
     answers.init(json::parse(strdata));
   }

@@ -99,8 +99,6 @@ void All_Config::config_init(const json &js)
     js_getval(delay_time,                 js, "delay_time",                 2000                );
     js_getval(Time_Check_Delay,           js, "Time_Check_Delay",           30000               );
     js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
-    js_getval(REPORT_ID,                  js, "REPORT_ID",                  "0"s                );
-    js_getval(REPORT_GROUP,               js, "REPORT_GROUP",               "0"s                );
     js_getval(MAX_TEXT_LENGTH,            js, "MAX_TEXT_LENGTH",            1 << 10             );
     js_getval(MAX_SINGLE_MESSAGE_LENGTH,  js, "MAX_SINGLE_MESSAGE_LENGTH",  1 << 11             );
     js_getval(MAX_MESSAGE_LENGTH,         js, "MAX_MESSAGE_LENGTH",         1 << 14             );
@@ -110,7 +108,7 @@ void All_Config::config_init(const json &js)
   }
   catch (const std::exception &e)
   {
-    error_lable("[File_Read]");
+    error_lable("[Config]");
     error_print("Error in Config: ");
     error_puts(e.what());
     exit(1);
@@ -120,20 +118,27 @@ json All_Config::save()
 {
   json ajs;
   json &js = ajs["Config"];
-  js["PORT"]              = PORT;
-  js["sleep_time"]        = sleep_time;
-  js["delay_time"]        = delay_time;
-  js["Time_Check_Delay"]  = Time_Check_Delay;
-  js["Self_ID"]           = Self_ID;
-  js["REPORT_ID"]         = REPORT_ID;
-  js["REPORT_GROUP"]      = REPORT_GROUP;
-  js["NOTE_FILENAME"]     = NOTE_FILENAME;
-  js["NOTE_FILENAME"]     = NOTE_FILENAME;
-  js["TITLE"]             = TITLE;
-  js["Debug_Mode"]        = Debug_Mode;
-  ajs["Custom_Config"]    = custom_config;
-  ajs["List_Config"]      = list_config.save();
+  js["PORT"]                      = PORT;
+  js["sleep_time"]                = sleep_time;
+  js["delay_time"]                = delay_time;
+  js["Time_Check_Delay"]          = Time_Check_Delay;
+  js["MAX_TEXT_LENGTH"]           = MAX_TEXT_LENGTH;
+  js["MAX_SINGLE_MESSGAE_LENGTH"] = MAX_SINGLE_MESSAGE_LENGTH;
+  js["MAX_MESSAGE_LENGTH"]        = MAX_MESSAGE_LENGTH;
+  js["pswd"]                      = pswd;
+  js["Self_ID"]                   = Self_ID;
+  js["TITLE"]                     = TITLE;
+  js["Debug_Mode"]                = Debug_Mode;
+  ajs["Custom_Config"]            = custom_config;
+  ajs["List_Config"]              = list_config.save();
   return ajs;
+}
+void All_Config::config_file_save()
+{
+  FILE *fp;
+  fp = fopen("config.json","w");
+  fprintf(fp,"%s",save().dump(2).c_str());
+  fclose(fp);
 }
 
 #endif
