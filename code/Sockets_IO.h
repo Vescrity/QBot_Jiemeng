@@ -5,6 +5,9 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <boost/beast/websocket.hpp>
+#include <mutex>
+#include <condition_variable>
+#include <vector>
 #include <thread>
 #include <nlohmann/json.hpp>
 #include "Jiemeng_Exception.h"
@@ -14,7 +17,7 @@
 using boost::asio::ip::tcp;
 using namespace boost::asio;
 using tcp = boost::asio::ip::tcp;
-
+namespace net = boost::asio;
 namespace websocket = boost::beast::websocket;
 static std::string serverHost;
 static std::string serverPort;
@@ -24,120 +27,148 @@ void Main_Task(const json &);
 /// @brief Process message and creat a task thread to handle it.
 void ProcessMessage(const std::string &message)
 {
-  debug_lable("[Recive]");
-  dout << message << "\n";
   json ev = json::parse(message);
   // raw_generate(ev);
   std::thread t(Main_Task, ev);
   t.detach();
 }
+/// @brief Web_Socket Control Center
+class WSIO_Cache
+{
+private:
+  mutex mtx;
+  condition_variable cv;
+  bool flag[130];
+  json cache[130];
+
+  net::io_context ioContext;
+  tcp::resolver resolver;
+
+  std::string serverHost;
+  std::string serverPort;
+  boost::beast::multi_buffer buffer;
+
+public:
+  websocket::stream<tcp::socket> ws;
+  WSIO_Cache(const std::string &host, const std::string &port)
+      : resolver(ioContext), ws(ioContext), serverHost(host), serverPort(port)
+  {
+    auto const results = resolver.resolve(serverHost, serverPort);
+    boost::asio::connect(ws.next_layer(), results.begin(), results.end());
+    ws.handshake(serverHost, "/");
+  }
+
+public:
+  void listen()
+  {
+
+    try
+    {
+      while (1)
+      {
+        boost::beast::flat_buffer buffer;
+        ws.read(buffer);
+        std::string message(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
+        debug_lable("[WSIO_Recive]");
+        dout << message << "\n";
+        buffer.consume(buffer.size());
+        json recv;
+        try
+        {
+          recv = json::parse(message);
+        }
+        catch (exception &e)
+        {
+          JM_EXCEPTION("[WSIO_Cache]");
+          continue;
+        }
+        if (recv.contains("echo"))
+        {
+          int index = recv["echo"].get<int>();
+          std::unique_lock<std::mutex> lock(mtx);
+          cache[index] = recv; // 存入缓存数组
+          flag[index] = true;  // 设置标志位为可访问
+          lock.unlock();
+          cv.notify_one(); // 通知条件变量
+        }
+        else
+        {
+          std::thread processThread(ProcessMessage, message);
+          processThread.detach();
+        }
+      }
+    }
+
+    catch (exception &e)
+    {
+      JM_EXCEPTION("[WSIO_Cache]");
+    }
+  }
+  json read(const int &index)
+  {
+    if (index > 129)
+      throw range_error("Out of range.");
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [&]
+            { return flag[index]; }); // 等待条件变量，直到标志位为可访问
+    json result = cache[index];       // 获取JSON内容
+    flag[index] = false;              // 访问结束，标志位设为不可访问
+    lock.unlock();                    // 解锁互斥量
+    return result;
+  }
+};
+WSIO_Cache *wsio_cache;
 
 void WebSocketClient(const std::string &serverHost, const std::string &serverPort)
 {
+  wsio_cache = new WSIO_Cache(serverHost, serverPort);
   try
   {
-    boost::asio::io_context ioContext;
-
-    // 创建解析器和WebSocket对象
-    tcp::resolver resolver(ioContext);
-    websocket::stream<tcp::socket> ws(ioContext);
-
-    // 解析服务器地址
-    auto const results = resolver.resolve(serverHost, serverPort);
-
-    // 连接到服务器
-    boost::asio::connect(ws.next_layer(), results.begin(), results.end());
-
-    // WebSocket握手
-    ws.handshake(serverHost, "/event");
-
-    // 接收和处理消息
-    boost::beast::multi_buffer buffer;
-    while (true)
-    {
-      ws.read(buffer);
-      std::string message(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
-      buffer.consume(buffer.size());
-
-      // 在新线程中处理消息
-      std::thread processThread(ProcessMessage, message);
-      processThread.detach();
-    }
+    wsio_cache->listen();
   }
-  catch (const std::exception &e)
+  catch (...)
   {
-    JM_EXCEPTION("[Socket_Client]")
+    delete wsio_cache;
   }
 }
 
 json ws_json_send(json &js)
 {
-  boost::asio::io_context io_send;
+  static short ids = 0;
+  js["echo"] = ids++;
+  if (ids == 128)
+    ids = 0;
   debug_lable("[ws_send]");
   debug_puts(js.dump().c_str());
-
-  // 创建解析器和WebSocket对象
-  tcp::resolver send_res(io_send);
-  websocket::stream<tcp::socket> ws_send(io_send);
-  boost::asio::ip::basic_resolver_results<boost::asio::ip::tcp> send_server_result;
-  send_server_result = send_res.resolve(serverHost, serverPort);
-  boost::asio::connect(ws_send.next_layer(), send_server_result.begin(), send_server_result.end());
-
-  // WebSocket握手
-  ws_send.handshake(serverHost, "/api");
-  static short ids = 0;
-  js["echo"] = ids;
   json rt;
-
-  ws_send.write(boost::asio::buffer(js.dump()));
-  int x = 0;
-  // 接收服务器的响应
-  do
-  {
-    boost::beast::flat_buffer buffer;
-    ws_send.read(buffer);
-    std::string response(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
-    rt = json::parse(response);
-    if (!rt["echo"].is_null())
-    {
-      if (rt["echo"] == ids)
-        break;
-    }
-  } while ((x++) < 15);
-  // 将响应解析为JSON对象并返回
-  if (ids++ == 128)
-    ids = 0;
-  ws_send.close(websocket::close_code::normal);
+  wsio_cache->ws.write(boost::asio::buffer(js.dump()));
+  rt = wsio_cache->read(js["echo"]);
   return rt;
 }
 
 void start_server(int port)
 {
-  try
+
+  while (1)
   {
-    while (1)
+    try
     {
-      // 服务端的主机和端口
       serverHost = "127.0.0.1";
       serverPort = to_string(port);
-      // 启动WebSocket客户端
-      std::thread clientThread(WebSocketClient, serverHost, serverPort);
-      info_lable("[Server]");
-      info_puts("Jiemeng sever started.");
-      clientThread.join();
+      WebSocketClient(serverHost, serverPort);
+    }
+    catch (std::exception &e)
+    {
+      std::string msg = "Exception caught: ";
+      msg += e.what();
+      error_lable("[Server]");
+      error_puts(msg.c_str());
       error_lable("[Server]");
       error_puts("Backend is down. Try to rebind...");
       minisleep(5000);
     }
   }
-  catch (std::exception &e)
-  {
-    std::string msg = "Exception caught: ";
-    msg += e.what();
-    error_lable("[Server]");
-    error_puts(msg.c_str());
-    minisleep(configs.sleep_time);
-  }
 }
+
 
 #endif
