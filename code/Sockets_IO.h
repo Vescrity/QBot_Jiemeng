@@ -36,8 +36,8 @@ void ProcessMessage(const std::string &message)
 class WSIO_Cache
 {
 private:
-  mutex mtx;
-  condition_variable cv;
+  mutex mtx[130];
+  condition_variable cv[130];
   bool flag[130];
   json cache[130];
 
@@ -85,11 +85,11 @@ public:
         if (recv.contains("echo"))
         {
           int index = recv["echo"].get<int>();
-          std::unique_lock<std::mutex> lock(mtx);
+          std::unique_lock<std::mutex> lock(mtx[index]);
           cache[index] = recv; // 存入缓存数组
           flag[index] = true;  // 设置标志位为可访问
           lock.unlock();
-          cv.notify_one(); // 通知条件变量
+          cv[index].notify_one(); // 通知条件变量
         }
         else
         {
@@ -108,8 +108,8 @@ public:
   {
     if (index > 129)
       throw range_error("Out of range.");
-    std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [&]
+    std::unique_lock<std::mutex> lock(mtx[index]);
+    cv[index].wait(lock, [&]
             { return flag[index]; }); // 等待条件变量，直到标志位为可访问
     json result = cache[index];       // 获取JSON内容
     flag[index] = false;              // 访问结束，标志位设为不可访问
