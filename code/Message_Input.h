@@ -42,12 +42,10 @@ void Message_Type::init(const json &Event)
         goto role_check;
       }
     }
-    if (btype.ifgroup)
-    {
-      user_name = (btype.ifgroup && (!sender["card"].is_null())) ? sender["card"] : sender["nickname"];
-      if (!user_name.length())
-        user_name = sender["nickname"];
-    }
+
+    user_name = (btype.ifgroup && (!sender["card"].is_null())) ? sender["card"] : sender["nickname"];
+    if (!user_name.length())
+      user_name = sender["nickname"];
 
   role_check:
     if (btype.ifgroup)
