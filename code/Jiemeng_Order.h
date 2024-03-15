@@ -76,7 +76,7 @@ string Order(const Message_Type &type, const string &order, const json &js)
 string Order(const Message_Type &type, const string &order, const string &Para_list)
 {
   debug_lable("[Order]");
-  dout << "Call [" << order << "]\nwith Para_list=" << Para_list << "\n";
+  dout << "Call [" << order << "] Para_list=" << Para_list << "\n";
   string para_list = Para_list;
   para_list = str_strchg("&#91;", "[", para_list.c_str());
   para_list = str_strchg("&#93;", "]", para_list.c_str());
