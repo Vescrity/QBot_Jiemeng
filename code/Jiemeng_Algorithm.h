@@ -10,7 +10,6 @@
 #include <sstream>
 using string = std::string;
 
-
 #define Vec_Find(a, b) (find((a).begin(), (a).end(), b) != (a).end())
 /// @brief Removes the first element equal to a given value from the given vector.
 /// @tparam T Any type that has overloaded the equality (==) operator
@@ -131,17 +130,23 @@ std::string string_format_with_json(const string &begin, const string &end, cons
           str = "[invalid]";
           return str;
         }
-        str = js[ptr].dump();
+        
+
         if (js[ptr].is_number())
         {
+          str = js[ptr].dump();
         }
         else if (js[ptr].is_string())
-          str = str.substr(1, str.size() - 2);
+        {
+          str = js[ptr];
+          //str = str.substr(1, str.size() - 2);
+        }
         else if (js[ptr].is_boolean())
           str = js[ptr] ? "1" : "0";
         else
         {
-          str = escape_string(str);
+          str = js[ptr].dump();
+          //str = escape_string(str);
           str = str.substr(1, str.size() - 2);
         }
         return str;
