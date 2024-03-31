@@ -22,8 +22,8 @@ public:
     answer_init();
     server_init();
   }
-  void run() { server.run(); }
-  json ws_send(json &a) { server.ws_send(a); }
+  void run();
+  json ws_send(json &a) { return server.ws_send(a); }
   
 };
 

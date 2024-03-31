@@ -1,5 +1,5 @@
 #include "Jiemeng_Lua.hpp"
-
+#include <iostream>
 void Lua_Engine::init()
 {
   L = luaL_newstate(); // 创建一个新的Lua环境

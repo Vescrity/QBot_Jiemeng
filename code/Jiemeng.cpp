@@ -3,10 +3,23 @@
 #include <iostream>
 #include <thread>
 #include "Jiemeng_Message.hpp"
+#include "Jiemeng_DebugIO.hpp"
+#include <nlohmann/json.hpp>
 using namespace std;
 
 void work_dir_check()
 {
+}
+void Main_Task(const json &js);
+void Jiemeng::run()
+{
+  std::thread([this]
+              { server.run(); })
+      .detach();
+  while (1)
+  {
+    Main_Task(server.get_message());
+  }
 }
 
 void Jiemeng::deck_init()
@@ -23,6 +36,7 @@ void Jiemeng::answer_init()
 
 void Main_Task(const json &js)
 {
+  dout<<js.dump(2)<<"\n";
   const json &post_type = js["post_type"];
   if (post_type != "message" && post_type != "message_sent")
   {

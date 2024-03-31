@@ -19,14 +19,10 @@ private:
 public:
   string host;
   string port;
-  void init(const string &h, const string &p)
-  {
-    ids = 0;
-    host = h;
-    port = p;
-  }
+  void init(const string &h, const string &p);
   void run();
   json ws_send(json &);
+  json get_message();
 };
 
 #endif
