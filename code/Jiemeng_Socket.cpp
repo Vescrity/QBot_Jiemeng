@@ -15,15 +15,19 @@ using tcp = boost::asio::ip::tcp;
 using json = nlohmann::json;
 namespace net = boost::asio;
 namespace websocket = boost::beast::websocket;
-
+static const unsigned short CACHE_LENGTH = 64;
 /// @brief Web_Socket Control Center
 class WSIO_Cache
 {
 private:
-  mutex mtx[130];
-  condition_variable cv[130];
-  bool flag[130];
-  json cache[130];
+  mutex mtx[CACHE_LENGTH];
+  condition_variable cv[CACHE_LENGTH];
+  bool flag[CACHE_LENGTH];
+  json cache[CACHE_LENGTH];
+  mutex msg_mtx;
+  condition_variable msg_cv;
+  json msg_cache;
+  bool msg_flag;
 
   net::io_context ioContext;
   tcp::resolver resolver;
@@ -42,9 +46,9 @@ public:
     ws.handshake(serverHost, "/");
   }
 
-public:
   void listen();
   json read(const int &index);
+  json get_message();
 };
 
 void WSIO_Cache::listen()
@@ -53,6 +57,8 @@ void WSIO_Cache::listen()
   {
     while (1)
     {
+      debug_lable("[Listen]");
+      dout << "\n";
       boost::beast::flat_buffer buffer;
       ws.read(buffer);
       std::string message(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
@@ -80,8 +86,14 @@ void WSIO_Cache::listen()
       }
       else
       {
-        std::thread processThread(ProcessMessage, message);
-        processThread.detach();
+        // std::thread processThread(ProcessMessage, message);
+        // processThread.detach();
+
+        std::unique_lock<std::mutex> lock(msg_mtx);
+        msg_cache = recv;
+        msg_flag = true;
+        lock.unlock();
+        msg_cv.notify_one();
       }
     }
   }
@@ -93,7 +105,7 @@ void WSIO_Cache::listen()
 }
 json WSIO_Cache::read(const int &index)
 {
-  if (index > 129)
+  if (index > CACHE_LENGTH)
     throw range_error("Out of range.");
   std::unique_lock<std::mutex> lock(mtx[index]);
   cv[index].wait(lock, [&]
@@ -101,6 +113,16 @@ json WSIO_Cache::read(const int &index)
   json result = cache[index];              // 获取JSON内容
   flag[index] = false;                     // 访问结束，标志位设为不可访问
   lock.unlock();                           // 解锁互斥量
+  return result;
+}
+json WSIO_Cache::get_message()
+{
+  std::unique_lock<std::mutex> lock(msg_mtx);
+  msg_cv.wait(lock, [&]
+              { return msg_flag; }); // 等待条件变量，直到标志位为可访问
+  json result = msg_cache;           // 获取JSON内容
+  msg_flag = false;                  // 访问结束，标志位设为不可访问
+  lock.unlock();                     // 解锁互斥量
   return result;
 }
 /*
@@ -119,18 +141,25 @@ void WebSocketClient(const std::string &serverHost, const std::string &serverPor
 
 //-----Server------
 
+void Server::init(const string &h, const string &p)
+{
+  ids = 0;
+  host = h;
+  port = p;
+  wsio_cache = new WSIO_Cache(host, port);
+}
 void Server::run()
 {
   while (1)
   {
     try
     {
-      wsio_cache = new WSIO_Cache(host, port);
       wsio_cache->listen();
     }
     catch (std::exception &e)
     {
       delete wsio_cache;
+      wsio_cache = new WSIO_Cache(host, port);
       std::string msg = "Exception caught: ";
       msg += e.what();
       error_lable("[Server]");
@@ -145,7 +174,7 @@ void Server::run()
 json Server::ws_send(json &js)
 {
   js["echo"] = ids++;
-  if (ids == 128)
+  if (ids == CACHE_LENGTH)
     ids = 0;
   debug_lable("[ws_send]");
   debug_puts(js.dump().c_str());
@@ -154,3 +183,4 @@ json Server::ws_send(json &js)
   rt = wsio_cache->read(js["echo"]);
   return rt;
 }
+json Server::get_message() { return wsio_cache->get_message(); }

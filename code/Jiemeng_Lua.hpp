@@ -1,7 +1,6 @@
 #ifndef JIEMENG_LUA
 #define JIEMENG_LUA
 #include <string>
-#include <iostream>
 #include <sstream>
 extern "C"
 {
