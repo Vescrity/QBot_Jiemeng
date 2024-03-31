@@ -13,7 +13,7 @@ void Message::init(const json &js)
 void Message::message_init(const json &js)
 {
   place.group_flag = js["message_type"] == "group";
-  text = js["raw_message"];
+  text.change(string( js["raw_message"]));
   const json &sender = js["sender"];
   place.user_id = to_string(js["user_id"]);
   if (sender["card"].is_null())
@@ -23,7 +23,7 @@ void Message::message_init(const json &js)
   if (is_group())
   {
     place.group_id = to_string(js["group_id"]);
-    // get_group_name
+    // TODO: get_group_name
   }
 }
 void Message::notice_init(const json &js)
@@ -36,12 +36,16 @@ void Message::notice_init(const json &js)
     place.group_id = to_string(js["group_id"]);
     place.user_id = to_string(js["user_id"]);
     text = "[JM:";
-    text += notice_type;
+    text.str() += notice_type;
     if (notice_type == "notify")
     {
-      text = text + ",subtype=" + to_string(js["sub_type"]);
+      text = text.str() + ",subtype=" + to_string(js["sub_type"]);
     }
-    text += "]";
+    text.str() += "]";
+  }
+  else
+  {
+    /// TODO
   }
 }
 
@@ -52,7 +56,7 @@ void print_cutline()
   color_puts(hf.c_str());
 }
 
-void Message::show()
+void Message::show() const
 {
   print_cutline();
   if (is_group())

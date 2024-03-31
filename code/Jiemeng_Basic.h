@@ -15,7 +15,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-
+#include <string>
+using string = std::string;
 inline void minisleep(const int &x)
 {
 #ifndef _WIN32
@@ -49,7 +50,5 @@ inline string execmd(const string &commd)
 #endif
   return output;
 }
-
-
 
 #endif

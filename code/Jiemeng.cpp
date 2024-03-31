@@ -11,7 +11,14 @@ using namespace std;
 void work_dir_check()
 {
 }
-void Main_Task(const json &js);
+
+void Jiemeng::process_message(Message message)
+{
+
+}
+
+
+
 void Jiemeng::run()
 {
   std::thread([this]
@@ -19,7 +26,16 @@ void Jiemeng::run()
       .detach();
   while (1)
   {
-    Main_Task(server.get_message());
+    try
+    {
+      Message msg = generate_message(server.get_message());
+      msg.show();
+      std::thread([this,msg]{this->process_message(msg);}).detach();
+    }
+    catch (Not_Serious)
+    {
+      continue;
+    }
   }
 }
 
@@ -35,7 +51,7 @@ void Jiemeng::answer_init()
 {
 }
 
-void Main_Task(const json &js)
+Message Jiemeng::generate_message(const json &js)
 {
   dout << js.dump(2) << "\n";
   const string &post_type = js["post_type"];
@@ -49,6 +65,7 @@ void Main_Task(const json &js)
   {
     Message message;
     message.init(js);
-    message.show();
+    return message;
   }
+  throw Not_Serious();
 }
