@@ -28,7 +28,10 @@ bool vec_remove_first_value(std::vector<T> &vec, const T &value_to_remove)
   }
   return false;
 }
-
+/// @brief 数组中是否含有 a
+/// @param a 
+/// @param b 
+/// @return 
 template <typename T, size_t N>
 bool array_search(const T &a, const T (&b)[N])
 {

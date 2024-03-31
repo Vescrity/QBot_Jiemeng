@@ -2,6 +2,7 @@
 #define JIEMENG_MESSAGE
 #include <string>
 #include <nlohmann/json.hpp>
+#include "Jiemeng_CQJson.hpp"
 using json = nlohmann::json;
 using string = std::string;
 /// @brief 消息位置
@@ -13,25 +14,27 @@ public:
   string group_nm;
   string user_id;
   string user_nm;
-  bool is_group() { return group_flag; }
-  bool is_private() { return !group_flag; }
-  bool operator==(const Message_Place &a) { return (group_id == a.group_id) && (user_id == a.user_id); }
-  bool operator!=(const Message_Place &a) { return !(*this == a); }
+  bool is_group() const { return group_flag; }
+  bool is_private() const { return !group_flag; }
+  bool operator==(const Message_Place &a) const { return (group_id == a.group_id) && (user_id == a.user_id); }
+  bool operator!=(const Message_Place &a) const { return !(*this == a); }
 };
 /// @brief 消息类
 class Message
 {
-  Message_Place place;
-  string text;
   void message_init(const json &);
   void notice_init(const json &);
 
 public:
+  Message_Place place;
+  CQMessage text;
   /// @brief 显示消息内容
-  void show();
-  bool is_group() { return place.is_group(); }
-  bool is_private() { return place.is_private(); }
+  string & str(){return text.get_string();}
+  void show() const;
+  bool is_group() const { return place.is_group(); }
+  bool is_private() const { return place.is_private(); }
   void init(const json &);
+  CQMessage &message() { return text; }
 };
 
 #endif

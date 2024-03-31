@@ -33,10 +33,7 @@ public:
   }
 
 private:
-  void dprint(const char *message)
-  {
-    debug_print(message);
-  }
+  void dprint(const char *message) { debug_print(message); }
 };
 extern DoutStream dout;
 

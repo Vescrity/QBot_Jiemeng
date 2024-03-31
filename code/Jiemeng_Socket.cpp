@@ -119,10 +119,10 @@ json WSIO_Cache::get_message()
 {
   std::unique_lock<std::mutex> lock(msg_mtx);
   msg_cv.wait(lock, [&]
-              { return msg_flag; }); // 等待条件变量，直到标志位为可访问
-  json result = msg_cache;           // 获取JSON内容
-  msg_flag = false;                  // 访问结束，标志位设为不可访问
-  lock.unlock();                     // 解锁互斥量
+              { return msg_flag; }); 
+  json result = msg_cache;           
+  msg_flag = false;                  
+  lock.unlock();                     
   return result;
 }
 /*
