@@ -1,6 +1,7 @@
 #ifndef JM_EXCEPTION
+
 #include <string>
-#include "Jiemeng_Basic.h"
+#include "Jiemeng_LogIO.hpp"
 
 /// @brief 通用异常打印宏
 /// @param LABLE 标签/类别

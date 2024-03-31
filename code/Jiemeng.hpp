@@ -1,28 +1,30 @@
-#ifndef JIEMENG_HPP
-#define JIEMENG_HPP
-#include <stdio.h>
-#include <string>
-#include <time.h>
-#include <iostream>
-#include <stdlib.h>
-#include <thread>
+#include "Jiemeng_Config.hpp"
 
+#include "Jiemeng_Socket.hpp"
 
-#include "Jiemeng_Basic.h"
-#include "urls.h"
-#include "Jiemeng_Config.h"
+class Jiemeng
+{
+  /*Deck deck;
 
-#include "Jiemeng_Deck.h"
-#include "Jiemeng_Status.h"
+  Answer_List answer;*/
+  Config config;
+  Server server;
 
-#include "Jiemeng_Order.h"
+public:
+  void deck_init();
+  void answer_init();
+  void config_init();
+  void server_init() { server.init("127.0.0.1", config.port); }
+  void init()
+  {
+    config_init();
+    deck_init();
+    answer_init();
+    server_init();
+  }
+  void run() { server.run(); }
+  json ws_send(json &a) { server.ws_send(a); }
+  
+};
 
-#include "File_Read.h"
-#include "Sockets_IO.h"
-#include "Message_Input.h"
-#include "Message_Operate.h"
-#include "Time_Check.h"
-#include "Pre_Catch.h"
-
-
-#endif
+void work_dir_check();
