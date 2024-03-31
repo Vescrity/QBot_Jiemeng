@@ -1,5 +1,6 @@
 #include "Jiemeng_Lua.hpp"
 #include <iostream>
+#include "Jiemeng_LogIO.hpp"
 void Lua_Engine::init()
 {
   L = luaL_newstate(); // 创建一个新的Lua环境
@@ -13,7 +14,9 @@ bool Lua_Engine::exec_script(const std::string &filename)
   if (luaL_dofile(L, filename.c_str()) != LUA_OK)
   {
     const char *error = lua_tostring(L, -1);
-    std::cerr << "Lua Error: " << error << std::endl;
+    error_lable("[Lua]");
+    error_puts(error);
+    //std::cerr << "Lua Error: " << error << std::endl;
     return false;
   }
   return true;
@@ -23,7 +26,9 @@ bool Lua_Engine::exec_code(const std::string &code)
   if (luaL_dostring(L, code.c_str()) != LUA_OK)
   {
     const char *error = lua_tostring(L, -1);
-    std::cerr << "Lua Error: " << error << std::endl;
+    error_lable("[Lua]");
+    error_puts(error);
+    //std::cerr << "Lua Error: " << error << std::endl;
     return false;
   }
   return true;

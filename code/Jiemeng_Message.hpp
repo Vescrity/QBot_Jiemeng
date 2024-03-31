@@ -23,6 +23,8 @@ class Message
 {
   Message_Place place;
   string text;
+  void message_init(const json &);
+  void notice_init(const json &);
 
 public:
   /// @brief 显示消息内容

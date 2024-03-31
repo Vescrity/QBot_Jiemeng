@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # set(CMAKE_BUILD_TYPE Debug)
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 # 设置编译选项，添加-lcurl
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcurl -llua")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcurl -llua -Wall")
 # 设定包含的源文件目录
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/code")
 # 搜索符合条件的源文件

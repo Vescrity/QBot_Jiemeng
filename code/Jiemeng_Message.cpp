@@ -1,8 +1,16 @@
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_LogIO.hpp"
 #include <iostream>
+#include "Jiemeng_Algorithm.hpp"
 using namespace std;
 void Message::init(const json &js)
+{
+  if (js["post_type"] != "notice")
+    message_init(js);
+  else
+    notice_init(js);
+}
+void Message::message_init(const json &js)
 {
   place.group_flag = js["message_type"] == "group";
   text = js["raw_message"];
@@ -16,6 +24,24 @@ void Message::init(const json &js)
   {
     place.group_id = to_string(js["group_id"]);
     // get_group_name
+  }
+}
+void Message::notice_init(const json &js)
+{
+  const string notice_type = js["notice_type"];
+  string able_type[] = {"group_upload", "group_increase", "group_ban", "group_recall", "notify"};
+  if (array_search(notice_type, able_type))
+  {
+    place.group_flag = 1;
+    place.group_id = to_string(js["group_id"]);
+    place.user_id = to_string(js["user_id"]);
+    text = "[JM:";
+    text += notice_type;
+    if (notice_type == "notify")
+    {
+      text = text + ",subtype=" + to_string(js["sub_type"]);
+    }
+    text += "]";
   }
 }
 

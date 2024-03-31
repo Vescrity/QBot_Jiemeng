@@ -6,8 +6,6 @@
 #include "Jiemeng_Exception.hpp"
 using string = std::string;
 using json = nlohmann::json;
-/// @brief Process message and creat a task thread to handle it.
-void ProcessMessage(const std::string &message);
 
 class WSIO_Cache;
 class Server

@@ -5,6 +5,7 @@
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_DebugIO.hpp"
 #include <nlohmann/json.hpp>
+#include "Jiemeng_Algorithm.hpp"
 using namespace std;
 
 void work_dir_check()
@@ -36,9 +37,10 @@ void Jiemeng::answer_init()
 
 void Main_Task(const json &js)
 {
-  dout<<js.dump(2)<<"\n";
-  const json &post_type = js["post_type"];
-  if (post_type != "message" && post_type != "message_sent")
+  dout << js.dump(2) << "\n";
+  const string &post_type = js["post_type"];
+  string able_type[] = {"message", "message_sent", "notice"};
+  if (!array_search(post_type, able_type))
   {
     debug_lable("[Event]");
     debug_puts("Not a message.");
@@ -49,13 +51,4 @@ void Main_Task(const json &js)
     message.init(js);
     message.show();
   }
-}
-
-/// @brief Process message and creat a task thread to handle it.
-void ProcessMessage(const std::string &message)
-{
-  json ev = json::parse(message);
-  // raw_generate(ev);
-  std::thread t(Main_Task, ev);
-  t.detach();
 }
