@@ -1,7 +1,7 @@
 #ifndef JIEMENG_DEBUGIO
 #define JIEMENG_DEBUGIO
 
-#include "Jiemeng_LogIO.hpp"
+#include "Jiemeng_IO.hpp"
 #include <nlohmann/json.hpp>
 #include <string>
 using namespace std;

@@ -7,7 +7,7 @@
 #include <thread>
 #include "Jiemeng_Basic.h"
 #include "Jiemeng_Socket.hpp"
-#include "Jiemeng_DebugIO.hpp"
+#include "Jiemeng_LogIO.hpp"
 
 using boost::asio::ip::tcp;
 using namespace boost::asio;

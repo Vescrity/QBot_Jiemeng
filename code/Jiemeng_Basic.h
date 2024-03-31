@@ -4,27 +4,22 @@
 #define JIEMENG_VERSION ("v25.0")
 #ifdef _WIN32
 #define JIEMENG_PLATFORM "Jiemeng_Windows (Limited Feature)"
+#include "opstring.h"
 #else
 #define JIEMENG_PLATFORM "Jiemeng_Linux"
 #endif
 #define UPDATE_TIME __DATE__ + " " + __TIME__
 
-
 #include <string.h>
 #include <stdio.h>
-#include "opstring.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#include <thread>
-#include <iostream>
 
-
-
-inline void minisleep(const int x)
+inline void minisleep(const int &x)
 {
 #ifndef _WIN32
-  usleep(x * 1000);
+  usleep(x << 10);
 #else
   Sleep(x);
 #endif

@@ -36,7 +36,6 @@ public:
     lua_pushcfunction(L, function); // 把C++函数推送到Lua栈上
     lua_setglobal(L, name.c_str()); // 设置为Lua全局函数
   }*/
-  // ... 更多用于与Lua交互的函数，比如调用Lua函数、获取变量等
 protected:
   template <typename T, int (T::*func)(lua_State *)>
   static int dispatch(lua_State *L)
