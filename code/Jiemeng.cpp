@@ -39,6 +39,11 @@ void Jiemeng::run()
   }
 }
 
+void Jiemeng::answer_init()
+{
+  answer.init(config.custom_config);
+}
+
 void Jiemeng::deck_init()
 {
 }
@@ -46,9 +51,6 @@ void Jiemeng::config_init()
 {
   ifstream fread("config.json");
   config.init(json::parse(fread));
-}
-void Jiemeng::answer_init()
-{
 }
 
 Message Jiemeng::generate_message(const json &js)

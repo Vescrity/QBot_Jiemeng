@@ -2,7 +2,7 @@
 #define JIEMENG_HPP
 
 #include "Jiemeng_Config.hpp"
-
+#include "Jiemeng_Answer.hpp"
 #include "Jiemeng_Socket.hpp"
 #include "Jiemeng_Message.hpp"
 
@@ -11,6 +11,7 @@ class Jiemeng
   /*Deck deck;
 
   Answer_List answer;*/
+  All_Answer answer;
   Config config;
   Server server;
   Message generate_message(const json &);

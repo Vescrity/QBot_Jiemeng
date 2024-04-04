@@ -7,6 +7,7 @@
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_Basic.h"
 #include "Jiemeng_Exception.hpp"
+#include "Jiemeng_JsonTemplate.hpp"
 #include <sstream>
 using string = std::string;
 
@@ -58,7 +59,6 @@ void Get_Para(const std::string &str, int n, std::vector<std::string> *result, c
 /// @return string after replace
 std::string Basic_String_Replace(const string &begin, const string &end, const string &input, std::function<std::string(const string &)> rule);
 
-#ifdef INCLUDE_NLOHMANN_JSON_HPP_
 
 using json = nlohmann::json;
 /// @brief According to the json_pointer between `begin` and `end`, replace the given string.
@@ -68,6 +68,6 @@ using json = nlohmann::json;
 /// @param format The string need to replace
 /// @return String after change
 std::string string_format_with_json(const string &begin, const string &end, const json &js, const std::string &format);
-#endif
+
 
 #endif
