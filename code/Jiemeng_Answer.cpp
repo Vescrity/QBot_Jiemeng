@@ -26,6 +26,7 @@ void All_Answer::init(const json &custom)
     JM_EXCEPTION("[Answer_init]")
   }
 }
+using Type = Operation::Type;
 Operation_List All_Answer::get_list(const Message &message) const
 {
   Operation_List rt;
@@ -45,10 +46,17 @@ Operation_List All_Answer::get_list(const Message &message) const
 }
 Operation_List Answer_List::get_list(const Message &message) const
 {
+  Operation_List rt;
   for (auto i : answer_group)
   {
     if (i->check(message))
-      return i->get_list();
+    {
+      rt += i->get_list();
+      if (rt.list.back().type == Type::ignore)
+        continue;
+      else
+        return rt;
+    }
   }
   dout << "Empty!\n";
   throw Not_Serious();
@@ -222,6 +230,10 @@ void Answer::init(const json &js)
           throw invalid_argument("text 被赋了错误的类型。");
         operation.str = js["text"];
       }
+      else if (js.count("ignore"))
+      {
+        operation.type = Operation::Type::ignore;
+      }
       else if (js.count("lua_call"))
       {
         operation.type = Operation::Type::lua_call;
@@ -238,6 +250,12 @@ void Answer::init(const json &js)
         operation.data = js["data"];
       }
     }
+  }
+  // ignore 替换
+  if (operation.type == Type::message)
+  {
+    if (operation.str == "[ignore]")
+      operation.type = Type::ignore;
   }
 }
 
