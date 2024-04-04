@@ -68,6 +68,7 @@ public:
     a = luaL_checknumber(L, 1);
     return 0;
   }
+  
 
 private:
   /// 测试变量
