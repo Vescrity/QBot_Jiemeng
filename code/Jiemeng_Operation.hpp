@@ -6,6 +6,7 @@
 
 using json = nlohmann::json;
 using string = std::string;
+class Message;
 class Operation
 {
 public:
@@ -13,17 +14,20 @@ public:
   {
     message,
     order, // json order
-    lua
+    lua_call,
+    lua_shell
   } type;
   bool is_json;
   json data;
   string str;
 };
+
 class Operation_List
 {
 
 public:
   std::vector<Operation> list;
+  void upgrade(Message &);
   Operation_List &operator+=(const Operation_List &b)
   {
     list.insert(list.end(), b.list.begin(), b.list.end());

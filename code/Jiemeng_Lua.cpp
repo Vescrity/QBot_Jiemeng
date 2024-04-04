@@ -1,67 +1,49 @@
 #include "Jiemeng_Lua.hpp"
+#include "Jiemeng.hpp"
+#include <fstream>
 #include <iostream>
-#include "Jiemeng_LogIO.hpp"
-void Lua_Engine::init()
+#include <filesystem>
+#include <sstream>
+#include "Jiemeng_DebugIO.hpp"
+namespace fs = std::filesystem;
+void Lua_Shell::init(Jiemeng *b)
 {
-  L = luaL_newstate(); // 创建一个新的Lua环境
-  luaL_openlibs(L);    // 打开Lua标准库
-  // 注册函数
-  redirect_lua_print(L, output);
-}
-
-bool Lua_Engine::exec_script(const std::string &filename)
-{
-  if (luaL_dofile(L, filename.c_str()) != LUA_OK)
+  lua.open_libraries(sol::lib::base);
+  bot = b;
+  string folder_path = "./luarc";
+  for (const auto &entry : fs::directory_iterator(folder_path))
   {
-    const char *error = lua_tostring(L, -1);
-    error_lable("[Lua]");
-    error_puts(error);
-    //std::cerr << "Lua Error: " << error << std::endl;
-    return false;
-  }
-  return true;
-}
-bool Lua_Engine::exec_code(const std::string &code)
-{
-  if (luaL_dostring(L, code.c_str()) != LUA_OK)
-  {
-    const char *error = lua_tostring(L, -1);
-    error_lable("[Lua]");
-    error_puts(error);
-    //std::cerr << "Lua Error: " << error << std::endl;
-    return false;
-  }
-  return true;
-}
-
-int lua_custom_print(lua_State *L)
-{
-  std::stringstream &out = *static_cast<std::stringstream *>(lua_touserdata(L, lua_upvalueindex(1)));
-  int nargs = lua_gettop(L);
-  for (int i = 1; i <= nargs; i++)
-  {
-    if (lua_isstring(L, i))
-    {
-      out << lua_tostring(L, i);
+    if (entry.path().extension() == ".lua")
+    { // 确保是.lua文件
+      try
+      {
+        // 执行Lua脚本
+        lua.script_file(entry.path().string());
+        std::cout << "Executed: " << entry.path().filename() << std::endl;
+      }
+      catch (const sol::error &e)
+      {
+        std::cerr << "Failed to execute " << entry.path().filename() << " due to: " << e.what() << std::endl;
+      }
     }
-    else
-    {
-      // 如果不是字符串，调用默认的tostring方法来转换
-      lua_pushvalue(L, i); // 把参数压栈
-      lua_call(L, 1, 1);
-      out << lua_tostring(L, -1); // 获取转换结果
-      lua_pop(L, 1);              // 弹出结果
-    }
-    if (i < nargs)
-      out << "\t";
   }
-  out << std::endl; // 添加一个换行符
-  return 0;
+  // lua["group_output"] = group_output;
+  lua.set_function(
+      "group_output",
+      [this](const string group_id, const string user_id, string message)
+      {
+        CQMessage ms(message);
+        return this->bot->message_output(group_id, user_id, ms); });
 }
-// 用来重定向Lua的print到我们的自定义函数
-void redirect_lua_print(lua_State *L, std::stringstream &out)
+void Lua_Shell::call(const string &func, Message &message)
 {
-  lua_pushlightuserdata(L, &out);
-  lua_pushcclosure(L, lua_custom_print, 1);
-  lua_setglobal(L, "print");
+  dout << "call: " << func;
+  sol::table msg_table = lua.create_table_with(
+      "user_id", message.place.user_id,
+      "user_nm", message.place.user_nm,
+      "group_id", message.place.group_id,
+      "group_nm", message.place.group_nm,
+      "is_group", message.is_group(),
+      "text", message.text.str());
+  lua[func](msg_table);
 }

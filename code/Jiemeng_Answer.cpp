@@ -34,6 +34,7 @@ Operation_List All_Answer::get_list(const Message &message) const
     try
     {
       rt = i->get_list(message);
+      return rt;
     }
     catch (Not_Serious)
     {
@@ -49,6 +50,7 @@ Operation_List Answer_List::get_list(const Message &message) const
     if (i->check(message))
       return i->get_list();
   }
+  dout << "Empty!\n";
   throw Not_Serious();
 }
 
@@ -61,6 +63,7 @@ bool Answer_Group::check(const Message &message) const
 
 bool Answer_Group::type_check(const Message_Place &type) const
 {
+  dout<<level<<" "<<type.level<<"\n";
   if (type.level < level)
     return 0;
   // 1000 级以上的权限无视规则
@@ -212,6 +215,16 @@ void Answer::init(const json &js)
         if (!js["text"].is_string())
           throw invalid_argument("text 被赋了错误的类型。");
         operation.str = js["text"];
+      }
+      else if (js.count("lua_call"))
+      {
+        operation.type = Operation::Type::lua_call;
+        operation.str = js["lua_call"];
+      }
+      else if (js.count("lua_shell"))
+      {
+        operation.type = Operation::Type::lua_shell;
+        operation.str = js["lua_shell"];
       }
       if (js.count("data"))
       {
