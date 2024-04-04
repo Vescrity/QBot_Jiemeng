@@ -1,15 +1,5 @@
 #ifndef JIEMENG_BASIC
 #define JIEMENG_BASIC
-
-#define JIEMENG_VERSION ("v24.99")
-#ifdef _WIN32
-#define JIEMENG_PLATFORM "Jiemeng_Windows (Limited Feature)"
-#include "opstring.h"
-#else
-#define JIEMENG_PLATFORM "Jiemeng_Linux"
-#endif
-#define UPDATE_TIME __DATE__ + " " + __TIME__
-
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

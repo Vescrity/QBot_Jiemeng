@@ -102,9 +102,9 @@ inline void color_puts(const char *s)
 {
   printf("\033[0m\033[1;34m%s\n\033[0m", s);
 }
-inline void color_print(const char *s)
+inline void color_print(const string &s)
 {
-  printf("\033[0m\033[1;34m%s\033[0m", s);
+  printf("\033[0m\033[1;34m%s\033[0m", s.c_str());
 }
 /// @brief YELLOW
 /// @param s

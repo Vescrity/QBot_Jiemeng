@@ -11,13 +11,14 @@ class Message;
 class Message_Place
 {
   bool group_flag;
-  void get_level(Config *);
+  
 public:
   string group_id;
   string group_nm;
   string user_id;
   string user_nm;
   int level;
+  void get_level(Config *);
   bool is_group() const { return group_flag; }
   bool is_private() const { return !group_flag; }
   bool operator==(const Message_Place &a) const { return (group_id == a.group_id) && (user_id == a.user_id); }
@@ -27,8 +28,8 @@ public:
 /// @brief 消息类
 class Message
 {
-  void message_init(const json &, Config *);
-  void notice_init(const json &, Config *);
+  void message_init(const json &);
+  void notice_init(const json &);
   
 public:
   Message_Place place;
@@ -38,7 +39,7 @@ public:
   void show() const;
   bool is_group() const { return place.is_group(); }
   bool is_private() const { return place.is_private(); }
-  void init(const json &, Config *);
+  void init(const json &);
   CQMessage &message() { return text; }
 };
 
