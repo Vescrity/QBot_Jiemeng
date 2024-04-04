@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <sstream>
 #include "Jiemeng_DebugIO.hpp"
+#include "Jiemeng_Version.hpp"
 namespace fs = std::filesystem;
 void Lua_Shell::init(Jiemeng *b)
 {
@@ -34,6 +35,9 @@ void Lua_Shell::init(Jiemeng *b)
       {
         CQMessage ms(message);
         return this->bot->message_output(group_id, user_id, ms); });
+  lua["version"] = JIEMENG_VERSION;
+  lua["platform"] = JIEMENG_PLATFORM;
+  lua["compile_time"] = UPDATE_TIME;
 }
 void Lua_Shell::call(const string &func, Message &message)
 {
@@ -46,4 +50,8 @@ void Lua_Shell::call(const string &func, Message &message)
       "is_group", message.is_group(),
       "text", message.text.str());
   lua[func](msg_table);
+}
+void Lua_Shell::exec(const string &code)
+{
+  lua.script(code);
 }

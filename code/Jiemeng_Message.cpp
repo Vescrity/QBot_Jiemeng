@@ -1,4 +1,5 @@
 #include "Jiemeng_Message.hpp"
+#include "Jiemeng_Version.hpp"
 #include "Jiemeng_LogIO.hpp"
 #include <iostream>
 #include "Jiemeng_Algorithm.hpp"
@@ -8,31 +9,29 @@ void Message_Place::get_level(Config *config)
 {
   level = config->get_admin_level(user_id);
 }
-void Message::init(const json &js, Config *config)
+void Message::init(const json &js)
 {
   if (js["post_type"] != "notice")
-    message_init(js, config);
+    message_init(js);
   else
-    notice_init(js, config);
+    notice_init(js);
 }
-void Message::message_init(const json &js, Config *config)
+void Message::message_init(const json &js)
 {
   place.group_flag = js["message_type"] == "group";
   text.change(string(js["raw_message"]));
   const json &sender = js["sender"];
   place.user_id = to_string(js["user_id"]);
-  place.get_level(config);
-  if (sender["card"].is_null())
+  if (!sender.contains("card"))
+    place.user_nm = sender["nickname"];
+  else if (sender["card"].is_null())
     place.user_nm = sender["nickname"];
   else
     place.user_nm = sender["card"];
   if (is_group())
-  {
     place.group_id = to_string(js["group_id"]);
-    // TODO: get_group_name
-  }
 }
-void Message::notice_init(const json &js, Config *config)
+void Message::notice_init(const json &js)
 {
   const string notice_type = js["notice_type"];
   string able_type[] = {"group_upload", "group_increase", "group_ban", "group_recall", "notify"};
@@ -48,19 +47,17 @@ void Message::notice_init(const json &js, Config *config)
       text = text.str() + ",subtype=" + to_string(js["sub_type"]);
     }
     text.str() += "]";
-    
   }
   else
   {
     /// TODO
   }
-  place.get_level(config);
 }
 
 void print_cutline()
 {
   string hf = "----------------";
-  color_print(hf.c_str());
+  color_print(hf);
   color_print(JIEMENG_PLATFORM);
   color_print(" ");
   color_print(JIEMENG_VERSION);

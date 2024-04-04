@@ -63,7 +63,7 @@ bool Answer_Group::check(const Message &message) const
 
 bool Answer_Group::type_check(const Message_Place &type) const
 {
-  dout<<level<<" "<<type.level<<"\n";
+  dout << level << " " << type.level << "\n";
   if (type.level < level)
     return 0;
   // 1000 级以上的权限无视规则
@@ -79,15 +79,21 @@ bool Answer_Group::group_check(const Message_Place &type) const
 {
   // 群聊被禁用
   if (grps[0] == "0")
+    return type.is_private();
+  if (grps[0] == "private_true" || grps[0] == "-private_true")
+    if (type.is_private())
+      return 1;
+  if (type.is_private())
     return 0;
+
   // 200 级以上的权限在允许群聊的词条中无视规则生效
-  if (type.level >= 200 && type.is_group())
+  if (type.level >= 200)
     return 1;
   // 允许任意生效群聊
-  if (grps[0] == "1")
+  if (grps[0] == "1" || (grps[0] == "private_true" && grps.size() == 1))
     return 1;
   // -1，排除后续指定群聊
-  if (grps[0] == "-1")
+  if (grps[0] == "-1" || grps[0] == "-private_true")
     return !(Vec_Find(grps, type.group_id));
   else
     return (Vec_Find(grps, type.group_id));

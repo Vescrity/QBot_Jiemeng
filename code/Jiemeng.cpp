@@ -44,9 +44,13 @@ void Jiemeng::exec_operation(Message &message, const Operation &operation)
     CQMessage ms(operation.str);
     message_output(message.place, ms);
   }
-  if (operation.type == Type::lua_call)
+  else if (operation.type == Type::lua_call)
   {
     lua.call(operation.str, message);
+  }
+  else if (operation.type == Type::lua_shell)
+  {
+    lua.exec(operation.str);
   }
 }
 void Jiemeng::lua_init()
@@ -91,7 +95,7 @@ void Jiemeng::config_init()
 
 Message Jiemeng::generate_message(const json &js)
 {
-  //dout << js.dump(2) << "\n";
+  // dout << js.dump(2) << "\n";
   const string &post_type = js["post_type"];
   string able_type[] = {"message", "message_sent", "notice"};
   if (!array_search(post_type, able_type))
@@ -102,8 +106,20 @@ Message Jiemeng::generate_message(const json &js)
   else
   {
     Message message;
-    message.init(js, &config);
+    message.init(js);
+    message.place.get_level(&config);
+    if (message.is_group())
+      message.place.group_nm = get_group_name(message.place.group_id);
     return message;
   }
   throw Not_Serious();
+}
+
+string Jiemeng::get_group_name(const string &group_id)
+{
+  json js;
+  js["params"]["group_id"] = stoi(group_id);
+  js["action"] = "get_group_info";
+  js = server.ws_send(js);
+  return js["data"]["group_name"];
 }
