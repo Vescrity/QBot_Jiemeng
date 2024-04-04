@@ -15,7 +15,8 @@ public:
     message,
     order, // json order
     lua_call,
-    lua_shell
+    lua_shell,
+    ignore
   } type;
   bool is_json;
   json data;
