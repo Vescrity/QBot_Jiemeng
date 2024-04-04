@@ -5,12 +5,13 @@
 #include "Jiemeng_CQJson.hpp"
 using json = nlohmann::json;
 using string = std::string;
+class Config;
 class Message;
 /// @brief 消息位置
 class Message_Place
 {
   bool group_flag;
-
+  void get_level(Config *);
 public:
   string group_id;
   string group_nm;
@@ -26,9 +27,9 @@ public:
 /// @brief 消息类
 class Message
 {
-  void message_init(const json &);
-  void notice_init(const json &);
-
+  void message_init(const json &, Config *);
+  void notice_init(const json &, Config *);
+  
 public:
   Message_Place place;
   CQMessage text;
@@ -37,7 +38,7 @@ public:
   void show() const;
   bool is_group() const { return place.is_group(); }
   bool is_private() const { return place.is_private(); }
-  void init(const json &);
+  void init(const json &, Config *);
   CQMessage &message() { return text; }
 };
 

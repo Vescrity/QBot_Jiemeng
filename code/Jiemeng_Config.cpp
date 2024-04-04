@@ -5,7 +5,24 @@ void Config::init(const json &js)
 {
   try
   {
-    js_getval(port,js,"port");
+    js_getval(port,                       js, "port"                                            );
+    //js_getval(sleep_time,                 js, "sleep_time",                 50                  );
+    //js_getval(delay_time,                 js, "delay_time",                 2000                );
+    //js_getval(Time_Check_Delay,           js, "Time_Check_Delay",           30000               );
+    //js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
+    //js_getval(MAX_TEXT_LENGTH,            js, "MAX_TEXT_LENGTH",            1 << 10             );
+    //js_getval(MAX_SINGLE_MESSAGE_LENGTH,  js, "MAX_SINGLE_MESSAGE_LENGTH",  1 << 11             );
+    //js_getval(MAX_MESSAGE_LENGTH,         js, "MAX_MESSAGE_LENGTH",         1 << 14             );
+    //js_getval(TITLE,                      js, "TITLE",                      "Jiemeng"s + Self_ID);
+    //js_getval(pswd,                       js, "pswd",                       1234                );
+    //js_getval(Debug_Mode,                 js, "Debug_Mode",                 false               );
+    is_private_black = bool(js["private_black"]);
+    admin_list = js["admin_list"];
+    private_list = js["private_list"].get<vector<string>>();
+    black_list = js["black_list"].get<vector<string>>();
+    group_list = js["group_list"].get<vector<string>>();
+    if (js.count("broad_List"))
+      broad_list = js["broad_list"].get<vector<string>>();
   }
   catch(const std::exception &e)
   {
