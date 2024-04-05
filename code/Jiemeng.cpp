@@ -7,11 +7,30 @@
 #include <nlohmann/json.hpp>
 #include "Jiemeng_Algorithm.hpp"
 #include "Jiemeng_Operation.hpp"
+#include "Jiemeng_Socket.hpp"
+#include "Jiemeng_Lua.hpp"
+#include "Jiemeng_Deck.hpp"
 using namespace std;
 
 void work_dir_check()
 {
 }
+
+Jiemeng::Jiemeng()
+{
+  init();
+}
+Jiemeng::~Jiemeng()
+{
+  clear();
+}
+void Jiemeng::clear()
+{
+  delete server;
+  delete lua;
+  delete deck;
+}
+
 void Jiemeng::init()
 {
   config_init();
@@ -21,6 +40,12 @@ void Jiemeng::init()
   server_init();
 }
 
+void Jiemeng::server_init()
+{
+  server = new Server;
+  server->init("127.0.0.1", config.port);
+}
+json Jiemeng::ws_send(json &a) { return server->ws_send(a); }
 void Jiemeng::process_message(Message message)
 {
   try
@@ -36,38 +61,21 @@ void Jiemeng::process_message(Message message)
   {
   }
 }
-using Type = Operation::Type;
-void Jiemeng::exec_operation(Message &message, const Operation &operation)
-{
-  if (operation.type == Type::message)
-  {
-    CQMessage ms(operation.str);
-    message_output(message.place, ms);
-  }
-  else if (operation.type == Type::lua_call)
-  {
-    lua.call(operation.str, message);
-  }
-  else if (operation.type == Type::lua_shell)
-  {
-    CQMessage ms(lua.exec(operation.str));
-    message_output(message.place, ms);
-  }
-}
+
 void Jiemeng::lua_init()
 {
-  lua.init(this);
+  lua = new Lua_Shell(this);
 }
 void Jiemeng::run()
 {
   std::thread([this]
-              { server.run(); })
+              { server->run(); })
       .detach();
   while (1)
   {
     try
     {
-      Message msg = generate_message(server.get_message());
+      Message msg = generate_message(server->get_message());
       msg.show();
       std::thread([this, msg]
                   { this->process_message(msg); })
@@ -87,6 +95,7 @@ void Jiemeng::answer_init()
 
 void Jiemeng::deck_init()
 {
+  deck = new Deck;
 }
 void Jiemeng::config_init()
 {
@@ -121,6 +130,6 @@ string Jiemeng::get_group_name(const string &group_id)
   json js;
   js["params"]["group_id"] = stoi(group_id);
   js["action"] = "get_group_info";
-  js = server.ws_send(js);
+  js = server->ws_send(js);
   return js["data"]["group_name"];
 }

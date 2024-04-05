@@ -17,7 +17,7 @@ void Lua_Shell::init(Jiemeng *b)
     for (const auto &entry : fs::directory_iterator(path))
     {
       if (entry.path().extension() == ".lua")
-      { // 确保是.lua文件
+      { 
         try
         {
           // 执行Lua脚本
