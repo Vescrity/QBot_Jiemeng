@@ -4,40 +4,51 @@
 #include <iostream>
 #include <filesystem>
 #include <sstream>
-#include "Jiemeng_DebugIO.hpp"
+#include "Jiemeng_LogIO.hpp"
 #include "Jiemeng_Version.hpp"
 namespace fs = std::filesystem;
 void Lua_Shell::init(Jiemeng *b)
 {
   lua.open_libraries(sol::lib::base);
   bot = b;
-  string folder_path = "./luarc";
-  for (const auto &entry : fs::directory_iterator(folder_path))
+  //string folder_path = "./luarc";
+  auto lua_load = [this](const string &path)
   {
-    if (entry.path().extension() == ".lua")
-    { // 确保是.lua文件
-      try
-      {
-        // 执行Lua脚本
-        lua.script_file(entry.path().string());
-        std::cout << "Executed: " << entry.path().filename() << std::endl;
-      }
-      catch (const sol::error &e)
-      {
-        std::cerr << "Failed to execute " << entry.path().filename() << " due to: " << e.what() << std::endl;
+    for (const auto &entry : fs::directory_iterator(path))
+    {
+      if (entry.path().extension() == ".lua")
+      { // 确保是.lua文件
+        try
+        {
+          // 执行Lua脚本
+          lua.script_file(entry.path().string());
+          dout << "Executed: " << string(entry.path().filename()) << "\n";
+        }
+        catch (const sol::error &e)
+        {
+          error_puts(string("Failed to execute ") + string(entry.path().filename()));
+          JM_EXCEPTION("[Lua_Shell]")
+        }
       }
     }
-  }
-  // lua["group_output"] = group_output;
+  };
+  lua_load("./luarc");
+  lua_load("./user_luarc");
+  lua["_version"] = JIEMENG_VERSION;
+  lua["_platform"] = JIEMENG_PLATFORM;
+  lua["_compile_time"] = UPDATE_TIME;
   lua.set_function(
       "group_output",
-      [this](const string group_id, const string user_id, string message)
+      [this](const string group_id, string message)
       {
         CQMessage ms(message);
-        return this->bot->message_output(group_id, user_id, ms); });
-  lua["version"] = JIEMENG_VERSION;
-  lua["platform"] = JIEMENG_PLATFORM;
-  lua["compile_time"] = UPDATE_TIME;
+        return this->bot->group_output(group_id, ms); });
+  lua.set_function(
+      "private_output",
+      [this](const string user_id, string message)
+      {
+        CQMessage ms(message);
+        return this->bot->private_output(user_id, ms); });
 }
 void Lua_Shell::call(const string &func, Message &message)
 {
@@ -51,7 +62,9 @@ void Lua_Shell::call(const string &func, Message &message)
       "text", message.text.str());
   lua[func](msg_table);
 }
-void Lua_Shell::exec(const string &code)
+string Lua_Shell::exec(const string &code)
 {
-  lua.script(code);
+  string str;
+  str = lua.script(code);
+  return str;
 }

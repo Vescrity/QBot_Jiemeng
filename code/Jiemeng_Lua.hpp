@@ -13,7 +13,7 @@ class Lua_Shell
 public:
   void init(Jiemeng *b);
   void call(const string &, Message &);
-  void exec(const string &);
+  string exec(const string &);
 };
 
 #endif
