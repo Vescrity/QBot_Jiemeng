@@ -181,37 +181,15 @@ void Answer::init(const json &js)
   }
   else if (js.is_object())
   {
-    if (js.count("anss"))
+    if (js.count("and"))
     {
-      if (js.count("is_and"))
-      {
-        try
-        {
-          if (!js["is_and"].is_boolean())
-            throw invalid_argument("is_and 被提供了错误的值。应当为 true/false。将按照 true 处理。");
-          and_flag = js["is_and"];
-        }
-        catch (invalid_argument &e)
-        {
-          JM_EXCEPTION("[Answer]");
-          and_flag = true;
-        }
-      }
-      else if (js.count("is_or"))
-      {
-        try
-        {
-          if (!js["is_or"].is_boolean())
-            throw invalid_argument("is_or 被提供了错误的值。应当为 true/false。将按照 true 处理。");
-          and_flag = !js["is_or"];
-        }
-        catch (invalid_argument &e)
-        {
-          JM_EXCEPTION("[Answer]");
-          and_flag = false;
-        }
-      }
-      Array_init(js["anss"]);
+      and_flag = true;
+      Array_init(js["and"]);
+    }
+    else if (js.count("or"))
+    {
+      and_flag = false;
+      Array_init(js["or"]);
     }
     else
     {

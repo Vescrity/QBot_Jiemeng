@@ -128,9 +128,9 @@ inline void error_lable(const char *s)
   print_time_mark();
   printf("\033[0m\033[5;7;31m%s\033[0m", s);
 }
-inline void error_puts(const char *s)
+inline void error_puts(const string &s)
 {
-  printf("\033[0m\033[5;31m%s\n\033[0m", s);
+  printf("\033[0m\033[5;31m%s\n\033[0m", s.c_str());
 }
 inline void error_print(const char *s)
 {

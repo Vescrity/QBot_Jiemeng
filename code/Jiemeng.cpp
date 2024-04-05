@@ -14,8 +14,8 @@ void work_dir_check()
 }
 void Jiemeng::init()
 {
-  lua_init();
   config_init();
+  lua_init();
   deck_init();
   answer_init();
   server_init();
@@ -50,7 +50,8 @@ void Jiemeng::exec_operation(Message &message, const Operation &operation)
   }
   else if (operation.type == Type::lua_shell)
   {
-    lua.exec(operation.str);
+    CQMessage ms(lua.exec(operation.str));
+    message_output(message.place, ms);
   }
 }
 void Jiemeng::lua_init()
