@@ -3,18 +3,17 @@
 
 #include "Jiemeng_Config.hpp"
 #include "Jiemeng_Answer.hpp"
-#include "Jiemeng_Socket.hpp"
-#include "Jiemeng_Message.hpp"
-#include "Jiemeng_Lua.hpp"
 class Operation;
-
+class Server;
+class Lua_Shell;
+class Deck;
 class Jiemeng
 {
-  /*Deck deck;*/
+  Deck *deck;
   All_Answer answer;
   Config config;
-  Server server;
-  Lua_Shell lua;
+  Server *server;
+  Lua_Shell *lua;
   Message generate_message(const json &);
   void process_message(Message);
   bool message_output(Message &);
@@ -26,14 +25,17 @@ class Jiemeng
   void deck_init();
   void answer_init();
   void config_init();
-  void server_init() { server.init("127.0.0.1", config.port); }
+  void server_init();
   void lua_init();
   friend class Lua_Shell;
 
 public:
+  Jiemeng();
+  ~Jiemeng();
   void init();
+  void clear();
   void run();
-  json ws_send(json &a) { return server.ws_send(a); }
+  json ws_send(json &a);
 };
 
 void work_dir_check();

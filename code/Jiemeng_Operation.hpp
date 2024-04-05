@@ -16,7 +16,8 @@ public:
     order, // json order
     lua_call,
     lua_shell,
-    ignore
+    ignore,
+    draw_deck
   } type;
   bool is_json;
   json data;

@@ -1,9 +1,9 @@
 #ifndef JIEMENG_ANSWER
 #define JIEMENG_ANSWER
 #include "Jiemeng_Operation.hpp"
-#include "Jiemeng_Message.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_JsonRegex.hpp"
+#include "Jiemeng_Message.hpp"
 #include <vector>
 using namespace std;
 

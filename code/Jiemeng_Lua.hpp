@@ -9,9 +9,10 @@ class Lua_Shell
 {
   sol::state lua;
   Jiemeng *bot;
+  void init(Jiemeng *b);
 
 public:
-  void init(Jiemeng *b);
+  Lua_Shell(Jiemeng *b) { init(b); };
   void call(const string &, Message &);
   string exec(const string &);
 };
