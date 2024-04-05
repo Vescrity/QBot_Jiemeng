@@ -9,15 +9,15 @@
 namespace fs = std::filesystem;
 void Lua_Shell::init(Jiemeng *b)
 {
-  lua.open_libraries(sol::lib::base);
+  lua.open_libraries();
   bot = b;
-  //string folder_path = "./luarc";
+  // string folder_path = "./luarc";
   auto lua_load = [this](const string &path)
   {
     for (const auto &entry : fs::directory_iterator(path))
     {
       if (entry.path().extension() == ".lua")
-      { 
+      {
         try
         {
           // 执行Lua脚本
@@ -53,18 +53,32 @@ void Lua_Shell::init(Jiemeng *b)
 void Lua_Shell::call(const string &func, Message &message)
 {
   dout << "call: " << func;
-  sol::table msg_table = lua.create_table_with(
-      "user_id", message.place.user_id,
-      "user_nm", message.place.user_nm,
-      "group_id", message.place.group_id,
-      "group_nm", message.place.group_nm,
-      "is_group", message.is_group(),
-      "text", message.text.str());
-  lua[func](msg_table);
+  try
+  {
+    sol::table msg_table = lua.create_table_with(
+        "user_id", message.place.user_id,
+        "user_nm", message.place.user_nm,
+        "group_id", message.place.group_id,
+        "group_nm", message.place.group_nm,
+        "is_group", message.is_group(),
+        "text", message.text.str());
+    lua[func](msg_table);
+  }
+  catch (const sol::error &e)
+  {
+    JM_EXCEPTION("[Lua_Call]")
+  }
 }
 string Lua_Shell::exec(const string &code)
 {
   string str;
-  str = lua.script(code);
+  try
+  {
+    str = lua.script(code);
+  }
+  catch (const sol::error &e)
+  {
+    JM_EXCEPTION("[Lua_Call]")
+  }
   return str;
 }
