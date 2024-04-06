@@ -1,6 +1,6 @@
 function lua_order_explain(script)
     local n = string.find(script, '#')
-    local scriptToExecute = string.sub(script, n+1)
+    local scriptToExecute = string.sub(script, n + 1)
     if scriptToExecute then
         local func, err = load(scriptToExecute)
         if not func then
@@ -13,7 +13,7 @@ function lua_order_explain(script)
     end
 end
 function lua_order(order)
-    local t = lua_order_explain(order.text)
+    local t = lua_order_explain(order.true_text)
     order.text = tostring(t)
     message_output(order)
 end

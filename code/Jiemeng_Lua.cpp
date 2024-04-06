@@ -6,6 +6,7 @@
 #include <sstream>
 #include "Jiemeng_LogIO.hpp"
 #include "Jiemeng_Version.hpp"
+#include "Jiemeng_Deck.hpp"
 namespace fs = std::filesystem;
 void Lua_Shell::init(Jiemeng *b)
 {
@@ -49,10 +50,14 @@ void Lua_Shell::init(Jiemeng *b)
       {
         CQMessage ms(message);
         return this->bot->private_output(user_id, ms); });
+  lua.set_function(
+      "deck_draw",
+      [this](const string key)
+      { return this->bot->deck->draw(key); });
 }
 void Lua_Shell::call(const string &func, Message &message)
 {
-  dout << "call: " << func;
+  dout << "call: " << func << "\n";
   try
   {
     sol::table msg_table = lua.create_table_with(
@@ -61,8 +66,11 @@ void Lua_Shell::call(const string &func, Message &message)
         "group_id", message.place.group_id,
         "group_nm", message.place.group_nm,
         "is_group", message.is_group(),
-        "text", message.text.str());
-    lua[func](msg_table);
+        "true_text", message.text.true_str(),
+        "text", message.text.const_str());
+    auto result = lua[func](msg_table);
+    if (!result.valid())
+      throw sol::error(result);
   }
   catch (const sol::error &e)
   {

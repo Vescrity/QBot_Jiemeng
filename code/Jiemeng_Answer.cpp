@@ -71,7 +71,6 @@ bool Answer_Group::check(const Message &message) const
 
 bool Answer_Group::type_check(const Message_Place &type) const
 {
-  dout << level << " " << type.level << "\n";
   if (type.level < level)
     return 0;
   // 1000 级以上的权限无视规则

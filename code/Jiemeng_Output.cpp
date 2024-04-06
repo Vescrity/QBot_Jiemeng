@@ -2,6 +2,8 @@
 #include "txt2img_api.hpp"
 bool Jiemeng::private_output(const string &user_id, CQMessage &message)
 {
+  if (message.str().length() == 0)
+    return false;
   json send_data, rt;
   send_data["action"] = "send_private_msg";
   send_data["params"]["user_id"] = stoi(user_id);
@@ -13,6 +15,8 @@ bool Jiemeng::private_output(const string &user_id, CQMessage &message)
 }
 bool Jiemeng::group_output(const string &group_id, CQMessage &message)
 {
+  if (message.str().length() == 0)
+    return false;
   json send_data, rt;
   send_data["action"] = "send_group_msg";
   send_data["params"]["group_id"] = stoi(group_id);
