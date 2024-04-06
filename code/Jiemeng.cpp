@@ -54,9 +54,19 @@ void Jiemeng::process_message(Message message)
   {
     Operation_List list = answer.get_list(message);
     list.upgrade(message);
+    string str;
     for (auto i : list.list)
     {
-      exec_operation(message, i);
+      try
+      {
+        str = str + exec_operation(message, i);
+      }
+      catch (Operation::Clear)
+      {
+        CQMessage ms(str);
+        message_output(message.place, ms);
+        str = "";
+      }
     }
   }
   catch (Not_Serious)
@@ -126,7 +136,6 @@ void Jiemeng::config_init()
   ifstream fread("config.json");
   config.init(json::parse(fread));
 }
-
 Message Jiemeng::generate_message(const json &js)
 {
   // dout << js.dump(2) << "\n";

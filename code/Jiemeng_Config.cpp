@@ -23,6 +23,7 @@ void Config::init(const json &js)
     private_list = js["private_list"].get<vector<string>>();
     black_list = js["black_list"].get<vector<string>>();
     group_list = js["group_list"].get<vector<string>>();
+    custom_config = js["Custom_Config"];
     if (js.count("broad_List"))
       broad_list = js["broad_list"].get<vector<string>>();
   }

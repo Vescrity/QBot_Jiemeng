@@ -17,11 +17,15 @@ public:
     lua_call,
     lua_shell,
     ignore,
-    draw_deck
+    draw_deck,
+    clear
   } type;
   bool is_json;
   json data;
   string str;
+  class Clear : std::exception
+  {
+  };
 };
 
 class Operation_List

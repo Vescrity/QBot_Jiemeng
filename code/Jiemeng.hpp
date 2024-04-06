@@ -21,7 +21,7 @@ class Jiemeng
   bool group_output(const string &group_id, CQMessage &message);
   bool private_output(const string &user_id, CQMessage &message);
   string get_group_name(const string &group_id);
-  void exec_operation(Message &, const Operation &);
+  string exec_operation(Message &, const Operation &);
   void deck_init();
   void answer_init();
   void config_init();
