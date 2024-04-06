@@ -27,6 +27,7 @@ class Jiemeng
   void config_init();
   void server_init();
   void lua_init();
+  void answer_reload();
   friend class Lua_Shell;
 
 public:
