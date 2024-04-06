@@ -14,7 +14,7 @@ using namespace std;
 
 void work_dir_check()
 {
-  //TODO
+  // TODO
 }
 
 Jiemeng::Jiemeng()
@@ -132,5 +132,12 @@ string Jiemeng::get_group_name(const string &group_id)
   js["params"]["group_id"] = stoi(group_id);
   js["action"] = "get_group_info";
   js = server->ws_send(js);
-  return js["data"]["group_name"];
+  if (js["data"].is_null())
+    return "";
+  else if (!js["data"].contains("group_name"))
+    return "";
+  js = js["data"]["group_name"];
+  if (js.is_null())
+    return "";
+  return js;
 }

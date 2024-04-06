@@ -34,7 +34,9 @@ void Message::message_init(const json &js)
 void Message::notice_init(const json &js)
 {
   const string notice_type = js["notice_type"];
-  string able_type[] = {"group_upload", "group_increase", "group_ban", "group_recall", "notify"};
+  string able_type[] = {
+      "group_upload", "group_increase", "group_ban",
+      "group_admin", "group_recall", "notify"};
   if (array_search(notice_type, able_type))
   {
     place.group_flag = 1;
@@ -51,6 +53,7 @@ void Message::notice_init(const json &js)
   else
   {
     /// TODO
+    throw Not_Serious();
   }
 }
 

@@ -1,5 +1,5 @@
 #include "Jiemeng_CQJson.hpp"
-
+#include "opstring.h"
 std::string json2CQ(const json &message)
 {
   std::string cqCode;
@@ -24,6 +24,7 @@ std::string json2CQ(const json &message)
       str_replace(value, "&", "&amp;");
       str_replace(value, "[", "&#91;");
       str_replace(value, "]", "&#93;");
+      str_replace(value, ",", "&#44;");
       cqCode += "," + key + "=" + value;
     }
     cqCode += "]";
@@ -70,6 +71,10 @@ json CQ2json(const string &message)
         fedPos = fstPos;
         fedPos = (fedPos == string::npos) ? (cqCode.length() - 1) : fstPos;
         value = cqCode.substr(feqPos + 1, fedPos - feqPos - 1);
+        str_replace(value, "&#91;", "[");
+        str_replace(value, "&#93;", "]");
+        str_replace(value, "&#44;", ",");
+        str_replace(value, "&amp;", "&");
         cqData[cqKey] = value;
       } while (fstPos != string::npos);
     }
@@ -78,6 +83,9 @@ json CQ2json(const string &message)
       cqType = "text";
       if (cqCode.length() == 0)
         continue;
+      str_replace(cqCode, "&#91;", "[");
+      str_replace(cqCode, "&#93;", "]");
+      str_replace(cqCode, "&amp;", "&");
       cqData["text"] = cqCode;
     }
   ret:
@@ -100,4 +108,16 @@ void CQMessage::generate_string()
     throw runtime_error("未初始化");
   cq = json2CQ(js);
   string_ready = 1;
+}
+string CQMessage::true_str()
+{
+  get_json();
+  string rt;
+  for (auto &item : js)
+  {
+    std::string cqType = item["type"];
+    if (cqType == "text")
+      rt += item["data"]["text"];
+  }
+  return rt;
 }

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
-#include "opstring.h"
+
 using json = nlohmann::json;
 using string = std::string;
 
@@ -39,7 +39,13 @@ public:
       generate_string();
     return cq;
   }
-  string &str() { return get_string(); }
+  string &str()
+  {
+    json_ready = 0;
+    return get_string();
+  }
+  string const_str() { return get_string(); }
+  string true_str();
   void change(const json &j)
   {
     js = j;
