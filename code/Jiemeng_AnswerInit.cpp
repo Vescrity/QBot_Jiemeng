@@ -1,125 +1,47 @@
 #include "Jiemeng_Answer.hpp"
+#include "Jiemeng_Operation.hpp"
 #include "Jiemeng_Exception.hpp"
 #include "Jiemeng_Algorithm.hpp"
-#include <algorithm>
-#include <fstream>
-#include <iostream>
 #include <filesystem>
+#include <fstream>
 #include <sstream>
 namespace fs = std::filesystem;
+using Type = Operation::Type;
 json ans_merge(const std::string &folderPath);
-
+Answer_List *main_answer_read(const json &custom)
+{
+  Answer_List *p = new Answer_List;
+  std::ostringstream oss;
+  oss << ans_merge("./Answer");
+  string strdata = oss.str();
+  strdata = string_format_with_json("{~", "}", custom, strdata);
+  p->init(json::parse(strdata));
+  return p;
+}
+void All_Answer::main_answer_reload(const json &custom)
+{
+  for (auto i : answer_list)
+  {
+    if (i->priority == 0)
+    {
+      delete i;
+      i = main_answer_read(custom);
+      return;
+    }
+  }
+}
 void All_Answer::init(const json &custom)
 {
   try
   {
-    Answer_List *p = new Answer_List;
-    std::ostringstream oss;
-    oss << ans_merge("./Answer");
-    string strdata = oss.str();
-    strdata = string_format_with_json("{~", "}", custom, strdata);
-    p->init(json::parse(strdata));
+    clear();
+    Answer_List *p = main_answer_read(custom);
     answer_list.push_back(p);
   }
   catch (std::exception &e)
   {
     JM_EXCEPTION("[Answer_init]")
   }
-}
-using Type = Operation::Type;
-Operation_List All_Answer::get_list(const Message &message) const
-{
-  Operation_List rt;
-  for (auto i : answer_list)
-  {
-    try
-    {
-      rt = i->get_list(message);
-      return rt;
-    }
-    catch (Not_Serious)
-    {
-      continue;
-    }
-  }
-  throw Not_Serious();
-}
-Operation_List Answer_List::get_list(const Message &message) const
-{
-  Operation_List rt;
-  for (auto i : answer_group)
-  {
-    if (i->check(message))
-    {
-      rt += i->get_list();
-      if (rt.list.back().type == Type::ignore)
-        continue;
-      else
-        return rt;
-    }
-  }
-  dout << "Empty!\n";
-  throw Not_Serious();
-}
-
-bool Answer_Group::check(const Message &message) const
-{
-  if (type_check(message.place))
-    return regex.check(message.text);
-  return 0;
-}
-
-bool Answer_Group::type_check(const Message_Place &type) const
-{
-  if (type.level < level)
-    return 0;
-  // 1000 级以上的权限无视规则
-  if (type.level >= 1000)
-    return 1;
-  if (both_flag)
-    return group_check(type) && user_check(type);
-  else
-    return group_check(type) || user_check(type);
-}
-
-bool Answer_Group::group_check(const Message_Place &type) const
-{
-  // 群聊被禁用
-  if (grps[0] == "0")
-    return type.is_private();
-  if (grps[0] == "private_true" || grps[0] == "-private_true")
-    if (type.is_private())
-      return 1;
-  if (type.is_private())
-    return 0;
-
-  // 200 级以上的权限在允许群聊的词条中无视规则生效
-  if (type.level >= 200)
-    return 1;
-  // 允许任意生效群聊
-  if (grps[0] == "1" || (grps[0] == "private_true" && grps.size() == 1))
-    return 1;
-  // -1，排除后续指定群聊
-  if (grps[0] == "-1" || grps[0] == "-private_true")
-    return !(Vec_Find(grps, type.group_id));
-  else
-    return (Vec_Find(grps, type.group_id));
-}
-bool Answer_Group::user_check(const Message_Place &type) const
-{
-  // 200 级以上
-  if (type.level >= 200)
-    return 1;
-  // 允许任意有效用户
-  if (user[0] == "1")
-    return 1;
-  if (user[0] == "0")
-    return 0;
-  // -1，排除后续指定用户
-  if (user[0] == "-1")
-    return !(Vec_Find(user, type.user_id));
-  else
-    return (Vec_Find(user, type.user_id));
 }
 
 void Answer_Group::init(const json &js)
@@ -256,20 +178,7 @@ void Answer::Array_init(const json &js)
     }
   }
 }
-Operation_List Answer::get_list() const
-{
-  Operation_List rt;
-  if (is_leaf())
-    return rt + operation;
-  if (is_and())
-  {
-    for (auto &i : sub_ans)
-      rt += i->get_list();
-    return rt;
-  }
-  else
-    return sub_ans[rand_get()]->get_list();
-}
+
 
 json ans_merge(const std::string &folderPath)
 {

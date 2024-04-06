@@ -126,6 +126,10 @@ void Jiemeng::answer_init()
 {
   answer.init(config.custom_config);
 }
+void Jiemeng::answer_reload()
+{
+  answer.main_answer_reload(config.custom_config);
+}
 
 void Jiemeng::deck_init()
 {

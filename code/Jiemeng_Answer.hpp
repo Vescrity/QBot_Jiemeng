@@ -71,6 +71,7 @@ public:
   int priority;
   void init(const json &js)
   {
+    clear();
     for (auto &i : js["Answers"])
     {
       Answer_Group *ans = new Answer_Group(i);
@@ -91,15 +92,16 @@ public:
 class All_Answer
 {
   vector<Answer_List *> answer_list;
-
 public:
-  ~All_Answer()
+  void clear()
   {
     for (auto i : answer_list)
       delete i;
     answer_list.clear();
   }
+  ~All_Answer() { clear(); }
   void init(const json &);
+  void main_answer_reload(const json &);
   Operation_List get_list(const Message &message) const;
 };
 /*
