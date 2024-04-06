@@ -11,7 +11,7 @@ class Message;
 class Message_Place
 {
   bool group_flag;
-  
+
 public:
   string group_id;
   string group_nm;
@@ -19,6 +19,8 @@ public:
   string user_nm;
   int level;
   void get_level(Config *);
+  void set_private() { group_flag = 0; }
+  void set_group() { group_flag = 1; }
   bool is_group() const { return group_flag; }
   bool is_private() const { return !group_flag; }
   bool operator==(const Message_Place &a) const { return (group_id == a.group_id) && (user_id == a.user_id); }
@@ -30,7 +32,7 @@ class Message
 {
   void message_init(const json &);
   void notice_init(const json &);
-  
+
 public:
   Message_Place place;
   CQMessage text;

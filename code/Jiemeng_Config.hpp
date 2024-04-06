@@ -8,8 +8,6 @@ using namespace std;
 using json=nlohmann::json;
 class Config
 {
-
-  
   vector<string> private_list;
   vector<string> black_list;
   vector<string> group_list;
@@ -20,6 +18,7 @@ public:
   string port;
   string self_id;
   int text_length;
+  int time_check;
   void add_group_list     (const string &id) { group_list.push_back(id); }
   void add_private_list   (const string &id) { private_list.push_back(id); }
   void add_black_list     (const string &id) { black_list.push_back(id); }

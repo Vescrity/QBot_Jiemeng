@@ -10,7 +10,7 @@ void Config::init(const json &js)
     js_getval(port,                       js, "port"                                            );
   //js_getval(sleep_time,                 js, "sleep_time",                 50                  );
   //js_getval(delay_time,                 js, "delay_time",                 2000                );
-  //js_getval(Time_Check_Delay,           js, "Time_Check_Delay",           30000               );
+    js_getval(time_check,                 js, "time_check",                 30000               );
   //js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
     js_getval(text_length,                js, "text_length",                1 << 10             );
   //js_getval(MAX_SINGLE_MESSAGE_LENGTH,  js, "MAX_SINGLE_MESSAGE_LENGTH",  1 << 11             );

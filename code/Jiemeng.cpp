@@ -10,6 +10,7 @@
 #include "Jiemeng_Socket.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng_Deck.hpp"
+#include "Jiemeng_Time.hpp"
 using namespace std;
 
 void work_dir_check()
@@ -71,6 +72,28 @@ void Jiemeng::run()
 {
   std::thread([this]
               { server->run(); })
+      .detach();
+  std::thread(
+      [this]
+      { 
+        string ti,tp;
+        for(;;)
+        {
+          Time_Class tm;
+          Message msg;
+          msg.place.user_id="10000";
+          msg.place.user_nm="时钟消息";
+          msg.place.set_private();
+          ti=tm.time_mark();
+          if(ti!=tp){
+            tp=ti;
+            msg.text.change(ti);
+            std::thread([this, msg]
+                  { this->process_message(msg); })
+            .detach();
+          }
+          minisleep(config.time_check);
+        } })
       .detach();
   while (1)
   {
