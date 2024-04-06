@@ -9,6 +9,7 @@
 #include "Jiemeng_Exception.hpp"
 #include "Jiemeng_JsonTemplate.hpp"
 #include <sstream>
+#include <memory>
 using string = std::string;
 
 #define Vec_Find(a, b) (find((a).begin(), (a).end(), b) != (a).end())
@@ -30,9 +31,9 @@ bool vec_remove_first_value(std::vector<T> &vec, const T &value_to_remove)
   return false;
 }
 /// @brief 数组中是否含有 a
-/// @param a 
-/// @param b 
-/// @return 
+/// @param a
+/// @param b
+/// @return
 template <typename T, size_t N>
 bool array_search(const T &a, const T (&b)[N])
 {
@@ -59,7 +60,6 @@ void Get_Para(const std::string &str, int n, std::vector<std::string> *result, c
 /// @return string after replace
 std::string Basic_String_Replace(const string &begin, const string &end, const string &input, std::function<std::string(const string &)> rule);
 
-
 using json = nlohmann::json;
 /// @brief According to the json_pointer between `begin` and `end`, replace the given string.
 /// @param begin The beginning delimiter for the text to be replaced.
@@ -68,6 +68,9 @@ using json = nlohmann::json;
 /// @param format The string need to replace
 /// @return String after change
 std::string string_format_with_json(const string &begin, const string &end, const json &js, const std::string &format);
-
-
+/// @brief 分割字符
+/// @param str
+/// @param cut
+/// @return
+std::unique_ptr<std::vector<std::string>> string_cut(const std::string &str, const std::string &cut);
 #endif

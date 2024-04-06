@@ -1,5 +1,6 @@
 #include "Jiemeng_Algorithm.hpp"
 #include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
 
 void Get_Para(const std::string &str, int n, std::vector<std::string> *result, const std::string &cutstr)
@@ -102,4 +103,18 @@ std::string string_format_with_json(const string &begin, const string &end, cons
         }
         return str;
       });
+}
+
+std::unique_ptr<std::vector<std::string>> string_cut(const std::string &a, const std::string &b)
+{
+  auto result = std::make_unique<std::vector<std::string>>();
+  size_t start = 0;
+  size_t end = 0;
+  while ((end = a.find(b, start)) != std::string::npos)
+  {
+    result->push_back(a.substr(start, end - start));
+    start = end + b.length();
+  }
+  result->push_back(a.substr(start)); // Add the last part
+  return result;
 }

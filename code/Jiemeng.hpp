@@ -28,7 +28,9 @@ class Jiemeng
   void server_init();
   void lua_init();
   void answer_reload();
+  void process_operation(Message &, Operation_List &);
   friend class Lua_Shell;
+  friend Operation_List extract(Operation &oper, Message &message, Jiemeng *bot);
 
 public:
   Jiemeng();

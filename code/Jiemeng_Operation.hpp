@@ -7,6 +7,7 @@
 using json = nlohmann::json;
 using string = std::string;
 class Message;
+class Jiemeng;
 class Operation
 {
 public:
@@ -33,7 +34,7 @@ class Operation_List
 
 public:
   std::vector<Operation> list;
-  void upgrade(Message &);
+  void upgrade(Message &, Jiemeng *);
   Operation_List &operator+=(const Operation_List &b)
   {
     list.insert(list.end(), b.list.begin(), b.list.end());
