@@ -55,7 +55,7 @@ void Lua_Shell::init(Jiemeng *b)
       [this](const string key)
       { return this->bot->deck->draw(key); });
 }
-void Lua_Shell::call(const string &func, Message &message)
+string Lua_Shell::call(const string &func, Message &message)
 {
   dout << "call: " << func << "\n";
   try
@@ -71,10 +71,21 @@ void Lua_Shell::call(const string &func, Message &message)
     auto result = lua[func](msg_table);
     if (!result.valid())
       throw sol::error(result);
+    return lua["tostring"](result);
+    /*if (result.get_type() == sol::type::string)
+    {
+      return result;
+    }
+    if (result.get_type() == sol::type::number)
+    {
+      return to_string(double(result));
+    }*/
+    return "";
   }
   catch (const sol::error &e)
   {
     JM_EXCEPTION("[Lua_Call]")
+    return "";
   }
 }
 string Lua_Shell::exec(const string &code)

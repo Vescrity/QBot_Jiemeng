@@ -46,19 +46,17 @@ public:
     ws.handshake(serverHost, "/");
   }
 
-  void listen();
+  void listen(std::function<void(const json &)> func);
   json read(const int &index);
   json get_message();
 };
 
-void WSIO_Cache::listen()
+void WSIO_Cache::listen(std::function<void(const json &)> func)
 {
   try
   {
     while (1)
     {
-      debug_lable("[Listen]");
-      dout << "\n";
       boost::beast::flat_buffer buffer;
       ws.read(buffer);
       std::string message(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
@@ -86,21 +84,23 @@ void WSIO_Cache::listen()
       }
       else
       {
-        // std::thread processThread(ProcessMessage, message);
-        // processThread.detach();
+        std::thread(
+            [this, func, recv]
+            { func(recv); })
+            .detach();
 
-        std::unique_lock<std::mutex> lock(msg_mtx);
+        /*std::unique_lock<std::mutex> lock(msg_mtx);
         msg_cache = recv;
         msg_flag = true;
         lock.unlock();
-        msg_cv.notify_one();
+        msg_cv.notify_one();*/
       }
     }
   }
-
   catch (exception &e)
   {
     JM_EXCEPTION("[WSIO_Cache]");
+    throw e;
   }
 }
 json WSIO_Cache::read(const int &index)
@@ -119,25 +119,12 @@ json WSIO_Cache::get_message()
 {
   std::unique_lock<std::mutex> lock(msg_mtx);
   msg_cv.wait(lock, [&]
-              { return msg_flag; }); 
-  json result = msg_cache;           
-  msg_flag = false;                  
-  lock.unlock();                     
+              { return msg_flag; });
+  json result = msg_cache;
+  msg_flag = false;
+  lock.unlock();
   return result;
 }
-/*
-void WebSocketClient(const std::string &serverHost, const std::string &serverPort)
-{
-  wsio_cache = new WSIO_Cache(serverHost, serverPort);
-  try
-  {
-    wsio_cache->listen();
-  }
-  catch (...)
-  {
-    delete wsio_cache;
-  }
-}*/
 
 //-----Server------
 
@@ -146,26 +133,31 @@ void Server::init(const string &h, const string &p)
   ids = 0;
   host = h;
   port = p;
-  wsio_cache = new WSIO_Cache(host, port);
+  flag = 0;
+  lock = unique_lock(mtx);
 }
-void Server::run()
+void Server::run(std::function<void(const json &)> func)
 {
   while (1)
   {
     try
     {
-      wsio_cache->listen();
+      wsio_cache = new WSIO_Cache(host, port);
+      flag_cache_true();
+      try
+      {
+        wsio_cache->listen(func);
+      }
+      catch (...)
+      {
+        flag_cache_false();
+        delete wsio_cache;
+      }
     }
+
     catch (std::exception &e)
     {
-      delete wsio_cache;
-      wsio_cache = new WSIO_Cache(host, port);
-      std::string msg = "Exception caught: ";
-      msg += e.what();
-      error_lable("[Server]");
-      error_puts(msg.c_str());
-      error_lable("[Server]");
-      error_puts("Backend is down. Try to rebind...");
+      JM_EXCEPTION("[Server]")
       minisleep(5000);
     }
   }
@@ -183,4 +175,26 @@ json Server::ws_send(json &js)
   rt = wsio_cache->read(js["echo"]);
   return rt;
 }
-json Server::get_message() { return wsio_cache->get_message(); }
+json Server::get_message()
+{
+  return get_cache()->get_message();
+}
+WSIO_Cache *Server::get_cache()
+{
+  std::unique_lock lk(mtx);
+  cv.wait(lk, [this]
+          { return flag; });
+  lk.unlock();
+  return wsio_cache;
+}
+void Server::flag_cache_true()
+{
+  flag = 1;
+  lock.unlock();
+  cv.notify_all();
+}
+void Server::flag_cache_false()
+{
+  lock = unique_lock(mtx);
+  flag = 0;
+}

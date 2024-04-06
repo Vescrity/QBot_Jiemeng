@@ -35,11 +35,17 @@ void Jiemeng::clear()
 
 void Jiemeng::init()
 {
+  int st = clock();
   config_init();
   lua_init();
   deck_init();
   answer_init();
   server_init();
+  info_lable("[Start]");
+  char *buf = new char[1 << 10];
+  sprintf(buf, "配置加载成功！本次加载共耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
+  info_puts(buf);
+  delete[] buf;
 }
 
 void Jiemeng::server_init()
@@ -48,26 +54,30 @@ void Jiemeng::server_init()
   server->init("127.0.0.1", config.port);
 }
 json Jiemeng::ws_send(json &a) { return server->ws_send(a); }
+void Jiemeng::process_operation(Message &message, Operation_List &list)
+{
+  list.upgrade(message, this);
+  string str;
+  for (auto i : list.list)
+  {
+    try
+    {
+      str = str + exec_operation(message, i);
+    }
+    catch (Operation::Clear)
+    {
+      CQMessage ms(str);
+      message_output(message.place, ms);
+      str = "";
+    }
+  }
+}
 void Jiemeng::process_message(Message message)
 {
   try
   {
     Operation_List list = answer.get_list(message);
-    list.upgrade(message);
-    string str;
-    for (auto i : list.list)
-    {
-      try
-      {
-        str = str + exec_operation(message, i);
-      }
-      catch (Operation::Clear)
-      {
-        CQMessage ms(str);
-        message_output(message.place, ms);
-        str = "";
-      }
-    }
+    process_operation(message, list);
   }
   catch (Not_Serious)
   {
@@ -80,9 +90,6 @@ void Jiemeng::lua_init()
 }
 void Jiemeng::run()
 {
-  std::thread([this]
-              { server->run(); })
-      .detach();
   std::thread(
       [this]
       { 
@@ -105,7 +112,23 @@ void Jiemeng::run()
           minisleep(config.time_check);
         } })
       .detach();
-  while (1)
+
+  auto pmsg = [this](const json &js)
+  {
+    Message msg;
+    try
+    {
+      msg = generate_message(js);
+    }
+    catch (Not_Serious)
+    {
+      return;
+    }
+    msg.show();
+    process_message(msg);
+  };
+  server->run(pmsg);
+  /*while (1)
   {
     try
     {
@@ -119,7 +142,7 @@ void Jiemeng::run()
     {
       continue;
     }
-  }
+  }*/
 }
 
 void Jiemeng::answer_init()
