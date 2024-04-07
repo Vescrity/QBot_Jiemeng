@@ -6,26 +6,14 @@
 #include "Jiemeng_Algorithm.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_Time.hpp"
+#include "Jiemeng_MessageReplace.hpp"
 using Type = Operation::Type;
 Operation_List extract(Operation &oper, Message &message, Jiemeng *bot)
 {
   Operation_List rt;
   if (oper.type == Type::message)
   {
-    oper.str = chg_Rcode(oper.str);
-    Time_Class tm;
-    str_replace(oper.str, "[year]", tm.get_year());
-    str_replace(oper.str, "[month]", tm.get_month());
-    str_replace(oper.str, "[yday]", tm.get_yearday());
-    str_replace(oper.str, "[mday]", tm.get_monthday());
-    str_replace(oper.str, "[wday]", tm.get_weekday());
-    str_replace(oper.str, "[hour]", tm.get_hour());
-    str_replace(oper.str, "[min]", tm.get_min());
-    str_replace(oper.str, "[sec]", tm.get_sec());
-    str_replace(oper.str, "[group_name]", message.place.group_nm);
-    str_replace(oper.str, "[group_id]", message.place.group_id);
-    str_replace(oper.str, "[user_name]", message.place.user_nm);
-    str_replace(oper.str, "[user_id]", message.place.user_id);
+    message_replace(oper.str, message.place);
     str_replace(oper.str, "[Repeat]", message.text.const_str());
     auto uwu = string_cut(oper.str, "[-cut-]");
     Operation op;
@@ -58,4 +46,44 @@ void Operation_List::upgrade(Message &message, Jiemeng *bot)
   rt += c;
   list.clear();
   list = rt.list;
+}
+
+void Operation::set_type(const string &t)
+{
+  if (t == "message")
+  {
+    type = Type::message;
+    return;
+  }
+  if (t == "order")
+  {
+    type = Type::order;
+    return;
+  }
+  if (t == "lua_call")
+  {
+    type = Type::lua_call;
+    return;
+  }
+  if (t == "lua_shell")
+  {
+    type = Type::lua_shell;
+    return;
+  }
+  if (t == "ignore")
+  {
+    type = Type::ignore;
+    return;
+  }
+  if (t == "draw_deck")
+  {
+    type = Type::draw_deck;
+    return;
+  }
+  if (t == "clear")
+  {
+    type = Type::clear;
+    return;
+  }
+  throw invalid_argument("未定义的 Operation_Type");
 }

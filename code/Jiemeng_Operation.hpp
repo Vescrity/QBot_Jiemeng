@@ -24,6 +24,7 @@ public:
   bool is_json;
   json data;
   string str;
+  void set_type(const string &);
   class Clear : std::exception
   {
   };
@@ -35,6 +36,7 @@ class Operation_List
 public:
   std::vector<Operation> list;
   void upgrade(Message &, Jiemeng *);
+  void push_back(const Operation &b){*this += b;};
   Operation_List &operator+=(const Operation_List &b)
   {
     list.insert(list.end(), b.list.begin(), b.list.end());
