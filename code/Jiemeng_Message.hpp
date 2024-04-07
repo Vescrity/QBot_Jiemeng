@@ -36,9 +36,12 @@ class Message
 public:
   Message_Place place;
   CQMessage text;
-  /// @brief 显示消息内容
+
   string &str() { return text.get_string(); }
+  /// @brief 显示消息内容
   void show() const;
+  void change(const string &s) { text.change(s); }
+  string true_str() { return text.true_str(); }
   bool is_group() const { return place.is_group(); }
   bool is_private() const { return place.is_private(); }
   void init(const json &);

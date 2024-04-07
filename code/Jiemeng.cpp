@@ -36,12 +36,22 @@ void Jiemeng::clear()
 void Jiemeng::init()
 {
   int st = clock();
+  debug_lable("[INIT]");
+  dout << "开始执行 Config_init\n";
   config_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 lua_init\n";
   lua_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 deck_init\n";
   deck_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 answer_init\n";
   answer_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 server_init\n";
   server_init();
-  info_lable("[Start]");
+  info_lable("[INIT]");
   char *buf = new char[1 << 10];
   sprintf(buf, "配置加载成功！本次加载共耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
   info_puts(buf);

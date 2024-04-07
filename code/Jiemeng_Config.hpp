@@ -17,6 +17,7 @@ class Config
 public:
   string port;
   string self_id;
+  string spliter;
   int text_length;
   int time_check;
   void add_group_list     (const string &id) { group_list.push_back(id); }

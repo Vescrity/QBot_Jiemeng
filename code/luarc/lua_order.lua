@@ -1,6 +1,5 @@
-function lua_order_explain(script)
-    local n = string.find(script, '#')
-    local scriptToExecute = string.sub(script, n + 1)
+function bot.lua_shell_explain(script)
+    local scriptToExecute = get_para(script)
     if scriptToExecute then
         local func, err = load(scriptToExecute)
         if not func then
@@ -9,11 +8,9 @@ function lua_order_explain(script)
             return func()
         end
     else
-        error("No script found after '#' in the input.")
+        error("No script found.")
     end
 end
-function lua_order(order)
-    local t = lua_order_explain(order.true_text)
-    order.text = tostring(t)
-    message_output(order)
+function bot.lua_shell(order)
+    return bot.lua_shell_explain(order:true_str())
 end
