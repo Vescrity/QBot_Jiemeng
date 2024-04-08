@@ -7,7 +7,7 @@ function bot._api(url, api, is_Get, data_table, return_json)
     req:set_data(js)
     local rt = req:js_post()
     if (return_json) then return rt end
-    local rttb = jsonlib.jsonlib.json2table(rt)
+    local rttb = jsonlib.json2table(rt)
     return rttb
 end
 

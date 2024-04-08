@@ -8,6 +8,22 @@ using string = std::string;
 
 extern bool Debug_Mode;
 
+#include <chrono>
+#include <iomanip>
+inline void print_time_mark()
+{
+  auto now = std::chrono::system_clock::now();
+  auto now_as_time_t = std::chrono::system_clock::to_time_t(now);
+  auto now_tm = *std::localtime(&now_as_time_t);
+  auto duration_since_epoch = now.time_since_epoch();
+  auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch);
+  auto millis_since_epoch = millis.count();
+  auto millis_remainder = millis_since_epoch % 1000;
+  char time_str[100];
+  strftime(time_str, sizeof(time_str), "%T", &now_tm);
+  printf("\033[0m\033[0;37m[%s.%03d]", time_str, static_cast<int>(millis_remainder));
+}
+/*
 inline void print_time_mark()
 {
   int hr, mn, sec;
@@ -20,6 +36,7 @@ inline void print_time_mark()
   sec = tmp_ptr->tm_sec;
   printf("\033[0m\033[0;37m[%02d:%02d:%02d]", hr, mn, sec);
 }
+*/
 /// @brief CYAN
 /// @param s
 inline void msg_lable(const char *s)
