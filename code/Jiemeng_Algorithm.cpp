@@ -105,12 +105,23 @@ std::string string_format_with_json(const string &begin, const string &end, cons
       });
 }
 
-std::unique_ptr<std::vector<std::string>> string_cut(const std::string &a, const std::string &b)
+std::unique_ptr<std::vector<std::string>> string_cut(const std::string &a, const std::string &b, const int &n)
 {
+  dout<<"n="<<n<<"\n";
   auto result = std::make_unique<std::vector<std::string>>();
   size_t start = 0;
   size_t end = 0;
-  while ((end = a.find(b, start)) != std::string::npos)
+  int i = 0;
+  auto judge = [&]
+  {
+    if (n == -1)
+      return (end = a.find(b, start)) != std::string::npos;
+    else{
+      end = a.find(b, start);
+      return (i++) < n-1;
+    }
+  };
+  while (judge())
   {
     result->push_back(a.substr(start, end - start));
     start = end + b.length();

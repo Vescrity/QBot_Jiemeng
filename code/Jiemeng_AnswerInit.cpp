@@ -8,6 +8,17 @@
 namespace fs = std::filesystem;
 using Type = Operation::Type;
 json ans_merge(const std::string &folderPath);
+void Answer_List::init(const json &js)
+{
+  clear();
+  for (auto &i : js["Answers"])
+  {
+    Answer_Group *ans = new Answer_Group(i);
+    answer_group.push_back(ans);
+  }
+  sort(answer_group.begin(), answer_group.end(), [](const Answer_Group *a, const Answer_Group *b)
+       { return *a < *b; });
+}
 Answer_List *main_answer_read(const json &custom)
 {
   Answer_List *p = new Answer_List;
@@ -20,12 +31,15 @@ Answer_List *main_answer_read(const json &custom)
 }
 void All_Answer::main_answer_reload(const json &custom)
 {
-  for (auto i : answer_list)
+  for (auto &i : answer_list)
   {
     if (i->priority == 0)
     {
-      delete i;
-      i = main_answer_read(custom);
+      Answer_List *j = main_answer_read(custom);
+      Answer_List *k;
+      k = i;
+      i = j;
+      delete k;
       return;
     }
   }
@@ -54,7 +68,7 @@ void Answer_Group::init(const json &js)
       throw std::invalid_argument("argument \"grps\" should be an array");
   }
   else
-    grps.push_back("1"s);
+    grps.push_back("private_true"s);
   if (js.count("user"))
   {
     if (js["user"].is_array())
@@ -90,13 +104,14 @@ void Answer_Group::init(const json &js)
 void Answer::init(const json &js)
 {
   and_flag = 0;
+  leaf = 0;
   if (js.is_string())
   {
     leaf = 1;
     operation.type = Operation::Type::message;
     operation.str = js;
   }
-  if (js.is_array())
+  else if (js.is_array())
   {
     Array_init(js);
   }
@@ -121,6 +136,21 @@ void Answer::init(const json &js)
         if (!js["order"].is_string())
           throw invalid_argument("order 被赋了错误的类型。");
         operation.str = js["order"];
+        if (operation.str == "ignore")
+        {
+          operation.type = Operation::Type::ignore;
+        }
+        else if (operation.str == "clear")
+        {
+          operation.type = Operation::Type::clear;
+        }
+      }
+      else if (js.count("draw_deck"))
+      {
+        operation.type = Operation::Type::draw_deck;
+        if (!js["draw_deck"].is_string())
+          throw invalid_argument("draw_deck 被赋了错误的类型。");
+        operation.str = js["draw_deck"];
       }
       else if (js.count("text"))
       {
@@ -132,6 +162,10 @@ void Answer::init(const json &js)
       else if (js.count("ignore"))
       {
         operation.type = Operation::Type::ignore;
+      }
+      else if (js.count("clear"))
+      {
+        operation.type = Operation::Type::clear;
       }
       else if (js.count("lua_call"))
       {
@@ -177,8 +211,16 @@ void Answer::Array_init(const json &js)
       sub_ans.push_back(ans);
     }
   }
+  else
+  {
+    for (auto &i : js)
+    {
+      Answer *ans = new Answer;
+      ans->init(i);
+      sub_ans.push_back(ans);
+    }
+  }
 }
-
 
 json ans_merge(const std::string &folderPath)
 {

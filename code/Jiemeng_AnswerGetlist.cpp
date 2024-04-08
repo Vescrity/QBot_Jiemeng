@@ -5,7 +5,7 @@ using Type = Operation::Type;
 Operation_List All_Answer::get_list(const Message &message) const
 {
   Operation_List rt;
-  for (auto i : answer_list)
+  for (auto &i : answer_list)
   {
     try
     {
@@ -22,7 +22,7 @@ Operation_List All_Answer::get_list(const Message &message) const
 Operation_List Answer_List::get_list(const Message &message) const
 {
   Operation_List rt;
-  for (auto i : answer_group)
+  for (auto &i : answer_group)
   {
     if (i->check(message))
     {
@@ -50,4 +50,17 @@ Operation_List Answer::get_list() const
   }
   else
     return sub_ans[rand_get()]->get_list();
+}
+
+int Answer::rand_get() const
+{
+  int cnt = sub_ans.size();
+  int r = Rands(0, lvs[cnt] - 1);
+  // 查找，或许可以考虑二分
+  for (int i = 1; i <= cnt; i++)
+  {
+    if (lvs[i] > r)
+      return i - 1;
+  }
+  return cnt - 1;
 }

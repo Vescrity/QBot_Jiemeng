@@ -22,15 +22,17 @@ class Jiemeng
   bool private_output(const string &user_id, CQMessage &message);
   string get_group_name(const string &group_id);
   string exec_operation(Message &, const Operation &);
-  void deck_init();
+  
   void answer_init();
   void config_init();
   void server_init();
+  /// @brief 仅限初始化使用！
   void lua_init();
   void answer_reload();
+  void deck_reload();
   void process_operation(Message &, Operation_List &);
   friend class Lua_Shell;
-  friend Operation_List extract(Operation &oper, Message &message, Jiemeng *bot);
+  friend Operation_List extract(Operation oper, Message message, Jiemeng *bot);
 
 public:
   Jiemeng();
