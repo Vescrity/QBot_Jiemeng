@@ -1,65 +1,221 @@
-
 #include "Jiemeng.hpp"
-void Heart_Beat()
+#include <fstream>
+#include <iostream>
+#include <thread>
+#include "Jiemeng_Message.hpp"
+#include "Jiemeng_DebugIO.hpp"
+#include <nlohmann/json.hpp>
+#include "Jiemeng_Algorithm.hpp"
+#include "Jiemeng_Operation.hpp"
+#include "Jiemeng_Socket.hpp"
+#include "Jiemeng_Lua.hpp"
+#include "Jiemeng_Deck.hpp"
+#include "Jiemeng_Time.hpp"
+using namespace std;
+
+void work_dir_check()
 {
-  /*for (;;)
+  // TODO
+}
+
+Jiemeng::Jiemeng()
+{
+  init();
+}
+Jiemeng::~Jiemeng()
+{
+  clear();
+}
+void Jiemeng::clear()
+{
+  delete server;
+  delete lua;
+  delete deck;
+}
+
+void Jiemeng::init()
+{
+  int st = clock();
+  debug_lable("[INIT]");
+  dout << "开始执行 Config_init\n";
+  config_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 lua_init\n";
+  lua_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 deck_init\n";
+  deck = new Deck;
+  debug_lable("[INIT]");
+  dout << "开始执行 answer_init\n";
+  answer_init();
+  debug_lable("[INIT]");
+  dout << "开始执行 server_init\n";
+  server_init();
+  info_lable("[INIT]");
+  char *buf = new char[1 << 10];
+  sprintf(buf, "配置加载成功！本次加载共耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
+  info_puts(buf);
+  delete[] buf;
+}
+
+void Jiemeng::server_init()
+{
+  server = new Server;
+  server->init("127.0.0.1", config.port);
+}
+json Jiemeng::ws_send(json &a) { return server->ws_send(a); }
+void Jiemeng::process_operation(Message &message, Operation_List &list)
+{
+  list.upgrade(message, this);
+  string str;
+  for (auto &i : list.list)
   {
-    int tn = Main_thr_num.get_new_num();
-#ifdef _WIN32
-    Main_thread_list[tn] = thread(WinExec, configs.SYMBOL_NAME.c_str(), SW_HIDE);
-#else
-    Main_thread_list[tn] = thread(system, string("./" + configs.SYMBOL_NAME).c_str());
-#endif
-    Main_thread_list[tn].detach();
-    minisleep(10000);
+    try
+    {
+      str = str + exec_operation(message, i);
+    }
+    catch (Operation::Clear)
+    {
+      CQMessage ms(str);
+      message_output(message.place, ms);
+      str = "";
+    }
+    catch(exception &e)
+    {
+      JM_EXCEPTION("[Exec_Operation]");
+    }
+  }
+}
+void Jiemeng::process_message(Message message)
+{
+  try
+  {
+    Operation_List list = answer.get_list(message);
+    debug_lable("[Answer]");
+    dout << "HIT!!\n";
+    process_operation(message, list);
+  }
+  catch (Not_Serious)
+  {
+  }
+}
+
+void Jiemeng::lua_init()
+{
+  lua = new Lua_Shell(this);
+}
+void Jiemeng::deck_reload()
+{
+  Deck *p = new Deck;
+  Deck *r = deck;
+  deck = p;
+  delete r;
+}
+void Jiemeng::run()
+{
+  std::thread(
+      [this]
+      { 
+        string ti,tp;
+        for(;;)
+        {
+          Time_Class tm;
+          Message msg;
+          msg.place.user_id="10000";
+          msg.place.user_nm="时钟消息";
+          msg.place.set_private();
+          ti=tm.time_mark();
+          if(ti!=tp){
+            tp=ti;
+            msg.text.change(ti);
+            std::thread([this, msg]
+                  { this->process_message(msg); })
+            .detach();
+          }
+          minisleep(config.time_check);
+        } })
+      .detach();
+
+  auto pmsg = [this](const json &js)
+  {
+    Message msg;
+    try
+    {
+      msg = generate_message(js);
+    }
+    catch (Not_Serious)
+    {
+      return;
+    }
+    msg.show();
+    process_message(msg);
+  };
+  server->run(pmsg);
+  /*while (1)
+  {
+    try
+    {
+      Message msg = generate_message(server->get_message());
+      msg.show();
+      std::thread([this, msg]
+                  { this->process_message(msg); })
+          .detach();
+    }
+    catch (Not_Serious)
+    {
+      continue;
+    }
   }*/
 }
 
-int main()
+void Jiemeng::answer_init()
 {
-  int st = clock();
-
-    // TODO: WORKDIR CHECK:
-#ifndef _WIN32
-  execmd("mkdir tmp"s);
-#endif
-#ifdef _WIN32
-  system("chcp 65001");
-#endif
-  Config_File_Read();
-#ifdef _WIN32
-  system(("title "s + configs.TITLE).c_str());
-#endif
-
-  Ans_Read();
-  Pre_Catch_Init();
-  int thrnum = Main_thr_num.get_new_num();
-#ifndef NO_HB
-  /*Main_thread_list[thrnum] = thread(Heart_Beat);
-  Main_thread_list[thrnum].detach();
-  thrnum = Main_thr_num.get_new_num();*/
-#endif
-#ifdef JIEMENG_DECK
-  decks.init();
-#endif
-  Main_thread_list[thrnum] = thread(Time_Main);
-  Main_thread_list[thrnum].detach();
-  info_lable("[Start]");
-  char *buf = new char[1 << 10];
-  sprintf(buf, "启动成功，耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
-  info_puts(buf);
-  delete[] buf;
-  start_server(configs.PORT);
+  answer.init(config.custom_config);
 }
-void Main_Task(const json &event)
+void Jiemeng::answer_reload()
 {
-  Message_Type *type = new Message_Type;
-  type->init(event);
-  if (type->btype.message == "[INVALID EVENT]"s)
-    return;
-  if (type->white)
-    if (type->btype.is_white())
-      Message_Operate(*type);
+  answer.main_answer_reload(config.custom_config);
+}
 
-  delete type;
+void Jiemeng::config_init()
+{
+  ifstream fread("config.json");
+  config.init(json::parse(fread));
+}
+Message Jiemeng::generate_message(const json &js)
+{
+  // dout << js.dump(2) << "\n";
+  const string &post_type = js["post_type"];
+  string able_type[] = {"message", "message_sent", "notice"};
+  if (!array_search(post_type, able_type))
+  {
+    debug_lable("[Event]");
+    debug_puts("Not a message.");
+  }
+  else
+  {
+    Message message;
+    message.init(js);
+    message.place.get_level(&config);
+    if (message.is_group())
+      message.place.group_nm = get_group_name(message.place.group_id);
+    return message;
+  }
+  throw Not_Serious();
+}
+
+string Jiemeng::get_group_name(const string &group_id)
+{
+  json js;
+  js["params"]["group_id"] = stoi(group_id);
+  js["action"] = "get_group_info";
+  js = server->ws_send(js);
+  if (js["data"].is_null())
+    return "";
+  else if (!js["data"].contains("group_name"))
+    return "";
+  js = js["data"]["group_name"];
+  if (js.is_null())
+    return "";
+  return js;
 }

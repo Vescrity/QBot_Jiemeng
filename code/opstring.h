@@ -17,7 +17,7 @@ using namespace std;
 /// @brief Change a number to string
 /// @param num The number to change
 /// @return The string
-string num2str(long long num)
+inline string num2str(long long num)
 {
   char *slfid = new char[20];
   sprintf(slfid, "%lld", (num));
@@ -25,7 +25,7 @@ string num2str(long long num)
 }
 
 
-void str_replace(std::string &str, const std::string &from, const std::string &to)
+inline void str_replace(std::string &str, const std::string &from, const std::string &to)
 {
   size_t startPos = 0;
   size_t foundPos;
@@ -168,15 +168,15 @@ inline char *acl_url_encode(const char *str)
   tmp[j] = '\0';
   return (char *)tmp;
 }
-string url_encode(const char *msg)
+inline string url_encode(const char *msg)
 {
   char *ff = acl_url_encode(msg);
   string rt(ff);
   free(ff);
   return rt;
 }
-string url_encode(const string &msg) { return url_encode(msg.c_str()); }
-string file_path_chg(const char *path)
+inline string url_encode(const string &msg) { return url_encode(msg.c_str()); }
+inline string file_path_chg(const char *path)
 {
   string opt_path("file:///");
   char b[1 << 10] = {0};
@@ -205,51 +205,15 @@ std::string GBKToUTF8(const char *strGBK)
     return conv.to_bytes(wstr);
 }*/
 
-#ifdef _WIN32
-string GBKToUTF8(const char *strGBK)
-{
-  int len = MultiByteToWideChar(CP_ACP, 0, strGBK, -1, NULL, 0);
-  wchar_t *wstr = new wchar_t[len + 1];
-  memset(wstr, 0, len + 1);
-  MultiByteToWideChar(CP_ACP, 0, strGBK, -1, wstr, len);
-  len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
-  char *str = new char[len + 1];
-  memset(str, 0, len + 1);
-  WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);
-  string strTemp = str;
-  if (wstr)
-    delete[] wstr;
-  if (str)
-    delete[] str;
-  return strTemp;
-}
 
-string UTF8ToGBK(const char *strUTF8)
-{
-  int len = MultiByteToWideChar(CP_UTF8, 0, strUTF8, -1, NULL, 0);
-  wchar_t *wszGBK = new wchar_t[len + 1];
-  memset(wszGBK, 0, len * 2 + 2);
-  MultiByteToWideChar(CP_UTF8, 0, strUTF8, -1, wszGBK, len);
-  len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL);
-  char *szGBK = new char[len + 1];
-  memset(szGBK, 0, len + 1);
-  WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, szGBK, len, NULL, NULL);
-  string strTemp(szGBK);
-  if (wszGBK)
-    delete[] wszGBK;
-  if (szGBK)
-    delete[] szGBK;
-  return strTemp;
-}
-#endif
-int get_16_10(const char str)
+inline int get_16_10(const char str)
 {
   if (str >= '0' && str <= '9')
     return str - '0';
   else
     return str - 'a' + 10;
 }
-char *utf8tounicode(const char *input, char *output)
+inline char *utf8tounicode(const char *input, char *output)
 {
   int len = strlen(input);
   int unicode_len = 0;
@@ -295,7 +259,7 @@ char *utf8tounicode(const char *input, char *output)
   }
   return output;
 }
-char *unicode_chg(char *str)
+inline char *unicode_chg(char *str)
 {
   int l = 0, r = 0;
   int cnt = 0;
@@ -336,7 +300,7 @@ char *unicode_chg(char *str)
   *(opt + cnt) = 0;
   return opt;
 }
-string json_read(const char *msg, const char *lable)
+inline string json_read(const char *msg, const char *lable)
 {
   string rt;
   int l, r, r2;
@@ -376,14 +340,14 @@ string json_read(const char *msg, const char *lable)
   return rt;
 }
 
-string msg_decode(string &msg)
+inline string msg_decode(string &msg)
 {
   msg = str_strchg("&#91;", "[", msg.c_str());
   msg = str_strchg("&#93;", "]", msg.c_str());
   msg = str_strchg("&#amp;", "&", msg.c_str());
   return msg;
 }
-std::string escape_string(const std::string &s)
+inline std::string escape_string(const std::string &s)
 {
   std::string result;
   result += "\"";
@@ -415,7 +379,7 @@ std::string escape_string(const std::string &s)
   return result;
 }
 
-string change_to_regex(const string &str)
+inline string change_to_regex(const string &str)
 {
   string sss = str;
   sss = str_strchg("\\", "\\\\", sss.c_str());
@@ -434,7 +398,44 @@ string change_to_regex(const string &str)
   sss = str_strchg("|", "\\|", sss.c_str());
   return sss;
 }
-bool hasNonUTF8(const std::string &str)
+#ifdef _WIN32
+
+string GBKToUTF8(const char *strGBK)
+{
+  int len = MultiByteToWideChar(CP_ACP, 0, strGBK, -1, NULL, 0);
+  wchar_t *wstr = new wchar_t[len + 1];
+  memset(wstr, 0, len + 1);
+  MultiByteToWideChar(CP_ACP, 0, strGBK, -1, wstr, len);
+  len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+  char *str = new char[len + 1];
+  memset(str, 0, len + 1);
+  WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);
+  string strTemp = str;
+  if (wstr)
+    delete[] wstr;
+  if (str)
+    delete[] str;
+  return strTemp;
+}
+
+string UTF8ToGBK(const char *strUTF8)
+{
+  int len = MultiByteToWideChar(CP_UTF8, 0, strUTF8, -1, NULL, 0);
+  wchar_t *wszGBK = new wchar_t[len + 1];
+  memset(wszGBK, 0, len * 2 + 2);
+  MultiByteToWideChar(CP_UTF8, 0, strUTF8, -1, wszGBK, len);
+  len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL);
+  char *szGBK = new char[len + 1];
+  memset(szGBK, 0, len + 1);
+  WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, szGBK, len, NULL, NULL);
+  string strTemp(szGBK);
+  if (wszGBK)
+    delete[] wszGBK;
+  if (szGBK)
+    delete[] szGBK;
+  return strTemp;
+}
+inline bool hasNonUTF8(const std::string &str)
 {
   for (size_t i = 0; i < str.length(); i++)
   {
@@ -473,4 +474,5 @@ bool hasNonUTF8(const std::string &str)
 
   return false; // all characters are valid UTF-8 characters
 }
+#endif
 #endif
