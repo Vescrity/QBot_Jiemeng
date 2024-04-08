@@ -19,7 +19,7 @@ function bot.api(Data, return_json)
     --  --  table data
     --  @param [bool return_json=false]
     --  @return table
-    get = Data.get or false
-    rtj = return_json or false
+    local get = Data.get or false
+    local rtj = return_json or false
     return bot._api(Data.url, Data.api, get, Data.data, rtj)
 end
