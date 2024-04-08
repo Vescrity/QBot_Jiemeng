@@ -72,5 +72,5 @@ std::string string_format_with_json(const string &begin, const string &end, cons
 /// @param str
 /// @param cut
 /// @return
-std::unique_ptr<std::vector<std::string>> string_cut(const std::string &str, const std::string &cut);
+std::unique_ptr<std::vector<std::string>> string_cut(const std::string &str, const std::string &cut, const int &n = -1);
 #endif

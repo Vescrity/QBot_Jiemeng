@@ -44,7 +44,7 @@ void Jiemeng::init()
   lua_init();
   debug_lable("[INIT]");
   dout << "开始执行 deck_init\n";
-  deck_init();
+  deck = new Deck;
   debug_lable("[INIT]");
   dout << "开始执行 answer_init\n";
   answer_init();
@@ -68,7 +68,7 @@ void Jiemeng::process_operation(Message &message, Operation_List &list)
 {
   list.upgrade(message, this);
   string str;
-  for (auto i : list.list)
+  for (auto &i : list.list)
   {
     try
     {
@@ -80,6 +80,10 @@ void Jiemeng::process_operation(Message &message, Operation_List &list)
       message_output(message.place, ms);
       str = "";
     }
+    catch(exception &e)
+    {
+      JM_EXCEPTION("[Exec_Operation]");
+    }
   }
 }
 void Jiemeng::process_message(Message message)
@@ -87,6 +91,8 @@ void Jiemeng::process_message(Message message)
   try
   {
     Operation_List list = answer.get_list(message);
+    debug_lable("[Answer]");
+    dout << "HIT!!\n";
     process_operation(message, list);
   }
   catch (Not_Serious)
@@ -97,6 +103,13 @@ void Jiemeng::process_message(Message message)
 void Jiemeng::lua_init()
 {
   lua = new Lua_Shell(this);
+}
+void Jiemeng::deck_reload()
+{
+  Deck *p = new Deck;
+  Deck *r = deck;
+  deck = p;
+  delete r;
 }
 void Jiemeng::run()
 {
@@ -164,10 +177,6 @@ void Jiemeng::answer_reload()
   answer.main_answer_reload(config.custom_config);
 }
 
-void Jiemeng::deck_init()
-{
-  deck = new Deck;
-}
 void Jiemeng::config_init()
 {
   ifstream fread("config.json");

@@ -8,7 +8,10 @@
 #include "Jiemeng_Version.hpp"
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_MessageReplace.hpp"
+#include "Jiemeng_Request.hpp"
 namespace fs = std::filesystem;
+nlohmann::json lua_table_to_json(sol::object lua_value);
+sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua);
 void Lua_Shell::init(Jiemeng *b)
 {
   lua.open_libraries();
@@ -34,7 +37,22 @@ void Lua_Shell::init(Jiemeng *b)
       }
     }
   };
-
+  lua.new_usertype<json>(
+      "json",
+      "new", sol::constructors<json()>(),
+      "dump", [](json &js)
+      { return js.dump(); });
+  lua.new_usertype<Request>(
+      "Request",
+      "new", sol::constructors<Request()>(),
+      "set_url", &Request::set_url,
+      "set_api", &Request::set_api,
+      "set_data", &Request::set_data,
+      "set_msgs", &Request::set_msgs,
+      "Post", &Request::Post,
+      "js_post", &Request::js_post,
+      "js_get", &Request::js_get,
+      "Get", &Request::Get);
   lua.new_usertype<Message_Place>(
       "Message_Place",
       "new", sol::constructors<Message_Place()>(),
@@ -67,6 +85,7 @@ void Lua_Shell::init(Jiemeng *b)
       "new", sol::constructors<Operation_List()>(),
       "push_back", &Operation_List::push_back);
   sol::table botlib = lua.create_table();
+  sol::table jsonlib = lua.create_table();
   botlib.set_function(
       "group_output",
       [this](const string group_id, string message)
@@ -80,7 +99,7 @@ void Lua_Shell::init(Jiemeng *b)
         CQMessage ms(message);
         return this->bot->private_output(user_id, ms); });
   botlib.set_function(
-      "_deck_draw",
+      "_draw_deck",
       [this](const string key)
       { return this->bot->deck->draw(key); });
   botlib.set_function(
@@ -99,13 +118,31 @@ void Lua_Shell::init(Jiemeng *b)
       "process_operation",
       [this](Message message, Operation_List list)
       { return this->bot->process_operation(message, list); });
+  botlib.set_function(
+      "answer_reload",
+      [this]()
+      { return this->bot->answer_reload(); });
+  botlib.set_function(
+      "deck_reload",
+      [this]()
+      { return this->bot->deck_reload(); });
+  jsonlib.set_function(
+      "table2json",
+      lua_table_to_json);
+  jsonlib.set_function(
+      "json2table",
+      [&](json &js)
+      { return json_to_lua_table(js, lua); });
   lua["bot"] = botlib;
+  lua["jsonlib"] = jsonlib;
   lua_load("./luarc");
   lua_load("./user_luarc");
   lua["bot"]["_version"] = JIEMENG_VERSION;
   lua["bot"]["_platform"] = JIEMENG_PLATFORM;
   lua["bot"]["_compile_time"] = UPDATE_TIME;
   lua["bot"]["spliter"] = bot->config.spliter;
+  auto custom_config_table = json_to_lua_table(bot->config.custom_config, lua);
+  lua["bot"]["custom_config"] = custom_config_table;
 }
 string Lua_Shell::call(const string &func, Message &message)
 {
@@ -113,14 +150,6 @@ string Lua_Shell::call(const string &func, Message &message)
   dout << "call: " << func << "\n";
   try
   {
-    /*sol::table msg_table = lua.create_table_with(
-        "user_id", message.place.user_id,
-        "user_nm", message.place.user_nm,
-        "group_id", message.place.group_id,
-        "group_nm", message.place.group_nm,
-        "is_group", message.is_group(),
-        "true_text", message.text.true_str(),
-        "text", message.text.const_str());*/
     auto fun = lua.script("return "s + func);
     sol::function fu = fun;
     auto result = fu(message);
@@ -156,4 +185,87 @@ string Lua_Shell::exec(const string &code)
     JM_EXCEPTION("[Lua_Call]")
   }
   return str;
+}
+nlohmann::json lua_table_to_json(sol::object lua_value)
+{
+  if (lua_value.is<bool>())
+  {
+    return lua_value.as<bool>();
+  }
+  else if (lua_value.is<int>() || lua_value.is<float>() || lua_value.is<double>())
+  {
+    return lua_value.as<double>();
+  }
+  else if (lua_value.is<std::string>())
+  {
+    return lua_value.as<std::string>();
+  }
+  else if (lua_value.is<sol::table>())
+  {
+    auto table = lua_value.as<sol::table>();
+    auto first_element = *table.begin();
+    if (first_element.first.is<int>())
+    { // Check if the table is an array
+      nlohmann::json json_array = nlohmann::json::array();
+      for (const auto &pair : table)
+      {
+        json_array.push_back(lua_table_to_json(pair.second));
+      }
+      return json_array;
+    }
+    else
+    {
+      // It's an object, we assume keys are strings here
+      nlohmann::json json_object;
+      for (const auto &pair : table)
+      {
+        json_object[pair.first.as<std::string>()] = lua_table_to_json(pair.second);
+      }
+      return json_object;
+    }
+  }
+  else
+  {
+    return nullptr;
+  }
+}
+sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua)
+{
+  if (j.is_boolean())
+  {
+    return sol::make_object(lua, j.get<bool>());
+  }
+  else if (j.is_number())
+  {
+    return sol::make_object(lua, j.get<double>());
+  }
+  else if (j.is_string())
+  {
+    return sol::make_object(lua, j.get<std::string>());
+  }
+  else if (j.is_array())
+  {
+    // 创建一个新的数组（Lua表）
+    sol::table lua_table = lua.create_table();
+    int index = 0;
+    for (const auto &item : j)
+    {
+      lua_table[++index] = json_to_lua_table(item, lua);
+    }
+    return lua_table;
+  }
+  else if (j.is_object())
+  {
+    // 创建一个新的Lua表
+    sol::table lua_table = lua.create_table();
+    for (auto &[key, value] : j.items())
+    {
+      lua_table[key] = json_to_lua_table(value, lua);
+    }
+    return lua_table;
+  }
+  else
+  { // null 或其他类型
+    return sol::make_object(lua, sol::nil);
+  }
 }

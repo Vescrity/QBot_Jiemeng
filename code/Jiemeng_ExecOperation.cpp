@@ -4,6 +4,8 @@
 using Type = Operation::Type;
 string Jiemeng::exec_operation(Message &message, const Operation &operation)
 {
+  dout<<"OPER:"<<int(operation.type)<<"\n";
+  dout<<"OPER:"<<operation.str<<"\n";
   if (operation.type == Type::message)
     return (operation.str);
   if (operation.type == Type::lua_call)

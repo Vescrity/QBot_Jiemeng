@@ -18,6 +18,7 @@ public:
   string user_id;
   string user_nm;
   int level;
+  Message_Place() { level = 0; }
   void get_level(Config *);
   void set_private() { group_flag = 0; }
   void set_group() { group_flag = 1; }

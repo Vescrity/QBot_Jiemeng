@@ -17,26 +17,17 @@ private:
   vector<Answer *> sub_ans;
 
 public:
+  Answer() { leaf = and_flag = 0; }
   ~Answer()
   {
-    for (auto i : sub_ans)
+    for (auto &i : sub_ans)
       delete i;
     sub_ans.clear();
   }
   bool is_leaf() const noexcept { return leaf; }
   bool is_and() const noexcept { return and_flag; } // TODO: 调试时若leaf时应当抛出异常，打印后应直接终止程序
   bool is_or() const noexcept { return !is_and(); }
-  int rand_get() const
-  {
-    int cnt = sub_ans.size();
-    int r = Rands(0, lvs[cnt] - 1);
-    for (int i = 1; i <= cnt; i++)
-    {
-      if (lvs[i] > r)
-        return i - 1;
-    }
-    return cnt - 1;
-  }
+  int rand_get() const;
   Operation_List get_list() const;
   void init(const json &js);
   void Array_init(const json &js);
@@ -69,20 +60,11 @@ class Answer_List
 
 public:
   int priority;
-  void init(const json &js)
-  {
-    clear();
-    for (auto &i : js["Answers"])
-    {
-      Answer_Group *ans = new Answer_Group(i);
-      answer_group.push_back(ans);
-    }
-    sort(answer_group.begin(), answer_group.end(), [](const Answer_Group *a, const Answer_Group *b)
-         { return *a < *b; });
-  }
+  Answer_List() { priority = 0; }
+  void init(const json &js);
   void clear()
   {
-    for (auto i : answer_group)
+    for (auto &i : answer_group)
       delete i;
     answer_group.clear();
   }
@@ -92,10 +74,11 @@ public:
 class All_Answer
 {
   vector<Answer_List *> answer_list;
+
 public:
   void clear()
   {
-    for (auto i : answer_list)
+    for (auto &i : answer_list)
       delete i;
     answer_list.clear();
   }
