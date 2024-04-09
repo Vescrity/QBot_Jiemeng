@@ -62,10 +62,10 @@ inline void msg_puts(const string &s)
 }
 /// @brief MAGENTA
 /// @param s
-inline void debug_print(const char *s)
+inline void debug_print(const string &s)
 {
   if (Debug_Mode)
-    printf("\033[0m\033[35m%s\033[0m", s);
+    printf("\033[0m\033[35m%s\033[0m", s.c_str());
 }
 inline void debug_puts(const char *s)
 {

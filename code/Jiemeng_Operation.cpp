@@ -102,12 +102,16 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
       return rt;
     }
   }
+  debug_lable("[Extract]");
+  dout << "发现了未被 extract 解析的 operation.\n";
   rt += oper;
   return rt;
 }
 
 void Operation_List::upgrade(Message &message, Jiemeng *bot)
 {
+  debug_lable("[Upgrade]");
+  dout << "开始对 Operation_List 执行更新操作\n";
   Operation_List rt;
   for (auto &i : list)
     rt += extract(i, message, bot);
