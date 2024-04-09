@@ -10,4 +10,5 @@ endTime_s=`date +%s`
 
 sumTime=$[ $endTime_s - $startTime_s ]
 
-echo "$startTime ---> $endTime" "本次编译耗时:$sumTime seconds"
+echo "$startTime ---> $endTime" 
+echo "本次编译耗时: $sumTime seconds"

@@ -139,9 +139,14 @@ void Operation::set_type(const string &t)
     type = Type::lua_call;
     return;
   }
-  if (t == "lua_shell")
+  if (t == "lua_once")
   {
-    type = Type::lua_shell;
+    type = Type::lua_once;
+    return;
+  }
+  if (t == "call_state")
+  {
+    type = Type::call_state;
     return;
   }
   if (t == "ignore")

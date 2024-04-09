@@ -3,6 +3,9 @@
 
 #include "Jiemeng_Config.hpp"
 #include "Jiemeng_Answer.hpp"
+#include <map>
+#include <string>
+using namespace std;
 class Operation;
 class Server;
 class Lua_Shell;
@@ -14,6 +17,8 @@ class Jiemeng
   Config config;
   Server *server;
   Lua_Shell *lua;
+  map<string, Lua_Shell *> map_lua;
+  Lua_Shell *one_lua;
   Message generate_message(const json &);
   void process_message(Message);
   bool message_output(Message &);
@@ -22,7 +27,7 @@ class Jiemeng
   bool private_output(const string &user_id, CQMessage &message);
   string get_group_name(const string &group_id);
   string exec_operation(Message &, const Operation &);
-  
+
   void answer_init();
   void config_init();
   void server_init();

@@ -129,6 +129,7 @@ void Answer::init(const json &js)
     }
     else
     {
+      // TODO: 优化写法！
       leaf = 1;
       if (js.count("order"))
       {
@@ -167,10 +168,20 @@ void Answer::init(const json &js)
       {
         operation.type = Operation::Type::clear;
       }
+      else if (js.count("lua_once"))
+      {
+        operation.type = Operation::Type::lua_once;
+        operation.str = js["lua_once"];
+      }
       else if (js.count("lua_call"))
       {
         operation.type = Operation::Type::lua_call;
         operation.str = js["lua_call"];
+      }
+      else if (js.count("call_state"))
+      {
+        operation.type = Operation::Type::call_state;
+        operation.str = js["call_state"];
       }
       else if (js.count("lua_shell"))
       {

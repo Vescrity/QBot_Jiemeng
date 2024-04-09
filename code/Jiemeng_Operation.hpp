@@ -17,6 +17,8 @@ public:
     order, // json order
     lua_call,
     lua_shell,
+    lua_once,
+    call_state,
     ignore,
     draw_deck,
     clear

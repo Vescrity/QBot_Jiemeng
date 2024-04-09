@@ -4,6 +4,7 @@
 #include <iostream>
 #include <filesystem>
 #include <sstream>
+
 #include "Jiemeng_LogIO.hpp"
 #include "Jiemeng_Version.hpp"
 #include "Jiemeng_Deck.hpp"
@@ -12,36 +13,42 @@
 namespace fs = std::filesystem;
 nlohmann::json lua_table_to_json(sol::object lua_value);
 sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua);
+
+void Lua_Shell::load(const string &path)
+{
+  for (const auto &entry : fs::directory_iterator(path))
+  {
+    if (entry.path().extension() == ".lua")
+    {
+      try
+      {
+        // 执行Lua脚本
+        lua.script_file(entry.path().string());
+        dout << "Executed: " << string(entry.path().filename()) << "\n";
+      }
+      catch (const sol::error &e)
+      {
+        error_puts(string("Failed to execute ") + string(entry.path().filename()));
+        JM_EXCEPTION("[Lua_Shell]")
+      }
+    }
+  }
+}
+
 void Lua_Shell::init(Jiemeng *b)
 {
   lua.open_libraries();
   bot = b;
-  // string folder_path = "./luarc";
-  auto lua_load = [this](const string &path)
-  {
-    for (const auto &entry : fs::directory_iterator(path))
-    {
-      if (entry.path().extension() == ".lua")
-      {
-        try
-        {
-          // 执行Lua脚本
-          lua.script_file(entry.path().string());
-          dout << "Executed: " << string(entry.path().filename()) << "\n";
-        }
-        catch (const sol::error &e)
-        {
-          error_puts(string("Failed to execute ") + string(entry.path().filename()));
-          JM_EXCEPTION("[Lua_Shell]")
-        }
-      }
-    }
-  };
+
   lua.new_usertype<json>(
       "json",
       "new", sol::constructors<json()>(),
-      "dump", [](json &js)
-      { return js.dump(); });
+      "dump",
+      sol::overload(
+          [](json &js)
+          { return js.dump(); },
+          [](json &js, int n)
+          { return js.dump(n); }));
   lua.new_usertype<Request>(
       "Request",
       "new", sol::constructors<Request()>(),
@@ -135,8 +142,8 @@ void Lua_Shell::init(Jiemeng *b)
       { return json_to_lua_table(js, lua); });
   lua["bot"] = botlib;
   lua["jsonlib"] = jsonlib;
-  lua_load("./luarc");
-  lua_load("./user_luarc");
+  load("./luarc");
+  load("./user_luarc");
   lua["bot"]["_version"] = JIEMENG_VERSION;
   lua["bot"]["_platform"] = JIEMENG_PLATFORM;
   lua["bot"]["_compile_time"] = UPDATE_TIME;
@@ -146,6 +153,7 @@ void Lua_Shell::init(Jiemeng *b)
 }
 string Lua_Shell::call(const string &func, Message &message)
 {
+  std::lock_guard<std::mutex> locker(mtx);
   debug_lable("[Lua_Call]");
   dout << "call: " << func << "\n";
   try
@@ -156,16 +164,8 @@ string Lua_Shell::call(const string &func, Message &message)
     // auto result = lua[func](message);
     if (!result.valid())
       throw sol::error(result);
-    return lua["tostring"](result);
-    /*if (result.get_type() == sol::type::string)
-    {
-      return result;
-    }
-    if (result.get_type() == sol::type::number)
-    {
-      return to_string(double(result));
-    }*/
-    return "";
+    string q = lua["tostring"](result);
+    return q;
   }
   catch (const sol::error &e)
   {
@@ -175,6 +175,7 @@ string Lua_Shell::call(const string &func, Message &message)
 }
 string Lua_Shell::exec(const string &code)
 {
+  std::lock_guard<std::mutex> locker(mtx);
   string str;
   try
   {

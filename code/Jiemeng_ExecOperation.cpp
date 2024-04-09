@@ -4,20 +4,32 @@
 using Type = Operation::Type;
 string Jiemeng::exec_operation(Message &message, const Operation &operation)
 {
-  dout<<"OPER:"<<int(operation.type)<<"\n";
-  dout<<"OPER:"<<operation.str<<"\n";
+  dout << "OPER:" << int(operation.type) << "\n";
+  dout << "OPER:" << operation.str << "\n";
   if (operation.type == Type::message)
     return (operation.str);
   if (operation.type == Type::lua_call)
   {
     return lua->call(operation.str, message);
   }
+  if (operation.type == Type::lua_once)
+  {
+    one_lua = new Lua_Shell(this);
+    string rt = one_lua->call(operation.str, message);
+    delete one_lua;
+    return rt;
+  }
+  if (operation.type == Type::call_state)
+  {
+    auto s = map_lua[operation.str];
+    return s->call(operation.data["func"], message);
+  }
   if (operation.type == Type::lua_shell)
     return (lua->exec(operation.str));
   // 理论上不应该出现draw_deck
   if (operation.type == Type::draw_deck)
     throw runtime_error("BUG: draw_deck 不应出现在这里");
-  if(operation.type==Type::clear)
+  if (operation.type == Type::clear)
     throw Operation::Clear();
   throw invalid_argument("未知的 Operation");
 }
