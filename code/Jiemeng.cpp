@@ -11,11 +11,34 @@
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_Time.hpp"
+#include <filesystem>
+namespace fs = std::filesystem;
 using namespace std;
+
+bool dir_exists(const string &name)
+{
+  if (fs::exists(name) && fs::is_directory(name))
+    return 1;
+  return 0;
+}
+bool file_exists(const string &name)
+{
+  if (fs::exists(name))
+    return 1;
+  return 0;
+}
 
 void work_dir_check()
 {
-  // TODO
+  if (!dir_exists("tmp"))
+  {
+    if (fs::create_directory("tmp"))
+      ;
+    else
+      throw runtime_error("Failed to creat dir tmp.");
+  }
+
+  return;
 }
 
 Jiemeng::Jiemeng()
@@ -80,7 +103,7 @@ void Jiemeng::process_operation(Message &message, Operation_List &list)
       message_output(message.place, ms);
       str = "";
     }
-    catch(exception &e)
+    catch (exception &e)
     {
       JM_EXCEPTION("[Exec_Operation]");
     }
@@ -103,6 +126,11 @@ void Jiemeng::process_message(Message message)
 void Jiemeng::lua_init()
 {
   lua = new Lua_Shell(this);
+  for (auto &state : config.lua_state_list)
+  {
+    auto s = map_lua[state["name"]] = new Lua_Shell(this);
+    s->load(state["path"]);
+  }
 }
 void Jiemeng::deck_reload()
 {

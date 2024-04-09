@@ -3,14 +3,15 @@
 #include "Jiemeng_Message.hpp"
 
 #include <sol/sol.hpp>
-
+#include <mutex>
+#include <condition_variable>
 class Jiemeng;
 class Lua_Shell
 {
   sol::state lua;
   Jiemeng *bot;
   void init(Jiemeng *b);
-
+  std::mutex mtx;
 public:
   Lua_Shell(Jiemeng *b) { init(b); };
   /// @brief 调用一个 Lua 函数，并将 Message 转为 Lua table 传递
@@ -21,6 +22,7 @@ public:
   /// @param  代码字符串
   /// @return 返回值
   string exec(const string &);
+  void load(const string &);
 };
 
 #endif
