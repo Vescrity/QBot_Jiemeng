@@ -5,11 +5,15 @@ using Type = Operation::Type;
 Operation_List All_Answer::get_list(const Message &message) const
 {
   Operation_List rt;
+  debug_lable("[Get_List]");
+  dout << "开始检索匹配\n";
   for (auto &i : answer_list)
   {
     try
     {
       rt = i->get_list(message);
+      debug_lable("[Get_List]");
+      dout << "检索完成！已成功生成 Operation_LIst\n";
       return rt;
     }
     catch (Not_Serious)
@@ -17,6 +21,8 @@ Operation_List All_Answer::get_list(const Message &message) const
       continue;
     }
   }
+  debug_lable("[Get_List]");
+  dout << "检索完成！没有发现匹配项。\n";
   throw Not_Serious();
 }
 Operation_List Answer_List::get_list(const Message &message) const
@@ -33,7 +39,6 @@ Operation_List Answer_List::get_list(const Message &message) const
         return rt;
     }
   }
-  dout << "Empty!\n";
   throw Not_Serious();
 }
 
