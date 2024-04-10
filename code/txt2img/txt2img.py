@@ -53,4 +53,4 @@ for line in text.split('\n'):
 
 # 保存图片
 canvas.save(args.output)
-print('[CQ:image,file=file:///{}/{}]'.format(current_dir, args.output), end='')
+print('[CQ:image,file=file://{}/{}]'.format(current_dir, args.output), end='')

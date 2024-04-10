@@ -32,8 +32,8 @@ void Config::init(const json &js)
         throw invalid_argument("lua_state_list 被提供了错误的数据类型。应为 array。");
     }
     
-    if (js.count("broad_List"))
-      broad_list = js["broad_list"].get<vector<string>>();
+    /*if (js.count("broad_List"))
+      broad_list = js["broad_list"].get<vector<string>>();*/
   }
   catch(const std::exception &e)
   {

@@ -72,7 +72,10 @@ void Lua_Shell::init(Jiemeng *b)
       "set_group", &Message_Place::set_group,
       "set_private", &Message_Place::set_private,
       "is_group", &Message_Place::is_group,
-      "is_private", &Message_Place::is_private);
+      "is_private", &Message_Place::is_private,
+      "get_level",
+      [b](Message_Place &place)
+      { place.get_level(&(b->config)); });
   lua.new_usertype<Message>(
       "Message",
       "new", sol::constructors<Message()>(),
@@ -94,6 +97,9 @@ void Lua_Shell::init(Jiemeng *b)
       "push_back", &Operation_List::push_back);
   sol::table botlib = lua.create_table();
   sol::table jsonlib = lua.create_table();
+  botlib.set_function(
+      "sleep",
+      minisleep);
   botlib.set_function(
       "group_output",
       [this](const string group_id, string message)
@@ -143,14 +149,15 @@ void Lua_Shell::init(Jiemeng *b)
       { return json_to_lua_table(js, lua); });
   lua["bot"] = botlib;
   lua["jsonlib"] = jsonlib;
-  load("./luarc");
-  load("./user_luarc");
   lua["bot"]["_version"] = JIEMENG_VERSION;
   lua["bot"]["_platform"] = JIEMENG_PLATFORM;
   lua["bot"]["_compile_time"] = UPDATE_TIME;
   lua["bot"]["spliter"] = bot->config.spliter;
   auto custom_config_table = json_to_lua_table(bot->config.custom_config, lua);
   lua["bot"]["custom_config"] = custom_config_table;
+  lua["bot"]["group_list"] = bot->config.get_group_list();
+  load("./luarc");
+  load("./user_luarc");
 }
 string Lua_Shell::call(const string &func, Message &message)
 {

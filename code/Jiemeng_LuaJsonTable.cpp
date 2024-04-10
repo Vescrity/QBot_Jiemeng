@@ -41,7 +41,7 @@ nlohmann::json lua_table_to_json(sol::object lua_value)
   }
   else
   {
-    return nullptr;
+    return "<Not Support Type>"s;
   }
 }
 sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua)
