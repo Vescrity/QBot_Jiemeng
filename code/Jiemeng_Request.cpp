@@ -1,7 +1,7 @@
 #include "Jiemeng_Request.hpp"
 #include "Jiemeng_LogIO.hpp"
 #include <sstream>
-#include "opstring.h"
+#include "Jiemeng_String.hpp"
 #include "Jiemeng_Basic.h"
 #include <curl/curl.h>
 json Request::js_curl_get()

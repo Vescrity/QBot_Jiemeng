@@ -1,13 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
-# 设置项目名称
-project(Jiemeng VERSION 24.99.0)
-# 设置C++标准
+project(Jiemeng)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-# Debug
-# set(CMAKE_BUILD_TYPE Debug)
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
-# 设置编译选项，添加-lcurl
+# 设置编译选项
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcurl -llua -Wall")
 # 设定包含的源文件目录
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/code")
@@ -17,9 +12,6 @@ file(GLOB SOURCES "${SOURCE_DIR}/*.cpp")
 foreach(SOURCE_PATH ${SOURCES})
     get_filename_component(SOURCE_FILE_NAME "${SOURCE_PATH}" NAME)
     if(SOURCE_FILE_NAME MATCHES "^test.*")
-        list(REMOVE_ITEM SOURCES "${SOURCE_PATH}")
-    endif()
-    if(SOURCE_FILE_NAME MATCHES "^ST.*")
         list(REMOVE_ITEM SOURCES "${SOURCE_PATH}")
     endif()
 endforeach()

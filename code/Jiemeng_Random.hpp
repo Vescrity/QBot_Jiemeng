@@ -6,7 +6,6 @@
 #include <time.h>
 #include <string.h>
 #include <boost/regex.hpp>
-#include "opstring.h"
 
 #define Lint long long
 /// @brief 返回[l,r]区间内随机整数
