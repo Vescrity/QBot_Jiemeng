@@ -60,11 +60,11 @@ void Message::notice_init(const json &js)
 void print_cutline()
 {
   string hf = "----------------";
-  color_print(hf);
-  color_print(JIEMENG_PLATFORM);
-  color_print(" ");
-  color_print(JIEMENG_VERSION);
-  color_puts(hf.c_str());
+  blue_print(hf);
+  blue_print(JIEMENG_PLATFORM);
+  blue_print(" ");
+  blue_print(JIEMENG_VERSION);
+  blue_puts(hf.c_str());
 }
 
 void Message::show() const

@@ -61,7 +61,7 @@ void WSIO_Cache::listen(std::function<void(const json &)> func)
       ws.read(buffer);
       std::string message(boost::asio::buffers_begin(buffer.data()), boost::asio::buffers_end(buffer.data()));
       debug_lable("[WSIO_Recive]");
-      dout << message << "\n";
+      debug_puts(message);
       buffer.consume(buffer.size());
       json recv;
       try
@@ -88,7 +88,8 @@ void WSIO_Cache::listen(std::function<void(const json &)> func)
             [this, func, recv]
             { func(recv); })
             .detach();
-
+        debug_lable("[WSIO]");
+        debug_puts("Detach!");
         /*std::unique_lock<std::mutex> lock(msg_mtx);
         msg_cache = recv;
         msg_flag = true;
@@ -134,7 +135,7 @@ void Server::init(const string &h, const string &p)
   host = h;
   port = p;
   flag = 0;
-  lock = unique_lock(mtx);
+  // lock = unique_lock(mtx);
 }
 void Server::run(std::function<void(const json &)> func)
 {
@@ -142,15 +143,20 @@ void Server::run(std::function<void(const json &)> func)
   {
     try
     {
+      debug_lable("[Server]");
+      debug_puts("Server::run 开始一次循环");
       wsio_cache = new WSIO_Cache(host, port);
-      flag_cache_true();
+      // flag_cache_true();
       try
       {
         wsio_cache->listen(func);
+        debug_lable("[Server]");
+        debug_puts("Server::run 结束listen");
       }
-      catch (...)
+      catch (std::exception &e)
       {
-        flag_cache_false();
+        // flag_cache_false();
+        JM_EXCEPTION("[Server]")
         delete wsio_cache;
       }
     }
@@ -160,6 +166,8 @@ void Server::run(std::function<void(const json &)> func)
       JM_EXCEPTION("[Server]")
       minisleep(5000);
     }
+    debug_lable("[Server]");
+    debug_puts("Server::run 完成一次循环");
   }
 }
 
@@ -187,6 +195,7 @@ WSIO_Cache *Server::get_cache()
   lk.unlock();
   return wsio_cache;
 }
+/*
 void Server::flag_cache_true()
 {
   flag = 1;
@@ -197,4 +206,4 @@ void Server::flag_cache_false()
 {
   lock = unique_lock(mtx);
   flag = 0;
-}
+}*/

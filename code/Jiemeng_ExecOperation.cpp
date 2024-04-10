@@ -14,9 +14,9 @@ string Jiemeng::exec_operation(Message &message, const Operation &operation)
   }
   if (operation.type == Type::lua_once)
   {
-    one_lua = new Lua_Shell(this);
-    string rt = one_lua->call(operation.str, message);
-    delete one_lua;
+    auto one = new Lua_Shell(this);
+    string rt = one->call(operation.str, message);
+    delete one;
     return rt;
   }
   if (operation.type == Type::call_state)

@@ -45,8 +45,35 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
     string &order = paras[0];
     if (order == "order")
     {
-      oper.str = paras[1];
+      auto Pa = string_cut(message.true_str(), bot->config.spliter, 2);
+      oper.str = (*Pa)[1];
       rt += extract(oper, message, bot);
+      return rt;
+    }
+    if (order == "s_sh")
+    {
+      auto Pa = string_cut(paras[1], bot->config.spliter, 2);
+      auto &state = (*Pa)[0];
+      auto &code = (*Pa)[1];
+      oper.str = bot->map_lua[state]->exec(code);
+      oper.type = Type::message;
+      rt += oper;
+      return rt;
+    }
+    if (order == "l_sh")
+    {
+      auto &Pa = paras[1];
+      oper.str = bot->lua->exec(Pa);
+      oper.type = Type::message;
+      rt += oper;
+      return rt;
+    }
+    if (order == "sh")
+    {
+      auto &Pa = paras[1];
+      oper.str = execmd(Pa);
+      oper.type = Type::message;
+      rt += oper;
       return rt;
     }
 

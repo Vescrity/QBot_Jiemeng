@@ -18,7 +18,6 @@ class Jiemeng
   Server *server;
   Lua_Shell *lua;
   map<string, Lua_Shell *> map_lua;
-  Lua_Shell *one_lua;
   Message generate_message(const json &);
   void process_message(Message);
   bool message_output(Message &);
