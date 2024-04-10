@@ -2,6 +2,7 @@
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_Time.hpp"
 #include "Jiemeng_Random.hpp"
+#include "Jiemeng_String.hpp"
 
 void message_replace(string &str, Message_Place &place)
 {

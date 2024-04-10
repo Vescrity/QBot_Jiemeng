@@ -1,4 +1,5 @@
 #include "Jiemeng_Deck.hpp"
+#include "Jiemeng_String.hpp"
 #include "Jiemeng_Random.hpp"
 #include <fstream>
 #include <filesystem>

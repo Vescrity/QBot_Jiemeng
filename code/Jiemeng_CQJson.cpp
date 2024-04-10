@@ -1,5 +1,5 @@
 #include "Jiemeng_CQJson.hpp"
-#include "opstring.h"
+#include "Jiemeng_String.hpp"
 std::string json2CQ(const json &message)
 {
   std::string cqCode;

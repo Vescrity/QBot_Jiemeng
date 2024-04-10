@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <vector>
-#include "opstring.h"
+#include "Jiemeng_String.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_Basic.h"
 #include "Jiemeng_Exception.hpp"
