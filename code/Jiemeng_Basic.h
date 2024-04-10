@@ -10,7 +10,7 @@ using string = std::string;
 inline void minisleep(const int &x)
 {
 #ifndef _WIN32
-  usleep(x << 10);
+  usleep(x * 1000);
 #else
   Sleep(x);
 #endif

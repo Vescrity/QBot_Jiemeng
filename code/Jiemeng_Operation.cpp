@@ -68,6 +68,16 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
       rt += oper;
       return rt;
     }
+    if (order == "1_sh")
+    {
+      auto &Pa = paras[1];
+      Lua_Shell *l = new Lua_Shell(bot);
+      oper.str = l->exec(Pa);
+      delete l;
+      oper.type = Type::message;
+      rt += oper;
+      return rt;
+    }
     if (order == "sh")
     {
       auto &Pa = paras[1];

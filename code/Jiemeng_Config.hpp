@@ -8,11 +8,12 @@ using namespace std;
 using json=nlohmann::json;
 class Config
 {
+  
+  json admin_list;
   vector<string> private_list;
   vector<string> black_list;
   vector<string> group_list;
-  vector<string> broad_list;
-  json admin_list;
+
   bool is_private_black;
 public:
   string port;
@@ -21,6 +22,11 @@ public:
   int text_length;
   int time_check;
   json lua_state_list;
+  
+  vector<string> get_group_list(){return group_list;}
+  vector<string> get_black_list(){return black_list;}
+  vector<string> get_private_list(){return private_list;}
+
   void add_group_list     (const string &id) { group_list.push_back(id); }
   void add_private_list   (const string &id) { private_list.push_back(id); }
   void add_black_list     (const string &id) { black_list.push_back(id); }
