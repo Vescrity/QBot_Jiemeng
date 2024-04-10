@@ -1,25 +1,22 @@
 {
-  "Config": {
-    "PORT": 5705,
-    "sleep_time": 50,
-    "Self_ID": "12345678",
-    "MAX_TEXT_LENGTH": 800,
-    "MAX_MESSAGE_LENGTH": 20000
+  "port": "5705",
+  "self_id": "123456789",
+  "private_black": true,
+  "private_list": [],
+  "admin_list": {
+    "65432123": 100
   },
-  "List_Config": {
-    "private_ifblack": true,
-    "private_list": [
-    ],
-    "admin_list": {
-      "65432123": 100
-    },
-    "black_list": [
-      "87654321",
-      "987654321"
-    ],
-    "group_list": [
-    ]
-  },
+  "black_list": [
+    "87654321",
+    "987654321"
+  ],
+  "lua_state_list": [
+    {
+      "name": "chat",
+      "path": "user_luarc/chat"
+    }
+  ],
+  "group_list": [],
   "Custom_Config": {
     "Test_Flag": "123456789"
   }
