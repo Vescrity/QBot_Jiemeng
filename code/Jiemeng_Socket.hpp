@@ -16,11 +16,11 @@ private:
   unsigned short ids;
   WSIO_Cache *get_cache();
   bool flag;
-  void flag_cache_true();
-  void flag_cache_false();
+  //void flag_cache_true();
+  //void flag_cache_false();
   
   mutex mtx;
-  std::unique_lock<std::mutex> lock;
+  //std::unique_lock<std::mutex> lock;
 public:
   string host;
   string port;
