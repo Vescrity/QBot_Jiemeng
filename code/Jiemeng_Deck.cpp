@@ -29,7 +29,6 @@ string Deck::draw(const string &str, int times)
 Deck::Deck()
 {
   init("./deck");
-  debug_lable("[Deck]");
 }
 void Deck::init(const string &folderPath)
 {
