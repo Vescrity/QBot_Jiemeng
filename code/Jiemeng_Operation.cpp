@@ -12,6 +12,8 @@ using Type = Operation::Type;
 Operation_List extract(Operation oper, Message message, Jiemeng *bot)
 {
   Operation_List rt;
+  Operation clears;
+  clears.type = Type::clear;
   if (oper.type == Type::message)
   {
     message_replace(oper.str, message.place);
@@ -19,10 +21,13 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
     auto uwu = string_cut(oper.str, "[-cut-]");
     Operation op;
     op.type = Type::message;
-    for (auto i : *uwu)
+    int qwq = 0;
+    for (auto &i : *uwu)
     {
       op.str = i;
       rt += op;
+      if (qwq++)
+        rt += clears;
     }
     return rt;
   }
@@ -152,10 +157,10 @@ void Operation_List::upgrade(Message &message, Jiemeng *bot)
   Operation_List rt;
   for (auto &i : list)
     rt += extract(i, message, bot);
-  Operation c;
+  /*Operation c;
   c.type = Type::clear;
   rt += c;
-  list.clear();
+  list.clear();*/
   list = rt.list;
 }
 

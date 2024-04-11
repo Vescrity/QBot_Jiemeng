@@ -17,13 +17,11 @@ class Deck
   string get_output(string str);
 
 public:
-  Deck() { init(); }
+  Deck();
   int size() { return js.size(); }
   /// @brief 初始化牌堆json
   /// @param folderPath 牌堆路径
   void init(const string &folderPath);
-  /// @brief 以默认路径(./deck)初始化牌堆json
-  void init() { init("./deck"); }
   /// @brief 抽取
   /// @param str 键值
   /// @param times 次数

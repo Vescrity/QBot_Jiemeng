@@ -22,12 +22,22 @@ void Message::message_init(const json &js)
   text.change(string(js["raw_message"]));
   const json &sender = js["sender"];
   place.user_id = to_string(js["user_id"]);
-  if (!sender.contains("card"))
+  try
+  {
+    place.user_nm = sender["card"];
+    if (place.user_nm.length() == 0)
+      throw Not_Serious();
+  }
+  catch (...)
+  {
+    place.user_nm = sender["nickname"];
+  }
+  /*if (!sender.contains("card"))
     place.user_nm = sender["nickname"];
   else if (sender["card"].is_null())
     place.user_nm = sender["nickname"];
   else
-    place.user_nm = sender["card"];
+    place.user_nm = sender["card"];*/
   if (is_group())
     place.group_id = to_string(js["group_id"]);
 }
