@@ -21,8 +21,10 @@ mkdir tmp
 mkdir deck
 mkdir jm_script
 mkdir Answer
+mkdir user_luarc
 
 cp -r ../code/txt2img .
+cp -r ../code/luarc .
 cp -r ../sample .
 cp ../LICENSE .
 cp ./sample/config.json .
