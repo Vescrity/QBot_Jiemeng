@@ -1,6 +1,7 @@
 #include "Jiemeng.hpp"
 #include <fstream>
 #include <thread>
+#include <future>
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_DebugIO.hpp"
 #include <nlohmann/json.hpp>
@@ -36,7 +37,12 @@ void work_dir_check()
     else
       throw runtime_error("Failed to creat dir tmp.");
   }
-
+  if (!dir_exists("txt2img"))
+  {
+    warn_lable("[txt2img]");
+    warn_puts("没有发现 txt2img 文件夹，请确保运行时不会触发相关功能。");
+  }
+  // TODO
   return;
 }
 
@@ -61,17 +67,21 @@ void Jiemeng::init()
   debug_lable("[INIT]");
   debug_puts("开始执行 Config_init");
   config_init();
-  deck = new Deck;
-  answer_init();
+  auto fd = async(launch::async, []
+                  { return new Deck; });
+  auto fans = async(launch::async, [this]
+                    { answer_init(); });
   debug_lable("[INIT]");
   debug_puts("开始执行 lua_init");
   lua_init();
   debug_lable("[INIT]");
   debug_puts("开始执行 server_init");
   server_init();
-  info_lable("[INIT]");
+  fans.get();
+  deck = fd.get();
   char *buf = new char[1 << 10];
   sprintf(buf, "初始化成功！共耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
+  info_lable("[INIT]");
   info_puts(buf);
   delete[] buf;
 }
@@ -112,8 +122,6 @@ void Jiemeng::process_message(Message message)
   try
   {
     Operation_List list = answer.get_list(message);
-    debug_lable("[Answer]");
-    dout << "HIT!!\n";
     process_operation(message, list);
   }
   catch (Not_Serious)
@@ -199,7 +207,6 @@ void Jiemeng::config_init()
 }
 Message Jiemeng::generate_message(const json &js)
 {
-  // dout << js.dump(2) << "\n";
   const string &post_type = js["post_type"];
   string able_type[] = {"message", "message_sent", "notice"};
   if (!array_search(post_type, able_type))
