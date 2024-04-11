@@ -1,6 +1,5 @@
 #include "Jiemeng.hpp"
 #include <fstream>
-#include <iostream>
 #include <thread>
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_DebugIO.hpp"
@@ -60,23 +59,19 @@ void Jiemeng::init()
 {
   int st = clock();
   debug_lable("[INIT]");
-  dout << "开始执行 Config_init\n";
+  debug_puts("开始执行 Config_init");
   config_init();
-  debug_lable("[INIT]");
-  dout << "开始执行 lua_init\n";
-  lua_init();
-  debug_lable("[INIT]");
-  dout << "开始执行 deck_init\n";
   deck = new Deck;
-  debug_lable("[INIT]");
-  dout << "开始执行 answer_init\n";
   answer_init();
   debug_lable("[INIT]");
-  dout << "开始执行 server_init\n";
+  debug_puts("开始执行 lua_init");
+  lua_init();
+  debug_lable("[INIT]");
+  debug_puts("开始执行 server_init");
   server_init();
   info_lable("[INIT]");
   char *buf = new char[1 << 10];
-  sprintf(buf, "配置加载成功！本次加载共耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
+  sprintf(buf, "初始化成功！共耗时%.3lfms", (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
   info_puts(buf);
   delete[] buf;
 }
@@ -90,6 +85,9 @@ json Jiemeng::ws_send(json &a) { return server->ws_send(a); }
 void Jiemeng::process_operation(Message &message, Operation_List &list)
 {
   list.upgrade(message, this);
+  Operation c;
+  c.type = Operation::Type::clear;
+  list += c;
   string str;
   for (auto &i : list.list)
   {
@@ -179,26 +177,15 @@ void Jiemeng::run()
     process_message(msg);
   };
   server->run(pmsg);
-  /*while (1)
-  {
-    try
-    {
-      Message msg = generate_message(server->get_message());
-      msg.show();
-      std::thread([this, msg]
-                  { this->process_message(msg); })
-          .detach();
-    }
-    catch (Not_Serious)
-    {
-      continue;
-    }
-  }*/
 }
 
 void Jiemeng::answer_init()
 {
+  debug_lable("[INIT]");
+  debug_puts("开始初始化应答库");
   answer.init(config.custom_config);
+  debug_lable("[INIT]");
+  debug_puts("应答库初始化成功！");
 }
 void Jiemeng::answer_reload()
 {

@@ -26,9 +26,17 @@ string Deck::draw(const string &str, int times)
   mp.clear();
   return rt;
 }
+Deck::Deck()
+{
+  init("./deck");
+  debug_lable("[Deck]");
+}
 void Deck::init(const string &folderPath)
 {
-  json mergedJSON;
+  debug_lable("[Deck]");
+  dout << "开始从 " << folderPath << " 加载牌堆\n";
+  json &mergedJSON = js;
+  json jsonData;
   for (const auto &entry : fs::directory_iterator(folderPath))
   {
     if (entry.path().extension() == ".json")
@@ -36,7 +44,7 @@ void Deck::init(const string &folderPath)
       ifstream file(entry.path());
       if (file)
       {
-        json jsonData;
+        //json jsonData;
         file >> jsonData;
         file.close();
         for (auto it = jsonData.begin(); it != jsonData.end(); ++it)
@@ -44,7 +52,8 @@ void Deck::init(const string &folderPath)
       }
     }
   }
-  js = mergedJSON;
+  debug_lable("[Deck]");
+  debug_puts("牌堆加载完毕");
 }
 string Deck::get_output(string str)
 {
