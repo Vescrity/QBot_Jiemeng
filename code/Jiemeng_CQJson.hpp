@@ -11,19 +11,21 @@ class CQMessage
 {
   string cq;
   json js;
-  bool json_ready, string_ready;
+  bool json_ready, string_ready, string_only;
   void generate_json();
   void generate_string();
 
 public:
-  CQMessage() { json_ready = string_ready = 0; }
+  CQMessage() { string_only = json_ready = string_ready = 0; }
   CQMessage(const string &s)
   {
+    CQMessage();
     cq = s;
     string_ready = 1;
   }
   CQMessage(const json &s)
   {
+    CQMessage();
     js = s;
     json_ready = 1;
   }
@@ -58,6 +60,7 @@ public:
     json_ready = 0;
     string_ready = 1;
   }
+  void set_string_only() { string_only = 1; }
   CQMessage &operator=(const string &s)
   {
     change(s);

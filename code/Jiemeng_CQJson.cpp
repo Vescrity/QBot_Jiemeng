@@ -99,6 +99,13 @@ void CQMessage::generate_json()
 {
   if (!string_ready)
     throw runtime_error("未初始化");
+  if (string_only)
+  {
+    js["type"] = "text";
+    js["data"]["text"] = cq;
+    json_ready = 1;
+    return;
+  }
   js = CQ2json(cq);
   json_ready = 1;
 }
@@ -106,7 +113,7 @@ void CQMessage::generate_string()
 {
   if (!json_ready)
     throw runtime_error("未初始化");
-  cq = json2CQ(js);
+  cq = string_only ? true_str() : json2CQ(js);
   string_ready = 1;
 }
 string CQMessage::true_str()
