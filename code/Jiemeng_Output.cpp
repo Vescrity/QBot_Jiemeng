@@ -4,8 +4,8 @@ bool Jiemeng::private_output(const string &user_id, CQMessage &message)
 {
   if (message.str().length() == 0 || user_id == "10000")
     return false;
-  debug_lable("[Output]");
-  dout << "private, user_id=" << user_id << "\nmessage=" << message.const_str() << "\n";
+  blue_lable("[Output]");
+  blue_puts(message.const_str());
   json send_data, rt;
   send_data["action"] = "send_private_msg";
   send_data["params"]["user_id"] = stoi(user_id);
@@ -17,8 +17,8 @@ bool Jiemeng::group_output(const string &group_id, CQMessage &message)
 {
   if (message.str().length() == 0)
     return false;
-  debug_lable("[Output]");
-  dout << "group, group_id=" << group_id << "\nmessage=" << message.const_str() << "\n";
+  blue_lable("[Output]");
+  blue_puts(message.const_str());
   json send_data, rt;
   send_data["action"] = "send_group_msg";
   send_data["params"]["group_id"] = stoi(group_id);
