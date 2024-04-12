@@ -2,6 +2,7 @@
 #include <fstream>
 #include <thread>
 #include <future>
+#include <chrono>
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_DebugIO.hpp"
 #include <nlohmann/json.hpp>
@@ -231,7 +232,15 @@ string Jiemeng::get_group_name(const string &group_id)
   json js;
   js["params"]["group_id"] = stoi(group_id);
   js["action"] = "get_group_info";
-  js = server->ws_send(js);
+  auto result = async(launch::async, [this, &js]
+                      { return server->ws_send(js); });
+  if (result.wait_for(chrono::milliseconds(config.wait_time)) == future_status::timeout)
+  {
+    warn_lable("[Get_Group_Name]");
+    warn_puts("获取群名超时，放弃等待。");
+    return "";
+  }
+  js = result.get();
   if (js["data"].is_null())
     return "";
   else if (!js["data"].contains("group_name"))
