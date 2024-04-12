@@ -4,6 +4,8 @@ function bot.basic_draw_deck(key, message)
 end
 
 function bot.draw_deck(message)
+    --  @param Message message
+    --  @return string 抽取结果
     local key = get_para(message:true_str())
     return bot.basic_draw_deck(key, message)
 end
