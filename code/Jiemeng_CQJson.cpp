@@ -1,5 +1,13 @@
 #include "Jiemeng_CQJson.hpp"
 #include "Jiemeng_String.hpp"
+std::string string2CQ(const std::string &str)
+{
+  string text;
+  str_replace(text, "&", "&amp;");
+  str_replace(text, "[", "&#91;");
+  str_replace(text, "]", "&#93;");
+  return text;
+}
 std::string json2CQ(const json &message)
 {
   std::string cqCode;
