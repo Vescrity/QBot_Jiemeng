@@ -46,7 +46,6 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
   {
     auto para = string_cut(oper.str, bot->config.spliter, 2);
     auto &paras = (*para);
-    dout << "PARA0" << paras[0] << "\n";
     string &order = paras[0];
     if (order == "order")
     {
@@ -55,40 +54,10 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
       rt += extract(oper, message, bot);
       return rt;
     }
-    if (order == "s_sh")
+    if (order == "sleep")
     {
-      auto Pa = string_cut(paras[1], bot->config.spliter, 2);
-      auto &state = (*Pa)[0];
-      auto &code = (*Pa)[1];
-      oper.str = bot->map_lua[state]->exec(code);
-      oper.type = Type::message;
-      rt += oper;
-      return rt;
-    }
-    if (order == "l_sh")
-    {
-      auto &Pa = paras[1];
-      oper.str = bot->lua->exec(Pa);
-      oper.type = Type::message;
-      rt += oper;
-      return rt;
-    }
-    if (order == "1_sh")
-    {
-      auto &Pa = paras[1];
-      Lua_Shell *l = new Lua_Shell(bot);
-      oper.str = l->exec(Pa);
-      delete l;
-      oper.type = Type::message;
-      rt += oper;
-      return rt;
-    }
-    if (order == "sh")
-    {
-      auto &Pa = paras[1];
-      oper.str = execmd(Pa);
-      oper.type = Type::message;
-      rt += oper;
+      auto Pa = string_cut(message.true_str(), bot->config.spliter, 2);
+      oper.data = stoi((*Pa)[1]);
       return rt;
     }
 
@@ -99,16 +68,6 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
       rt += extract(oper, message, bot);
       return rt;
     }
-    if (order == "deck_reload")
-    {
-      bot->deck_reload();
-      return rt;
-    }
-    if (order == "answer_reload")
-    {
-      bot->answer_reload();
-      return rt;
-    }
     if (order == "reRecv")
     {
       message.str() = paras[1];
@@ -116,36 +75,9 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
       rt.upgrade(message, bot);
       return rt;
     }
-    if (order == "type_rePost")
-    {
-      dout << "paras1" << paras[1] << "\n";
-      auto Para = string_cut(paras[1], bot->config.spliter, 3);
-      auto &Paras = *Para;
-      message_replace(Paras[2], message.place);
-      str_replace(Paras[2], "[Repeat]", message.text.const_str());
-      Operation op;
-      op.str = Paras[2];
-      op.type = Type::message;
-      Message msg;
-      msg.change("");
-      if (Paras[0] != "0")
-      {
-        msg.place.set_group();
-        msg.place.group_id = Paras[0];
-      }
-      else
-      {
-        msg.place.set_private();
-        msg.place.user_id = Paras[1];
-      }
-      Operation_List opl;
-      opl += op;
-      bot->process_operation(msg, opl);
-      return rt;
-    }
+    rt += oper;
+    return rt;
   }
-  debug_lable("[Extract]");
-  dout << "发现了未被 extract 解析的 operation.\n";
   rt += oper;
   return rt;
 }
