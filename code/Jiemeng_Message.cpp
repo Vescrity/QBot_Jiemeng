@@ -25,13 +25,15 @@ void Message::message_init(const json &js)
   try
   {
     if (sender.contains("card"))
+    {
       if (sender["card"].is_string())
         place.user_nm = sender["card"];
-      else
-      {
-        warn_lable("[Message_Init]");
-        warn_print("card 不为 string 类型，这似乎并不符合 OneBot11 标准。");
-      }
+    }
+    else
+    {
+      warn_lable("[Message_Init]");
+      warn_print("card 似乎并不符合 OneBot11 标准。");
+    }
     if (place.user_nm.length() == 0)
       throw Not_Serious();
   }
