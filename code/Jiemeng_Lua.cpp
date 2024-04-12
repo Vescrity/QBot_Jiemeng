@@ -10,6 +10,7 @@
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_MessageReplace.hpp"
 #include "Jiemeng_Request.hpp"
+#include "Jiemeng_Status.hpp"
 namespace fs = std::filesystem;
 nlohmann::json lua_table_to_json(sol::object lua_value);
 sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua);
@@ -140,6 +141,22 @@ void Lua_Shell::init(Jiemeng *b)
       "deck_reload",
       [this]()
       { return this->bot->deck_reload(); });
+  botlib.set_function(
+      "ws_send",
+      sol::overload(
+          [this](json a)
+          { return this->bot->ws_send(a); },
+          [this](const string &a)
+          {
+            json js=json::parse(a);
+            return this->bot->ws_send(js); }));
+  botlib.set_function("start_up_time", start_up_time);
+  botlib.set_function(
+      "deck_size",
+      [this]{return this->bot->deck->size();});
+  /*botlib.set_function(
+      "answer_size",
+      [this]{return this->bot->answer->});*/
   jsonlib.set_function(
       "table2json",
       lua_table_to_json);
