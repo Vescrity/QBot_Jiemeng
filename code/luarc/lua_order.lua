@@ -12,5 +12,7 @@ function bot.lua_shell_explain(script)
     end
 end
 function bot.lua_shell(order)
+    --  @param Message order 携带 Lua 代码
+    --  @return string 运行结果
     return bot.lua_shell_explain(order:true_str())
 end
