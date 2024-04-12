@@ -150,10 +150,19 @@ void Lua_Shell::init(Jiemeng *b)
           {
             json js=json::parse(a);
             return this->bot->ws_send(js); }));
+  botlib.set_function(
+      "get_custom_config",
+      [this]
+      { return json_to_lua_table(bot->config.custom_config, lua); });
+  botlib.set_function(
+      "get_group_list",
+      [this]
+      { return bot->config.get_group_list(); });
   botlib.set_function("start_up_time", start_up_time);
   botlib.set_function(
       "deck_size",
-      [this]{return this->bot->deck->size();});
+      [this]
+      { return this->bot->deck->size(); });
   /*botlib.set_function(
       "answer_size",
       [this]{return this->bot->answer->});*/
@@ -170,8 +179,8 @@ void Lua_Shell::init(Jiemeng *b)
   lua["bot"]["_platform"] = JIEMENG_PLATFORM;
   lua["bot"]["_compile_time"] = UPDATE_TIME;
   lua["bot"]["spliter"] = bot->config.spliter;
-  auto custom_config_table = json_to_lua_table(bot->config.custom_config, lua);
-  lua["bot"]["custom_config"] = custom_config_table;
+  // auto custom_config_table = json_to_lua_table(bot->config.custom_config, lua);
+  // lua["bot"]["custom_config"] = custom_config_table;
   lua["bot"]["group_list"] = bot->config.get_group_list();
   load("./luarc");
   load("./user_luarc");
