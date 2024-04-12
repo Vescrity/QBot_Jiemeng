@@ -160,6 +160,16 @@ void Answer::init(const json &js)
           throw invalid_argument("text 被赋了错误的类型。");
         operation.str = js["text"];
       }
+      else if (js.count("sleep"))
+      {
+        operation.type = Operation::Type::sleep;
+        operation.data = js["sleep"];
+        if(!operation.data.is_number())
+        {
+          // TODO: 情况处理
+          throw invalid_argument("Sleep expect NUMBER");
+        }
+      }
       else if (js.count("ignore"))
       {
         operation.type = Operation::Type::ignore;
