@@ -8,7 +8,7 @@ void Config::init(const json &js)
   try
   {
     js_getval(port,                       js, "port"                                            );
-  //js_getval(sleep_time,                 js, "sleep_time",                 50                  );
+    js_getval(wait_time,                  js, "wait_time",                  2000                );
   //js_getval(delay_time,                 js, "delay_time",                 2000                );
     js_getval(time_check,                 js, "time_check",                 30000               );
   //js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
