@@ -3,6 +3,7 @@
 #include <iostream>
 #include <filesystem>
 #include <sstream>
+#include <thread>
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng.hpp"
 #include "Jiemeng_LogIO.hpp"
@@ -24,7 +25,7 @@ void Lua_Shell::load(const string &path)
       try
       {
         // 执行Lua脚本
-        lua.script_file(entry.path().string());
+        lua->script_file(entry.path().string());
         debug_lable("[Lua_Load]");
         dout << "Executed: " << string(entry.path().filename()) << "\n";
       }
@@ -36,13 +37,25 @@ void Lua_Shell::load(const string &path)
     }
   }
 }
-
+void Lua_Shell::reload()
+{
+  debug_puts("Call Reload");
+  std::lock_guard<std::mutex> locker(mtx);
+  debug_puts("Start Reload");
+  lua.reset();
+  lua = std::make_unique<sol::state>();
+  debug_puts("Reset!");
+  init(bot);
+  return;
+}
 void Lua_Shell::init(Jiemeng *b)
 {
-  lua.open_libraries();
-  bot = b;
-
-  lua.new_usertype<json>(
+  lua->open_libraries();
+  debug_puts("OK!");
+  if (bot == nullptr)
+    bot = b;
+  debug_puts("OK!");
+  lua->new_usertype<json>(
       "json",
       "new", sol::constructors<json()>(),
       "dump",
@@ -51,7 +64,7 @@ void Lua_Shell::init(Jiemeng *b)
           { return js.dump(); },
           [](json &js, int n)
           { return js.dump(n); }));
-  lua.new_usertype<Request>(
+  lua->new_usertype<Request>(
       "Request",
       "new", sol::constructors<Request()>(),
       "set_url", &Request::set_url,
@@ -62,7 +75,7 @@ void Lua_Shell::init(Jiemeng *b)
       "js_post", &Request::js_post,
       "js_get", &Request::js_get,
       "Get", &Request::Get);
-  lua.new_usertype<Message_Place>(
+  lua->new_usertype<Message_Place>(
       "Message_Place",
       "new", sol::constructors<Message_Place()>(),
       "group_id", &Message_Place::group_id,
@@ -77,7 +90,7 @@ void Lua_Shell::init(Jiemeng *b)
       "get_level",
       [b](Message_Place &place)
       { place.get_level(&(b->config)); });
-  lua.new_usertype<Message>(
+  lua->new_usertype<Message>(
       "Message",
       "new", sol::constructors<Message()>(),
       "str", &Message::str,
@@ -87,17 +100,17 @@ void Lua_Shell::init(Jiemeng *b)
       "is_group", &Message::is_group,
       "is_private", &Message::is_private,
       "place", &Message::place);
-  lua.new_usertype<Operation>(
+  lua->new_usertype<Operation>(
       "Operation",
       "new", sol::constructors<Operation()>(),
       "str", &Operation::str,
       "set_type", &Operation::set_type);
-  lua.new_usertype<Operation_List>(
+  lua->new_usertype<Operation_List>(
       "Operation_List",
       "new", sol::constructors<Operation_List()>(),
       "push_back", &Operation_List::push_back);
-  sol::table botlib = lua.create_table();
-  sol::table jsonlib = lua.create_table();
+  sol::table botlib = lua->create_table();
+  sol::table jsonlib = lua->create_table();
   botlib.set_function(
       "sleep",
       minisleep);
@@ -142,6 +155,12 @@ void Lua_Shell::init(Jiemeng *b)
       [this]()
       { return this->bot->deck_reload(); });
   botlib.set_function(
+      "lua_reload",
+      [this]()
+      { 
+        thread([this]{reload();}).detach();
+        return ""; });
+  botlib.set_function(
       "ws_send",
       sol::overload(
           [this](json a)
@@ -153,7 +172,7 @@ void Lua_Shell::init(Jiemeng *b)
   botlib.set_function(
       "get_custom_config",
       [this]
-      { return json_to_lua_table(bot->config.custom_config, lua); });
+      { return json_to_lua_table(bot->config.custom_config, *lua); });
   botlib.set_function(
       "get_group_list",
       [this]
@@ -172,16 +191,16 @@ void Lua_Shell::init(Jiemeng *b)
   jsonlib.set_function(
       "json2table",
       [&](json &js)
-      { return json_to_lua_table(js, lua); });
-  lua["bot"] = botlib;
-  lua["jsonlib"] = jsonlib;
-  lua["bot"]["_version"] = JIEMENG_VERSION;
-  lua["bot"]["_platform"] = JIEMENG_PLATFORM;
-  lua["bot"]["_compile_time"] = UPDATE_TIME;
-  lua["bot"]["spliter"] = bot->config.spliter;
+      { return json_to_lua_table(js, *lua); });
+  (*lua)["bot"] = botlib;
+  (*lua)["jsonlib"] = jsonlib;
+  (*lua)["bot"]["_version"] = JIEMENG_VERSION;
+  (*lua)["bot"]["_platform"] = JIEMENG_PLATFORM;
+  (*lua)["bot"]["_compile_time"] = UPDATE_TIME;
+  (*lua)["bot"]["spliter"] = bot->config.spliter;
   // auto custom_config_table = json_to_lua_table(bot->config.custom_config, lua);
   // lua["bot"]["custom_config"] = custom_config_table;
-  lua["bot"]["group_list"] = bot->config.get_group_list();
+  (*lua)["bot"]["group_list"] = bot->config.get_group_list();
   load("./luarc");
   load("./user_luarc");
 }
@@ -192,13 +211,13 @@ string Lua_Shell::call(const string &func, Message &message)
   dout << "call: " << func << "\n";
   try
   {
-    auto fun = lua.script("return "s + func);
+    auto fun = lua->script("return "s + func);
     sol::function fu = fun;
     auto result = fu(message);
     // auto result = lua[func](message);
     if (!result.valid())
       throw sol::error(result);
-    string q = lua["tostring"](result);
+    string q = (*lua)["tostring"](result);
     return q;
   }
   catch (const sol::error &e)
@@ -213,7 +232,7 @@ string Lua_Shell::exec(const string &code)
   string str;
   try
   {
-    str = lua.script(code);
+    str = lua->script(code);
   }
   catch (const sol::error &e)
   {
