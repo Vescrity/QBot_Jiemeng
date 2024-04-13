@@ -1,13 +1,6 @@
 #include "Jiemeng_CQJson.hpp"
 #include "Jiemeng_String.hpp"
-std::string string2CQ(const std::string &str)
-{
-  string text;
-  str_replace(text, "&", "&amp;");
-  str_replace(text, "[", "&#91;");
-  str_replace(text, "]", "&#93;");
-  return text;
-}
+
 std::string json2CQ(const json &message)
 {
   std::string cqCode;
@@ -107,13 +100,6 @@ void CQMessage::generate_json()
 {
   if (!string_ready)
     throw runtime_error("未初始化");
-  if (string_only)
-  {
-    js["type"] = "text";
-    js["data"]["text"] = cq;
-    json_ready = 1;
-    return;
-  }
   js = CQ2json(cq);
   json_ready = 1;
 }
@@ -121,7 +107,7 @@ void CQMessage::generate_string()
 {
   if (!json_ready)
     throw runtime_error("未初始化");
-  cq = string_only ? true_str() : json2CQ(js);
+  cq = json2CQ(js);
   string_ready = 1;
 }
 string CQMessage::true_str()

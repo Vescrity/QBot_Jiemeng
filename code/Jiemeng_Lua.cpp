@@ -108,9 +108,8 @@ void Lua_Shell::init(Jiemeng *b)
       "push_back", &Operation_List::push_back);
   sol::table botlib = lua->create_table();
   sol::table jsonlib = lua->create_table();
-  botlib.set_function(
-      "sleep",
-      minisleep);
+  botlib.set_function("sleep", minisleep);
+  botlib.set_function("string_only", string2CQ);
   botlib.set_function(
       "group_output",
       [this](const string group_id, string message)

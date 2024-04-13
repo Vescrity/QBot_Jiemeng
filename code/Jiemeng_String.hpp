@@ -22,7 +22,14 @@ inline void str_replace(std::string &str, const std::string &from, const std::st
     startPos = foundPos + to.length();
   }
 }
-
+inline std::string string2CQ(const std::string &str)
+{
+  string text;
+  str_replace(text, "&", "&amp;");
+  str_replace(text, "[", "&#91;");
+  str_replace(text, "]", "&#93;");
+  return text;
+}
 string url_encode(const char *msg);
 inline string url_encode(const string &msg) { return url_encode(msg.c_str()); }
 
