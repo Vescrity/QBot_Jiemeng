@@ -8,7 +8,11 @@ nlohmann::json lua_table_to_json(sol::object lua_value)
   {
     return lua_value.as<bool>();
   }
-  else if (lua_value.is<int>() || lua_value.is<float>() || lua_value.is<double>())
+  else if (lua_value.is<int>())
+  {
+    return lua_value.as<int>();
+  }
+  else if (lua_value.is<float>() || lua_value.is<double>())
   {
     return lua_value.as<double>();
   }
