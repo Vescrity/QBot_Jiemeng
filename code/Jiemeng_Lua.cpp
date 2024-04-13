@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <sstream>
 #include <thread>
+#include "txt2img_api.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng.hpp"
 #include "Jiemeng_LogIO.hpp"
@@ -174,13 +175,15 @@ void Lua_Shell::init(Jiemeng *b)
       [this]
       { return bot->config.get_group_list(); });
   botlib.set_function("start_up_time", start_up_time);
+  botlib.set_function("txt2img", txt2img);
   botlib.set_function(
       "deck_size",
       [this]
       { return this->bot->deck->size(); });
-  /*botlib.set_function(
+  botlib.set_function(
       "answer_size",
-      [this]{return this->bot->answer->});*/
+      [this]
+      { return this->bot->answer.main_answer->size(); });
   jsonlib.set_function(
       "table2json",
       lua_table_to_json);
