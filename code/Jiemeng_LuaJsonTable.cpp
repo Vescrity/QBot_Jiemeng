@@ -56,6 +56,8 @@ sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua)
   }
   else if (j.is_number())
   {
+    if (j.is_number_integer())
+      return sol::make_object(lua, j.get<int>());
     return sol::make_object(lua, j.get<double>());
   }
   else if (j.is_string())
