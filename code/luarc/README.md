@@ -1,6 +1,128 @@
 # Jiemeng Lua
 
-预定义了一些函数与变量。
+预定义了一些变量、函数、类。
+
+## 变量
+
+### bot
+
+- 类型：table
+
+预定义的函数和变量主要定义于此。
+
+#### bot._version
+
+- 类型：string
+- 值为当前桔梦版本。
+
+#### bot._platform
+
+- 类型：string
+- 值为当前桔梦平台。如 `Jiemeng_Linux`
+
+#### bot._compile_time
+
+- 类型：string
+- 值为桔梦编译的时间。(实际仅为 `Jiemeng_Version.cpp` 的编译时间)
+
+#### bot.spliter
+
+- 类型：string
+- 值为配置中指定的 spliter。默认为 `'#'`
+
+#### bot.group_list
+
+- 类型：string[] (type() 值为 `userdata` )
+- 值为配置中指定的 group_list
+
+## 类
+
+### json
+
+内部为 C++ nlohmann::json 对象。
+
+#### 成员函数
+
+##### new
+
+- `[json] new()`
+
+返回一个新的 json 对象。
+
+##### dump
+
+- `[string] dump()`
+- `[string] dump([int] n)`
+
+按字符串形式返回自身值。指定 `n` 可以格式化输出，`n` 为缩进大小。
+
+
+### Request
+
+#### 成员函数
+
+##### new
+
+- `[Request] new()`
+
+返回一个空的 Request 对象
+
+##### set_*
+
+- `[void] set_url([string] url)`
+- `[void] set_api([string] api)`
+
+设置 url 与 api，发送请求时实际是直接将两者进行拼接。
+
+- `[void] set_data([json] data)`
+- `[void] set_msgs([string] msg)`
+
+设置发送数据。
+- `set_data` 参数类型为 json，并会在请求头中标记。
+- `set_msgs` 直接发送设置的内容。
+
+##### 发送方法
+
+- `[string] Post()`
+- `[string] Get()`
+
+使用 Post/Get 方法发送 Request 类中设置的内容。
+
+- `[json] js_post()`
+- `[json] js_get()`
+
+同上，但返回一个 json 对象。
+
+### Message_Place
+
+用于描述消息属性。
+
+#### 成员
+
+- `[string] group_id`
+- `[string] group_nm`
+- `[string] user_id`
+- `[string] user_nm`
+- `[int] level`
+
+#### 成员函数
+
+...
+
+[TODO]
+
+### Message
+
+[TODO]
+
+### Operaton
+
+[TODO]
+
+### Operaton_List
+
+[TODO]
+
 
 ## 函数
 
