@@ -24,7 +24,6 @@ void Lua_Shell::load(const string &path)
     {
       try
       {
-        // 执行Lua脚本
         lua->script_file(entry.path().string());
         debug_lable("[Lua_Load]");
         dout << "Executed: " << string(entry.path().filename()) << "\n";
@@ -51,10 +50,8 @@ void Lua_Shell::reload()
 void Lua_Shell::init(Jiemeng *b)
 {
   lua->open_libraries();
-  debug_puts("OK!");
   if (bot == nullptr)
     bot = b;
-  debug_puts("OK!");
   lua->new_usertype<json>(
       "json",
       "new", sol::constructors<json()>(),
@@ -198,8 +195,6 @@ void Lua_Shell::init(Jiemeng *b)
   (*lua)["bot"]["_platform"] = JIEMENG_PLATFORM;
   (*lua)["bot"]["_compile_time"] = UPDATE_TIME;
   (*lua)["bot"]["spliter"] = bot->config.spliter;
-  // auto custom_config_table = json_to_lua_table(bot->config.custom_config, lua);
-  // lua["bot"]["custom_config"] = custom_config_table;
   (*lua)["bot"]["group_list"] = bot->config.get_group_list();
   load("./luarc");
   load("./user_luarc");
@@ -214,7 +209,6 @@ string Lua_Shell::call(const string &func, Message &message)
     auto fun = lua->script("return "s + func);
     sol::function fu = fun;
     auto result = fu(message);
-    // auto result = lua[func](message);
     if (!result.valid())
       throw sol::error(result);
     string q = (*lua)["tostring"](result);

@@ -20,7 +20,6 @@ public:
   {
     lua = std::make_unique<sol::state>();
     bot = nullptr;
-    //lua = *lp;
     init(b);
   };
   void reload();
