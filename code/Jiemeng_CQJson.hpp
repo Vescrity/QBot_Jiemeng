@@ -11,12 +11,12 @@ class CQMessage
 {
   string cq;
   json js;
-  bool json_ready, string_ready, string_only;
+  bool json_ready, string_ready;
   void generate_json();
   void generate_string();
 
 public:
-  CQMessage() { string_only = json_ready = string_ready = 0; }
+  CQMessage() {  json_ready = string_ready = 0; }
   CQMessage(const string &s)
   {
     CQMessage();
@@ -60,7 +60,6 @@ public:
     json_ready = 0;
     string_ready = 1;
   }
-  void set_string_only() { string_only = 1; }
   CQMessage &operator=(const string &s)
   {
     change(s);
