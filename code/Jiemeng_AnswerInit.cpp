@@ -31,26 +31,19 @@ Answer_List *main_answer_read(const json &custom)
 }
 void All_Answer::main_answer_reload(const json &custom)
 {
-  for (auto &i : answer_list)
-  {
-    if (i->priority == 0)
-    {
-      Answer_List *j = main_answer_read(custom);
-      Answer_List *k;
-      k = i;
-      i = j;
-      delete k;
-      return;
-    }
-  }
+  Answer_List *j = main_answer_read(custom);
+  Answer_List *k;
+  k = main_answer;
+  main_answer = j;
+  delete k;
+  return;
 }
 void All_Answer::init(const json &custom)
 {
   try
   {
     clear();
-    Answer_List *p = main_answer_read(custom);
-    answer_list.push_back(p);
+    main_answer = main_answer_read(custom);
   }
   catch (std::exception &e)
   {
@@ -164,7 +157,7 @@ void Answer::init(const json &js)
       {
         operation.type = Operation::Type::sleep;
         operation.data = js["sleep"];
-        if(!operation.data.is_number())
+        if (!operation.data.is_number())
         {
           // TODO: 情况处理
           throw invalid_argument("Sleep expect NUMBER");

@@ -61,6 +61,7 @@ class Answer_List
 public:
   int priority;
   Answer_List() { priority = 0; }
+  auto size() { return answer_group.size(); }
   void init(const json &js);
   void clear()
   {
@@ -73,15 +74,25 @@ public:
 };
 class All_Answer
 {
-  vector<Answer_List *> answer_list;
+  vector<Answer_List *> pre_answer_list;
+  vector<Answer_List *> suf_answer_list;
 
 public:
+  Answer_List *main_answer;
   void clear()
   {
-    for (auto &i : answer_list)
-      delete i;
-    answer_list.clear();
+    auto c = [this](vector<Answer_List *> &x)
+    {
+      for (auto &i : x)
+        delete i;
+      x.clear();
+    };
+    c(pre_answer_list);
+    if (main_answer != nullptr)
+      delete main_answer;
+    c(suf_answer_list);
   }
+  All_Answer() { main_answer = nullptr; }
   ~All_Answer() { clear(); }
   void init(const json &);
   void main_answer_reload(const json &);

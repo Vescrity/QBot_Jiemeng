@@ -7,22 +7,32 @@ Operation_List All_Answer::get_list(const Message &message) const
   Operation_List rt;
   debug_lable("[Get_List]");
   dout << "开始检索匹配\n";
-  for (auto &i : answer_list)
+  auto c = [&](const vector<Answer_List *> &x)
   {
-    try
+    for (auto &i : x)
     {
-      rt = i->get_list(message);
-      debug_lable("[Get_List]");
-      dout << "检索完成！已成功生成 Operation_LIst\n";
-      return rt;
+      try
+      {
+        rt = i->get_list(message);
+        debug_lable("[Get_List]");
+        dout << "检索完成！已成功生成 Operation_LIst\n";
+        return rt;
+      }
+      catch (Not_Serious)
+      {
+        continue;
+      }
     }
-    catch (Not_Serious)
-    {
-      continue;
-    }
-  }
+    throw Not_Serious();
+  };
+  try  {return c(pre_answer_list);  }
+  catch (Not_Serious){}
+  try  {return main_answer->get_list(message);}
+  catch(Not_Serious) {}
+  try{return c(suf_answer_list);}
+  catch (Not_Serious){}
   debug_lable("[Get_List]");
-  dout << "检索完成！没有发现匹配项。\n";
+  debug_puts( "检索完成！没有发现匹配项。");
   throw Not_Serious();
 }
 Operation_List Answer_List::get_list(const Message &message) const
