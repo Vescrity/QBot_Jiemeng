@@ -15,6 +15,47 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 using namespace std;
+void Jiemeng::run()
+{
+  std::thread(
+      [this]
+      { 
+        string ti,tp;
+        for(;;)
+        {
+          Time_Class tm;
+          Message msg;
+          msg.place.user_id="10000";
+          msg.place.user_nm="时钟消息";
+          msg.place.set_private();
+          ti=tm.time_mark();
+          if(ti!=tp){
+            tp=ti;
+            msg.text.change(ti);
+            std::thread([this, msg]
+                  { this->process_message(msg); })
+            .detach();
+          }
+          minisleep(config.time_check);
+        } })
+      .detach();
+
+  auto pmsg = [this](const json &js)
+  {
+    Message msg;
+    try
+    {
+      msg = generate_message(js);
+    }
+    catch (Not_Serious)
+    {
+      return;
+    }
+    msg.show();
+    process_message(msg);
+  };
+  server->run(pmsg);
+}
 
 bool dir_exists(const string &name)
 {
@@ -146,47 +187,6 @@ void Jiemeng::deck_reload()
   deck = p;
   delete r;
 }
-void Jiemeng::run()
-{
-  std::thread(
-      [this]
-      { 
-        string ti,tp;
-        for(;;)
-        {
-          Time_Class tm;
-          Message msg;
-          msg.place.user_id="10000";
-          msg.place.user_nm="时钟消息";
-          msg.place.set_private();
-          ti=tm.time_mark();
-          if(ti!=tp){
-            tp=ti;
-            msg.text.change(ti);
-            std::thread([this, msg]
-                  { this->process_message(msg); })
-            .detach();
-          }
-          minisleep(config.time_check);
-        } })
-      .detach();
-
-  auto pmsg = [this](const json &js)
-  {
-    Message msg;
-    try
-    {
-      msg = generate_message(js);
-    }
-    catch (Not_Serious)
-    {
-      return;
-    }
-    msg.show();
-    process_message(msg);
-  };
-  server->run(pmsg);
-}
 
 void Jiemeng::answer_init()
 {
@@ -230,7 +230,7 @@ Message Jiemeng::generate_message(const json &js)
 string Jiemeng::get_group_name(const string &group_id)
 {
   json js;
-  js["params"]["group_id"] = stoi(group_id);
+  js["params"]["group_id"] = stoull(group_id);
   js["action"] = "get_group_info";
   auto result = async(launch::async, [this, &js]
                       { return server->ws_send(js); });
