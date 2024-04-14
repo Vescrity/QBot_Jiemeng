@@ -29,11 +29,6 @@ void Message::message_init(const json &js)
       if (sender["card"].is_string())
         place.user_nm = sender["card"];
     }
-    else
-    {
-      warn_lable("[Message_Init]");
-      warn_puts("card 似乎并不符合 OneBot11 标准。");
-    }
     if (place.user_nm.length() == 0)
       throw Not_Serious();
   }
