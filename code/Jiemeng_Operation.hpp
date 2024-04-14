@@ -32,6 +32,16 @@ public:
   class Clear : std::exception
   {
   };
+  class reRecv : public std::exception
+  {
+    std::string message;
+  public:
+    reRecv(const std::string &msg) : message(msg) {}
+    virtual const char *what() const noexcept override
+    {
+      return message.c_str();
+    }
+  };
 };
 
 class Operation_List

@@ -13,10 +13,11 @@
 #include "Jiemeng_MessageReplace.hpp"
 #include "Jiemeng_Request.hpp"
 #include "Jiemeng_Status.hpp"
+using json = nlohmann::json;
 namespace fs = std::filesystem;
-nlohmann::json lua_table_to_json(sol::object lua_value);
+json lua_table_to_json(sol::object lua_value);
 sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua);
-
+json parse_to_json(const sol::object &obj);
 void Lua_Shell::load(const string &path)
 {
   for (const auto &entry : fs::directory_iterator(path))
@@ -157,7 +158,24 @@ void Lua_Shell::init(Jiemeng *b)
       { 
         thread([this]{reload();}).detach();
         return ""; });
+
   botlib.set_function(
+      "ws_send",
+      [this](const sol::object &obj)
+      {
+        auto a = parse_to_json(obj);
+        return this->bot->ws_send(a);
+      });
+  botlib.set_function(
+      "_ws_send",
+      [this](const sol::object &obj)
+      { thread(
+            [&]
+            {
+              auto a = parse_to_json(obj);
+              this->bot->ws_send(a); })
+            .detach(); });
+  /*botlib.set_function(
       "ws_send",
       sol::overload(
           [this](json a)
@@ -165,7 +183,33 @@ void Lua_Shell::init(Jiemeng *b)
           [this](const string &a)
           {
             json js=json::parse(a);
-            return this->bot->ws_send(js); }));
+            return this->bot->ws_send(js); },
+          [this](sol::table &a)
+          {
+            json js=lua_table_to_json(a);
+            return this->bot->ws_send(js); }));*/
+  /*botlib.set_function(
+      "_ws_send",
+      sol::overload(
+          [this](json &a)
+          { thread(
+                [&]
+                { this->bot->ws_send(a); })
+                .detach(); },
+          [this](const string &a)
+          { thread(
+                [&]
+                {
+                  json js=json::parse(a);
+                  this->bot->ws_send(js); })
+                .detach(); },
+          [this](sol::table &a)
+          { thread(
+                [&]
+                {
+                  json js=lua_table_to_json(a);
+                  this->bot->ws_send(js); })
+                .detach(); }));**/
   botlib.set_function(
       "get_custom_config",
       [this]

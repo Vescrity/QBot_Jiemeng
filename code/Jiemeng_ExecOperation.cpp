@@ -101,6 +101,10 @@ string Jiemeng::exec_operation(Message &message, const Operation &operation)
       process_operation(msg, opl);
       return "";
     }
+    if (order == "reRecv")
+    {
+      throw Operation::reRecv(paras[1]);
+    }
   }
   // 理论上不应该出现draw_deck
   if (operation.type == Type::draw_deck)

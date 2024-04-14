@@ -35,6 +35,7 @@ class Jiemeng
   void answer_reload();
   void deck_reload();
   void process_operation(Message &, Operation_List &);
+  void process_operation(Message &, Operation_List &, string &);
   friend class Lua_Shell;
   friend Operation_List extract(Operation oper, Message message, Jiemeng *bot);
 

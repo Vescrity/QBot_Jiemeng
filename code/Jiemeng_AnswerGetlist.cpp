@@ -5,6 +5,7 @@ using Type = Operation::Type;
 Operation_List All_Answer::get_list(const Message &message) const
 {
   Operation_List rt;
+  auto b=message;
   debug_lable("[Get_List]");
   dout << "开始检索匹配\n";
   auto c = [&](const vector<Answer_List *> &x)
