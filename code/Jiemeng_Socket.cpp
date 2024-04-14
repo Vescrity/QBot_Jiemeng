@@ -15,7 +15,7 @@ using tcp = boost::asio::ip::tcp;
 using json = nlohmann::json;
 namespace net = boost::asio;
 namespace websocket = boost::beast::websocket;
-static const unsigned short CACHE_LENGTH = 64;
+static const unsigned short CACHE_LENGTH = 256;
 /// @brief Web_Socket Control Center
 class WSIO_Cache
 {

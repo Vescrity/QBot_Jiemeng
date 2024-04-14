@@ -68,13 +68,6 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
       rt += extract(oper, message, bot);
       return rt;
     }
-    if (order == "reRecv")
-    {
-      message.str() = paras[1];
-      rt = bot->answer.get_list(message);
-      rt.upgrade(message, bot);
-      return rt;
-    }
     rt += oper;
     return rt;
   }

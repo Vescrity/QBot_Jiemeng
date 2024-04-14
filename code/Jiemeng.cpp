@@ -134,30 +134,42 @@ void Jiemeng::server_init()
   server->init("127.0.0.1", config.port);
 }
 json Jiemeng::ws_send(json &a) { return server->ws_send(a); }
-void Jiemeng::process_operation(Message &message, Operation_List &list)
+void Jiemeng::process_operation(Message &message, Operation_List &list, string &buf)
 {
   list.upgrade(message, this);
-  Operation c;
-  c.type = Operation::Type::clear;
-  list += c;
-  string str;
   for (auto &i : list.list)
   {
     try
     {
-      str = str + exec_operation(message, i);
+      buf = buf + exec_operation(message, i);
     }
     catch (Operation::Clear)
     {
-      CQMessage ms(str);
+      CQMessage ms(buf);
       message_output(message.place, ms);
-      str = "";
+      buf = "";
+    }
+    catch (Operation::reRecv &e)
+    {
+      Message msg;
+      msg.change(e.what());
+      Operation_List rl;
+      rl = answer.get_list(msg);
+      process_operation(msg, rl, buf);
     }
     catch (exception &e)
     {
       JM_EXCEPTION("[Exec_Operation]");
     }
   }
+}
+void Jiemeng::process_operation(Message &message, Operation_List &list)
+{
+  string uwu = "";
+  Operation clears;
+  clears.type = Operation::Type::clear;
+  list += clears;
+  process_operation(message, list, uwu);
 }
 void Jiemeng::process_message(Message message)
 {

@@ -1,7 +1,7 @@
 #include <nlohmann/json.hpp>
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng.hpp"
-
+using json = nlohmann::json;
 nlohmann::json lua_table_to_json(sol::object lua_value)
 {
   if (lua_value.is<bool>())
@@ -88,5 +88,34 @@ sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua)
   else
   { // null 或其他类型
     return sol::make_object(lua, sol::nil);
+  }
+}
+json parse_to_json(const sol::object &obj)
+{
+  if (obj.is<sol::table>())
+  {
+    sol::table tb = obj.as<sol::table>();
+    return lua_table_to_json(tb);
+  }
+  else if (obj.is<std::string>())
+  {
+    const std::string &str = obj.as<std::string>();
+    try
+    {
+      return json::parse(str);
+    }
+    catch (const json::parse_error &e)
+    {
+      // For the purpose of this example, we'll just rethrow it
+      throw;
+    }
+  }
+  else if (obj.is<json>())
+  {
+    return obj.as<json>();
+  }
+  else
+  {
+    throw std::invalid_argument("Unsupported type for JSON conversion");
   }
 }
