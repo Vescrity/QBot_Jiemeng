@@ -57,7 +57,7 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
     if (order == "sleep")
     {
       auto Pa = string_cut(message.true_str(), bot->config.spliter, 2);
-      oper.data = stoi((*Pa)[1]);
+      oper.data = stoll((*Pa)[1]);
       return rt;
     }
 

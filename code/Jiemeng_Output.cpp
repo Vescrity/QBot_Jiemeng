@@ -8,7 +8,7 @@ bool Jiemeng::private_output(const string &user_id, CQMessage &message)
   blue_puts(message.const_str());
   json send_data, rt;
   send_data["action"] = "send_private_msg";
-  send_data["params"]["user_id"] = stoi(user_id);
+  send_data["params"]["user_id"] = stoull(user_id);
   send_data["params"]["message"] = message.get_json();
   rt = ws_send(send_data);
   return rt["status"] == "ok";
@@ -21,7 +21,7 @@ bool Jiemeng::group_output(const string &group_id, CQMessage &message)
   blue_puts(message.const_str());
   json send_data, rt;
   send_data["action"] = "send_group_msg";
-  send_data["params"]["group_id"] = stoi(group_id);
+  send_data["params"]["group_id"] = stoull(group_id);
   send_data["params"]["message"] = message.get_json();
   rt = ws_send(send_data);
   return rt["status"] == "ok";

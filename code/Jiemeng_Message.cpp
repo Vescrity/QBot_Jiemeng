@@ -32,7 +32,7 @@ void Message::message_init(const json &js)
     else
     {
       warn_lable("[Message_Init]");
-      warn_print("card 似乎并不符合 OneBot11 标准。");
+      warn_puts("card 似乎并不符合 OneBot11 标准。");
     }
     if (place.user_nm.length() == 0)
       throw Not_Serious();
@@ -72,6 +72,8 @@ void Message::notice_init(const json &js)
   else
   {
     /// TODO
+    warn_lable("[Notice_init]");
+    warn_puts("暂不支持的事件");
     throw Not_Serious();
   }
 }
