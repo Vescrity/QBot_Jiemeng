@@ -197,6 +197,7 @@ void Lua_Shell::init(Jiemeng *b)
   (*lua)["bot"]["_platform"] = JIEMENG_PLATFORM;
   (*lua)["bot"]["_compile_time"] = UPDATE_TIME;
   (*lua)["bot"]["spliter"] = bot->config.spliter;
+  (*lua)["bot"]["custom_config"] = json_to_lua_table(bot->config.custom_config, *lua);
   (*lua)["bot"]["group_list"] = bot->config.get_group_list();
   load("./luarc");
   load("./user_luarc");
