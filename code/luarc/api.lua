@@ -5,7 +5,12 @@ function bot._api(url, api, is_Get, data_table, return_json)
     req:set_api(api)
     local js = jsonlib.table2json(data_table)
     req:set_data(js)
-    local rt = req:js_post()
+    local rt = json.new()
+    if (is_Get) then
+        rt = req:js_get()
+    else
+        rt = req:js_post()
+    end
     if (return_json) then return rt end
     return jsonlib.json2table(rt)
 end
