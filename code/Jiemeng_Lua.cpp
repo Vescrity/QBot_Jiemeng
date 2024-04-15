@@ -1,4 +1,3 @@
-
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -196,41 +195,6 @@ void Lua_Shell::init(Jiemeng *b)
             [this,a]
             { json b=a;this->bot->ws_send(b); })
             .detach(); });
-  /*botlib.set_function(
-      "ws_send",
-      sol::overload(
-          [this](json a)
-          { return this->bot->ws_send(a); },
-          [this](const string &a)
-          {
-            json js=json::parse(a);
-            return this->bot->ws_send(js); },
-          [this](sol::table &a)
-          {
-            json js=lua_table_to_json(a);
-            return this->bot->ws_send(js); }));*/
-  /*botlib.set_function(
-      "_ws_send",
-      sol::overload(
-          [this](json &a)
-          { thread(
-                [&]
-                { this->bot->ws_send(a); })
-                .detach(); },
-          [this](const string &a)
-          { thread(
-                [&]
-                {
-                  json js=json::parse(a);
-                  this->bot->ws_send(js); })
-                .detach(); },
-          [this](sol::table &a)
-          { thread(
-                [&]
-                {
-                  json js=lua_table_to_json(a);
-                  this->bot->ws_send(js); })
-                .detach(); }));**/
   botlib.set_function(
       "get_custom_config",
       [this]
