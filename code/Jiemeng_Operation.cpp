@@ -33,7 +33,20 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
   }
   if (oper.type == Type::draw_deck)
   {
-    oper.str = bot->deck->draw(oper.str);
+    auto para = string_cut(oper.str, bot->config.spliter);
+    auto p1 = (*para)[0];
+    int t = 1;
+    if (para->size() > 1)
+    {
+      try
+      {
+        t = stoll((*para)[1]);
+      }
+      catch (...)
+      {
+      }
+    }
+    oper.str = bot->deck->draw(p1, t);
     oper.type = Type::message;
     rt += extract(oper, message, bot);
     return rt;
