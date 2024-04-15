@@ -54,6 +54,19 @@ void Lua_Shell::init(Jiemeng *b)
   lua->open_libraries();
   if (bot == nullptr)
     bot = b;
+
+  auto json_index = [](nlohmann::json &j, sol::this_state s, const std::string &key) -> sol::object
+  {
+    sol::state_view lua(s);
+    if (j.contains(key))
+    {
+      return sol::make_object(lua, j[key]);
+    }
+    else
+    {
+      return sol::nil;
+    }
+  };
   lua->new_usertype<json>(
       "json",
       "new", sol::constructors<json()>(),
@@ -62,7 +75,11 @@ void Lua_Shell::init(Jiemeng *b)
           [](json &js)
           { return js.dump(); },
           [](json &js, int n)
-          { return js.dump(n); }));
+          { return js.dump(n); }),
+      "__index", json_index,
+      // __newindex metamethod，设置子键
+      "__newindex", [](nlohmann::json &this_json, const std::string &key, const sol::stack_object &value)
+      { this_json[key] = value.as<nlohmann::json>(); });
   lua->new_usertype<Request>(
       "Request",
       "new", sol::constructors<Request()>(),
@@ -93,7 +110,10 @@ void Lua_Shell::init(Jiemeng *b)
       "Message",
       "new", sol::constructors<Message()>(),
       "str", &Message::str,
-      "change", &Message::change,
+      "change", sol::overload([](Message &m, const char *str)
+                              { return m.change(str); },
+                              [](Message &m, json &js)
+                              { return m.change(js); }),
       "true_str", &Message::true_str,
       "show", &Message::show,
       "is_group", &Message::is_group,
@@ -169,11 +189,11 @@ void Lua_Shell::init(Jiemeng *b)
   botlib.set_function(
       "_ws_send",
       [this](const sol::object &obj)
-      { thread(
-            [&]
-            {
-              auto a = parse_to_json(obj);
-              this->bot->ws_send(a); })
+      { 
+        json a = parse_to_json(obj);
+        thread(
+            [this,a]
+            { json b=a;this->bot->ws_send(b); })
             .detach(); });
   /*botlib.set_function(
       "ws_send",
