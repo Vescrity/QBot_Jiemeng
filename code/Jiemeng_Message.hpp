@@ -41,7 +41,9 @@ public:
   string &str() { return text.get_string(); }
   /// @brief 显示消息内容
   void show() const;
+  void change(const char *s) { text.change(string(s)); }
   void change(const string &s) { text.change(s); }
+  void change(const json &s) { text.change(s); }
   string true_str() { return text.true_str(); }
   bool is_group() const { return place.is_group(); }
   bool is_private() const { return place.is_private(); }

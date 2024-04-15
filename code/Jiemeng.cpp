@@ -152,7 +152,7 @@ void Jiemeng::process_operation(Message &message, Operation_List &list, string &
     catch (Operation::reRecv &e)
     {
       Message msg;
-      msg.change(e.what());
+      msg.change(string(e.what()));
       Operation_List rl;
       rl = answer.get_list(msg);
       process_operation(msg, rl, buf);

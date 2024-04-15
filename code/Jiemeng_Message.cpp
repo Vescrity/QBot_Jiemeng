@@ -62,6 +62,10 @@ void Message::notice_init(const json &js)
     {
       text = text.str() + ",subtype=" + to_string(js["sub_type"]);
     }
+    if(notice_type=="group_recall")
+    {
+      text = text.str()+",message_id="+to_string(js["message_id"]);
+    }
     text.str() += "]";
   }
   else
