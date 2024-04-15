@@ -35,7 +35,7 @@ nlohmann::json lua_table_to_json(sol::object lua_value)
     }
     else
     {
-      nlohmann::json json_object;
+      nlohmann::json json_object = json::object();
       for (const auto &pair : table)
       {
         json_object[pair.first.as<std::string>()] = lua_table_to_json(pair.second);
