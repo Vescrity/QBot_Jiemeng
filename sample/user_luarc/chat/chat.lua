@@ -1,4 +1,5 @@
 chat_session = {}
+cat_session = {}
 function chat_newsession()
     local sess = {model = "Jiemeng", stream = false}
     sess.messages = {}
@@ -17,7 +18,7 @@ function chat_make_content(roles, str)
     return con
 end
 
-function _chat(session, message_str)
+function _chat(session, message_str, cat)
     if (message_str == '/clear') then
         chat_session[session] = chat_newsession()
         return '上下文已清理'
@@ -31,6 +32,11 @@ function _chat(session, message_str)
         api = '/api/chat',
         data = chat_session[session]
     }
+    if (cat) then
+        send_data.data.model = 'Jiemeng_cat'
+    else
+        send_data.data.model = 'Jiemeng'
+    end
     local output = bot.api(send_data).message.content
     local ta = chat_make_content('assistant', output)
     table.insert(chat_session[session].messages, ta)
@@ -45,5 +51,16 @@ function chat(message)
     session = session .. message.place.user_id
     local para = get_para(message:true_str())
     local rt = _chat(session, para)
+    return rt
+end
+
+function cat(message)
+    local session = ''
+    if (message:is_group()) then
+        session = session .. message.place.group_id .. '_'
+    end
+    session = session .. message.place.user_id
+    local para = get_para(message:true_str())
+    local rt = _chat(session, para, 1)
     return rt
 end
