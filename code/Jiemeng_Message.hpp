@@ -47,6 +47,8 @@ public:
   string true_str() { return text.true_str(); }
   bool is_group() const { return place.is_group(); }
   bool is_private() const { return place.is_private(); }
+  void set_group() { place.set_group(); }
+  void set_private() { place.set_private(); }
   void init(const json &);
   CQMessage &message() { return text; }
 };

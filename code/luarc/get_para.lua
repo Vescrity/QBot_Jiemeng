@@ -6,6 +6,6 @@ function get_para(s, spliter)
     if pos then
         return s:sub(pos + #spliter), s:sub(1, pos - 1)
     else
-        return '', s
+        return nil, s
     end
 end
