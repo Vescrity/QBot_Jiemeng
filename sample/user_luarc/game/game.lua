@@ -50,20 +50,23 @@ end
 
 function Character:level_up(select)
     select = tonumber(select)
+    up = math.min(self.atk, self.def, self.mdef)
     if (select == 1) then
-        self.atk = self.atk * 2.0
+        self.atk = self.atk + up
     elseif (select == 2) then
-        self.def = self.def * 2.0
+        self.def = self.def + up * 1.25
     elseif (select == 3) then
-        self.mdef = self.mdef * 2.0
+        self.mdef = self.mdef + up * 1.5
     else
         return '无效的参数'
     end
-    self.hp = self.hp * 2.5
+    self.hp = self.hp + up * 4.0
+    self.hp = self.hp * 2.0
     self.level = self.level + 1
-    self.mdef = self.mdef * 1.5
+    self.atk = self.atk * 1.24
+    self.def = self.def * 1.24
+    self.mdef = self.mdef * 1.24
     return '升级成功'
-
 end
 
 function pk(a, b)
@@ -103,10 +106,10 @@ function challenge(player, mon)
 end
 
 function gen_monster(level)
-    local mon = Character:new(nil, '怪物' .. tostring(level), level, 10, 1.6,
+    local mon = Character:new(nil, '怪物' .. tostring(level), level, 5, 1.6,
                               1.3, 0)
-    local times = (1.7 ^ (level - 1))
-    mon.hp = mon.hp * (2.2 ^ (level - 1))
+    local times = (1.645 ^ (level - 1))
+    mon.hp = mon.hp * times
     mon.def = mon.def * times
     mon.atk = mon.atk * times
     mon.mdef = mon.mdef * times
@@ -166,9 +169,6 @@ function Character:_game(oper, oper2)
         else
             return '挑战失败'
         end
-    elseif (oper == 'help' or oper == nil) then
-        return
-            '操作：\nstatus\nmon_info\nchallenge\nup#[1/2/3]\nnewgame#[name]'
     elseif (oper == 'up') then
         if (oper2 == nil) then return '缺少第二参数' end
         if (self.level >= self.stage) then return '不满足升级条件' end
@@ -185,12 +185,31 @@ function Character:_game(oper, oper2)
         return r
     elseif (oper == 'load') then
         local r = ''
-        print(jsonlib.table2json(game_data))
         r = load_game_data('./game_data.json')
-        print(jsonlib.table2json(game_data))
+        return r
+    elseif (oper == 'info') then
+        local r = ''
+        r = r .. [====[
+伤害计算：
+    玩家先手，产生伤害为 己方ATK-敌方DEF
+    MDEF 在每局战斗中可抵掉等量的伤害
+    若战斗双方均不能对对方造成伤害则将血量清至 0.1 并结束本局战斗。
+升级机制：
+    每次战斗胜利后进行一次升级
+    当前升级逻辑：
+        记 up = min(ATK DEF MDEF)
+        若升级 ATK，则加 up*1.0
+        若升级 DEF，则加 up*1.25
+        若升级 MDEF，则加 up*1.5
+        随后生命加 up*4.0，随后 *2.0
+        其余属性 *1.24
+怪物属性：
+    初始值为 5 1.6 1.3 0
+    随后每升级一次全属性 *1.645]====]
         return r
     else
-        return '未知的操作'
+        return
+            '操作：\nstatus 状态信息\nmon_info 怪物信息\nchallenge[#1/2/3] 挑战[并升级]\nup#[1/2/3] 升级 ATK/DEF/MDEF\nnewgame[#name] 新游戏[名称]'
     end
 end
 
