@@ -1,5 +1,8 @@
 #include "Jiemeng.hpp"
 #include "txt2img_api.hpp"
+
+// TODO: 允许用户定义 lua 函数在消息发送前处理消息内容
+
 bool Jiemeng::private_output(const string &user_id, CQMessage &message)
 {
   try
