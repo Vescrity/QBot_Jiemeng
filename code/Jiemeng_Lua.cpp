@@ -78,7 +78,11 @@ void Lua_Shell::init(Jiemeng *b)
       "__index", json_index,
       // __newindex metamethod，设置子键
       "__newindex", [](nlohmann::json &this_json, const std::string &key, const sol::stack_object &value)
-      { this_json[key] = value.as<nlohmann::json>(); });
+      { this_json[key] = value.as<nlohmann::json>(); },
+      "val", [&](json &js) -> sol::object
+      { return json_to_lua_table(js, *lua); },
+      "parse", [&](json &js, const sol::object &obj)
+      { js = parse_to_json(obj); });
   lua->new_usertype<Request>(
       "Request",
       "new", sol::constructors<Request()>(),
