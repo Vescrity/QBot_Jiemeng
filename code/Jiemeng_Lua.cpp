@@ -121,7 +121,25 @@ void Lua_Shell::init(Jiemeng *b)
       "show", &Message::show,
       "is_group", &Message::is_group,
       "is_private", &Message::is_private,
-      "place", &Message::place);
+      "set_group", &Message::set_group,
+      "set_private", &Message::set_private,
+      "place", &Message::place,
+      "user_id", sol::property([](Message &msg)
+                               { return msg.place.user_id; },
+                               [](Message &msg, const string &str)
+                               { msg.place.user_id = str; }),
+      "user_nm", sol::property([](Message &msg)
+                               { return msg.place.user_nm; },
+                               [](Message &msg, const string &str)
+                               { msg.place.user_nm = str; }),
+      "group_id", sol::property([](Message &msg)
+                                { return msg.place.group_id; },
+                                [](Message &msg, const string &str)
+                                { msg.place.group_id = str; }),
+      "group_nm", sol::property([](Message &msg)
+                                { return msg.place.group_nm; },
+                                [](Message &msg, const string &str)
+                                { msg.place.group_nm = str; }));
   lua->new_usertype<Operation>(
       "Operation",
       "new", sol::constructors<Operation()>(),
