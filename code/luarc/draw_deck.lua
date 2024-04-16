@@ -1,6 +1,3 @@
-
-DECK_MAX = 20
-
 function bot.basic_draw_deck(message, key, times)
     times = times or 1
     times = tonumber(times)
