@@ -1,12 +1,21 @@
 #include "Jiemeng_JsonRegex.hpp"
 #include "Jiemeng_Exception.hpp"
 #include <boost/regex.hpp>
-
+#include <string>
+#include <locale>
+#include <codecvt>
+std::wstring string_to_wstring(const std::string &str)
+{
+  std::wstring_convert<std::codecvt_utf8<wchar_t>> wstring_convert;
+  return wstring_convert.from_bytes(str);
+}
 bool reg_check(const string &msg, const json &regs);
 inline bool reg_str_check(const string &msg, const std::string &rstr)
 {
-  boost::regex reg(rstr);
-  return boost::regex_search(msg, reg);
+  auto wrstr=string_to_wstring(rstr);
+  auto wmsg=string_to_wstring(msg);
+  boost::wregex reg(wrstr);
+  return boost::regex_search(wmsg, reg);
 }
 bool reg_and_check(const string &msg, const json &regs)
 {
