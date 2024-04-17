@@ -63,9 +63,9 @@ function Character:level_up(select)
     self.hp = self.hp + up * 4.0
     self.hp = self.hp * 2.0
     self.level = self.level + 1
-    self.atk = self.atk * 1.24
-    self.def = self.def * 1.24
-    self.mdef = self.mdef * 1.24
+    self.atk = self.atk * 1.2
+    self.def = self.def * 1.2
+    self.mdef = self.mdef * 1.2
     return '升级成功'
 end
 
@@ -106,9 +106,9 @@ function challenge(player, mon)
 end
 
 function gen_monster(level)
-    local mon = Character:new(nil, '怪物' .. tostring(level), level, 5, 1.6,
-                              1.3, 0)
-    local times = (1.645 ^ (level - 1))
+    local mon = Character:new(nil, '怪物' .. tostring(level), level, 5, 1.65,
+                              1.1, 0)
+    local times = (1.6 ^ (level - 1))
     mon.hp = mon.hp * times
     mon.def = mon.def * times
     mon.atk = mon.atk * times
@@ -202,10 +202,10 @@ function Character:_game(oper, oper2)
         若升级 DEF，则加 up*1.25
         若升级 MDEF，则加 up*1.5
         随后生命加 up*4.0，随后 *2.0
-        其余属性 *1.24
+        其余属性 *1.2
 怪物属性：
-    初始值为 5 1.6 1.3 0
-    随后每升级一次全属性 *1.645]====]
+    初始值为 5 1.65 1.1 0
+    随后每升级一次全属性 *1.6]====]
         return r
     else
         return
