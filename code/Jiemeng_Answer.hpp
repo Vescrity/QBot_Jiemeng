@@ -15,6 +15,9 @@ private:
   Operation operation;
   vector<int> lvs;
   vector<Answer *> sub_ans;
+  /// @brief 根据规则随机取应答
+  /// @return 应答索引
+  int rand_get() const;
 
 public:
   Answer() { leaf = and_flag = 0; }
@@ -25,9 +28,8 @@ public:
     sub_ans.clear();
   }
   bool is_leaf() const noexcept { return leaf; }
-  bool is_and() const noexcept { return and_flag; } // TODO: 调试时若leaf时应当抛出异常，打印后应直接终止程序
+  bool is_and() const noexcept { return and_flag; }
   bool is_or() const noexcept { return !is_and(); }
-  int rand_get() const;
   Operation_List get_list() const;
   void init(const json &js);
   void Array_init(const json &js);
