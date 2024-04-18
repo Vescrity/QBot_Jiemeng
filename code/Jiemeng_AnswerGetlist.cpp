@@ -72,7 +72,7 @@ int Answer::rand_get() const
 {
   int cnt = sub_ans.size();
   int r = Rands(0, lvs[cnt] - 1);
-  // 查找，或许可以考虑二分
+  // 查找，数据量较小决定不二分
   for (int i = 1; i <= cnt; i++)
   {
     if (lvs[i] > r)
