@@ -16,7 +16,13 @@ bool Jiemeng::private_output(const string &user_id, CQMessage &message)
     send_data["params"]["user_id"] = stoull(user_id);
     send_data["params"]["message"] = message.get_json();
     rt = ws_send(send_data);
-    return rt["status"] == "ok";
+    if (rt["status"] == "ok")
+    {
+      info_lable("[Output]");
+      info_puts("OK!");
+      return true;
+    }
+    return false;
   }
   catch (exception &e)
   {
@@ -37,7 +43,13 @@ bool Jiemeng::group_output(const string &group_id, CQMessage &message)
     send_data["params"]["group_id"] = stoull(group_id);
     send_data["params"]["message"] = message.get_json();
     rt = ws_send(send_data);
-    return rt["status"] == "ok";
+    if (rt["status"] == "ok")
+    {
+      info_lable("[Output]");
+      info_puts("OK!");
+      return true;
+    }
+    return false;
   }
   catch (exception &e)
   {
