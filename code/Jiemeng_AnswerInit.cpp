@@ -278,11 +278,10 @@ json ans_merge(const std::string &folderPath)
     }
   }
 
-  // mergedJson["Answers"] = json::array();
-  /*for (const auto &answers : answerArrays)
+  mergedJson["Answers"] = json::array();
+  for (const auto &answers : answerArrays)
   {
     mergedJson["Answers"].insert(mergedJson["Answers"].end(), answers.begin(), answers.end());
-  }*/
-  mergedJson["Answers"] = answerArrays;
+  }
   return mergedJson;
 }
