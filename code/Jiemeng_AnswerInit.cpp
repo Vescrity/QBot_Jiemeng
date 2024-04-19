@@ -248,12 +248,24 @@ json ans_merge(const std::string &folderPath)
       if (file.is_open())
       {
         json fileJson;
-        file >> fileJson;
-        if (fileJson.contains("Answers") && fileJson["Answers"].is_array())
+        try
         {
-          answerArrays.push_back(fileJson["Answers"]);
+          file >> fileJson;
+          if (fileJson.contains("Answers") && fileJson["Answers"].is_array())
+            answerArrays.push_back(fileJson["Answers"]);
+          else
+          {
+            warn_lable("[Answer_Merge]");
+            warn_puts("文件 "s + string(entry.path()) + " 没有发现 Answers 字段或格式不正确，请检查。本次加载将忽略。");
+          }
+          file.close();
         }
-        file.close();
+        catch (exception &e)
+        {
+          error_lable("[Answer_Merge]");
+          error_puts("读取文件 " + string(entry.path()) + " 时发生错误：" + e.what());
+          file.close();
+        }
       }
       else
       {
@@ -266,10 +278,11 @@ json ans_merge(const std::string &folderPath)
     }
   }
 
-  mergedJson["Answers"] = json::array();
-  for (const auto &answers : answerArrays)
+  // mergedJson["Answers"] = json::array();
+  /*for (const auto &answers : answerArrays)
   {
     mergedJson["Answers"].insert(mergedJson["Answers"].end(), answers.begin(), answers.end());
-  }
+  }*/
+  mergedJson["Answers"] = answerArrays;
   return mergedJson;
 }
