@@ -41,6 +41,6 @@ public:
   json custom_config;
 
   void init(const json&);
-
+  json save();
 };
 #endif

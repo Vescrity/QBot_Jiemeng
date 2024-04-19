@@ -151,6 +151,7 @@ void Lua_Shell::init(Jiemeng *b)
       "push_back", &Operation_List::push_back);
   sol::table botlib = lua->create_table();
   sol::table jsonlib = lua->create_table();
+  // sol::table config = lua->create_table();
   botlib.set_function("sleep", minisleep);
   botlib.set_function("rand", Rands);
   botlib.set_function("string_only", string2CQ);
@@ -170,6 +171,10 @@ void Lua_Shell::init(Jiemeng *b)
       "_draw_deck",
       [this](const string key)
       { return this->bot->deck->draw(key); });
+  botlib.set_function(
+      "deck_list",
+      [this]()
+      { return this->bot->deck->list(); });
   botlib.set_function(
       "message_replace",
       [this](const string str, Message_Place place)
@@ -217,10 +222,7 @@ void Lua_Shell::init(Jiemeng *b)
             [this,a]
             { json b=a;this->bot->ws_send(b); })
             .detach(); });
-  botlib.set_function(
-      "get_custom_config",
-      [this]
-      { return json_to_lua_table(bot->config.custom_config, *lua); });
+
   botlib.set_function(
       "get_group_list",
       [this]
@@ -242,6 +244,39 @@ void Lua_Shell::init(Jiemeng *b)
       "json2table",
       [&](json &js)
       { return json_to_lua_table(js, *lua); });
+  // Config
+  botlib.set_function(
+      "get_custom_config",
+      [this]
+      { return json_to_lua_table(bot->config.custom_config, *lua); });
+  botlib.set_function(
+      "add_group_list",
+      [this](const string &str)
+      { this->bot->config.add_group_list(str); });
+  botlib.set_function(
+      "add_private_list",
+      [this](const string &str)
+      { this->bot->config.add_private_list(str); });
+  botlib.set_function(
+      "add_black_list",
+      [this](const string &str)
+      { this->bot->config.add_black_list(str); });
+  botlib.set_function(
+      "del_private_list",
+      [this](const string &str)
+      { this->bot->config.del_private_list(str); });
+  botlib.set_function(
+      "del_group_list",
+      [this](const string &str)
+      { this->bot->config.del_group_list(str); });
+  botlib.set_function(
+      "del_black_list",
+      [this](const string &str)
+      { this->bot->config.del_black_list(str); });
+  botlib.set_function(
+      "save_config",
+      [this]()
+      { this->bot->save_config(); });
   (*lua)["bot"] = botlib;
   (*lua)["jsonlib"] = jsonlib;
   (*lua)["bot"]["_version"] = JIEMENG_VERSION;

@@ -34,6 +34,7 @@ class Jiemeng
   void lua_init();
   void answer_reload();
   void deck_reload();
+  void save_config();
   void process_operation(Message &, Operation_List &);
   void process_operation(Message &, Operation_List &, string &);
   friend class Lua_Shell;

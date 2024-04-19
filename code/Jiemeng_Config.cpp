@@ -40,3 +40,21 @@ void Config::init(const json &js)
     JM_EXCEPTION("[Config]");
   }
 }
+
+json Config::save()
+{
+  json rt;
+  rt["port"] = port;
+  rt["wait_time"] = wait_time;
+  rt["time_check"] = time_check;
+  rt["text_length"] = text_length;
+  rt["spliter"] = spliter;
+  rt["Debug_Mode"] = Debug_Mode;
+  rt["private_black"] = is_private_black;
+  rt["admin_list"] = admin_list;
+  rt["black_list"] = black_list;
+  rt["group_list"] = group_list;
+  rt["Custom_Config"] = custom_config;
+  rt["lua_state_list"] = lua_state_list;
+  return rt;
+}
