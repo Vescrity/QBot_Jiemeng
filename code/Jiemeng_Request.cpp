@@ -44,24 +44,24 @@ json Request::js_get()
   }
 }
 json Request::js_post()
+{
+  string ss = Post();
+  try
   {
-    string ss = Post();
-    try
-    {
-      json sjs = json::parse(ss);
-      return sjs;
-    }
-    catch (const std::exception &e)
-    {
-      std::string msg = "Exception caught: ";
-      msg += e.what();
-      error_lable("[Post]");
-      error_puts(msg.c_str());
-      error_lable("[Post]");
-      error_puts(ss.c_str());
-      return json::parse("null");
-    }
+    json sjs = json::parse(ss);
+    return sjs;
   }
+  catch (const std::exception &e)
+  {
+    std::string msg = "Exception caught: ";
+    msg += e.what();
+    error_lable("[Post]");
+    error_puts(msg.c_str());
+    error_lable("[Post]");
+    error_puts(ss.c_str());
+    return json::parse("null");
+  }
+}
 string Request::datas_urlencode()
 {
   string rt = "";

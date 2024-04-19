@@ -57,6 +57,14 @@ void Jiemeng::run()
   server->run(pmsg);
 }
 
+void Jiemeng::save_config()
+{
+  FILE *fp;
+  fp = fopen("config.json", "w");
+  fprintf(fp, "%s", config.save().dump(2).c_str());
+  fclose(fp);
+}
+
 bool dir_exists(const string &name)
 {
   if (fs::exists(name) && fs::is_directory(name))
