@@ -71,6 +71,8 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
     {
       auto Pa = string_cut(message.true_str(), bot->config.spliter, 2);
       oper.data = stoll((*Pa)[1]);
+      oper.type = Type::sleep;
+      rt += oper;
       return rt;
     }
 
