@@ -16,8 +16,8 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
   clears.type = Type::clear;
   if (oper.type == Type::message)
   {
-    message_replace(oper.str, message.place);
-    str_replace(oper.str, "[Repeat]", message.text.const_str());
+    message_replace(oper.str, message);
+    str_replace(oper.str, "[Repeat]", message.const_str());
     auto uwu = string_cut(oper.str, "[-cut-]");
     Operation op;
     op.type = Type::message;

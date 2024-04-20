@@ -5,7 +5,7 @@ function bot.basic_draw_deck(message, key, times)
     if (times==nil or times > DECK_MAX or times <= 0) then return '无效的参数值。' end
     for i = 1, times do
         local raw = bot._draw_deck(key)
-        rt = rt .. bot.message_replace(raw, message.place) .. '\n'
+        rt = rt .. bot.message_replace(raw, message) .. '\n'
     end
     return rt
 end

@@ -26,31 +26,21 @@ public:
   bool is_private() const { return !group_flag; }
   bool operator==(const Message_Place &a) const { return (group_id == a.group_id) && (user_id == a.user_id); }
   bool operator!=(const Message_Place &a) const { return !(*this == a); }
-  friend class Message;
 };
 /// @brief 消息类
-class Message
+class Message : public Message_Place, public CQMessage
 {
   void message_init(const json &);
   void notice_init(const json &);
 
 public:
-  Message_Place place;
-  CQMessage text;
-
-  string &str() { return text.get_string(); }
+  Message_Place &place(){return (*this);}
+  string &str() { return get_string(); }
+  json &js() { return get_json(); }
   /// @brief 显示消息内容
   void show() const;
-  void change(const char *s) { text.change(string(s)); }
-  void change(const string &s) { text.change(s); }
-  void change(const json &s) { text.change(s); }
-  string true_str() { return text.true_str(); }
-  bool is_group() const { return place.is_group(); }
-  bool is_private() const { return place.is_private(); }
-  void set_group() { place.set_group(); }
-  void set_private() { place.set_private(); }
   void init(const json &);
-  CQMessage &message() { return text; }
+  CQMessage &message() { return (*this); }
 };
 
 #endif

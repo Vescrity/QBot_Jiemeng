@@ -214,14 +214,14 @@ function Character:_game(oper, oper2)
 end
 
 function game(message)
-    local player = game_data[message.place.user_id] or
-                       new_player(message.place.user_nm)
+    local player = game_data[message.user_id] or
+                       new_player(message.user_nm)
     if (player.level == 0) then player = new_player(player.name) end
     local ord = get_para(message:true_str())
     local op2, op1 = get_para(ord)
     local rt = player:_game(op1, op2)
     if (op1 ~= 'load') then
-        game_data[message.place.user_id] = Character:new(player)
+        game_data[message.user_id] = Character:new(player)
     end
     return rt
 end

@@ -113,6 +113,7 @@ void Lua_Shell::init(Jiemeng *b)
       "Message",
       "new", sol::constructors<Message()>(),
       "str", &Message::str,
+      "json", &Message::js,
       "change", sol::overload([](Message &m, const char *str)
                               { return m.change(str); },
                               [](Message &m, json &js)
@@ -123,23 +124,11 @@ void Lua_Shell::init(Jiemeng *b)
       "is_private", &Message::is_private,
       "set_group", &Message::set_group,
       "set_private", &Message::set_private,
-      "place", &Message::place,
-      "user_id", sol::property([](Message &msg)
-                               { return msg.place.user_id; },
-                               [](Message &msg, const string &str)
-                               { msg.place.user_id = str; }),
-      "user_nm", sol::property([](Message &msg)
-                               { return msg.place.user_nm; },
-                               [](Message &msg, const string &str)
-                               { msg.place.user_nm = str; }),
-      "group_id", sol::property([](Message &msg)
-                                { return msg.place.group_id; },
-                                [](Message &msg, const string &str)
-                                { msg.place.group_id = str; }),
-      "group_nm", sol::property([](Message &msg)
-                                { return msg.place.group_nm; },
-                                [](Message &msg, const string &str)
-                                { msg.place.group_nm = str; }));
+      "user_id", &Message::user_id,
+      "user_nm", &Message::user_nm,
+      "group_id", &Message::group_id,
+      "group_nm", &Message::group_nm,
+      "level", &Message::level);
   lua->new_usertype<Operation>(
       "Operation",
       "new", sol::constructors<Operation()>(),

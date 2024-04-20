@@ -60,6 +60,12 @@ public:
     json_ready = 0;
     string_ready = 1;
   }
+  void change(const char *s)
+  {
+    cq = s;
+    json_ready = 0;
+    string_ready = 1;
+  }
   CQMessage &operator=(const string &s)
   {
     change(s);

@@ -46,20 +46,27 @@ end
 function chat(message)
     local session = ''
     if (message:is_group()) then
-        session = session .. message.place.group_id .. '_'
+        session = session .. message.group_id .. '_'
     end
-    session = session .. message.place.user_id
+    session = session .. message.user_id
     local para = get_para(message:true_str())
     local rt = _chat(session, para)
+    return rt
+end
+
+function random_chat(message)
+    local session = 'random'
+    chat_session[session]=nil
+    local rt = _chat(session, message:str())
     return rt
 end
 
 function cat(message)
     local session = ''
     if (message:is_group()) then
-        session = session .. message.place.group_id .. '_'
+        session = session .. message.group_id .. '_'
     end
-    session = session .. message.place.user_id
+    session = session .. message.user_id
     local para = get_para(message:true_str())
     local rt = _chat(session, para, 1)
     return rt
