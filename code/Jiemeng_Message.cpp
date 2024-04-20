@@ -16,34 +16,36 @@ void Message::init(const json &js)
   else
     notice_init(js);
 }
+/*Message::Message(const Message &msg)
+{
+  text=msg.text;
+  group_id
+}*/
 void Message::message_init(const json &js)
 {
-  place.group_flag = js["message_type"] == "group";
-  text.change(string(js["raw_message"]));
+  if (js["message_type"] == "group")
+    set_group();
+  else
+    set_private();
+  change(string(js["raw_message"]));
   const json &sender = js["sender"];
-  place.user_id = to_string(js["user_id"]);
+  user_id = to_string(js["user_id"]);
   try
   {
     if (sender.contains("card"))
     {
       if (sender["card"].is_string())
-        place.user_nm = sender["card"];
+        user_nm = sender["card"];
     }
-    if (place.user_nm.length() == 0)
+    if (user_nm.length() == 0)
       throw Not_Serious();
   }
   catch (...)
   {
-    place.user_nm = sender["nickname"];
+    user_nm = sender["nickname"];
   }
-  /*if (!sender.contains("card"))
-    place.user_nm = sender["nickname"];
-  else if (sender["card"].is_null())
-    place.user_nm = sender["nickname"];
-  else
-    place.user_nm = sender["card"];*/
   if (is_group())
-    place.group_id = to_string(js["group_id"]);
+    group_id = to_string(js["group_id"]);
 }
 void Message::notice_init(const json &js)
 {
@@ -53,20 +55,20 @@ void Message::notice_init(const json &js)
       "group_admin", "group_recall", "notify"};
   if (array_search(notice_type, able_type))
   {
-    place.group_flag = 1;
-    place.group_id = to_string(js["group_id"]);
-    place.user_id = to_string(js["user_id"]);
-    text = "[JM:";
-    text.str() += notice_type;
+    set_group();
+    group_id = to_string(js["group_id"]);
+    user_id = to_string(js["user_id"]);
+    message() = "[JM:";
+    message().str() += notice_type;
     if (notice_type == "notify")
     {
-      text = text.str() + ",subtype=" + to_string(js["sub_type"]);
+      message() = message().str() + ",subtype=" + to_string(js["sub_type"]);
     }
-    if(notice_type=="group_recall")
+    if (notice_type == "group_recall")
     {
-      text = text.str()+",message_id="+to_string(js["message_id"]);
+      message() = message().str() + ",message_id=" + to_string(js["message_id"]);
     }
-    text.str() += "]";
+    message().str() += "]";
   }
   else
   {
@@ -93,14 +95,14 @@ void Message::show() const
   if (is_group())
   {
     info_lable("[group_nm]");
-    info_puts(place.group_nm);
+    info_puts(group_nm);
     info_lable("[group_id]");
-    info_puts(place.group_id);
+    info_puts(group_id);
   }
   info_lable("[user_nm]");
-  info_puts(place.user_nm);
+  info_puts(user_nm);
   info_lable("[user_id]");
-  info_puts(place.user_id);
+  info_puts(user_id);
   msg_lable("[message]");
-  msg_puts(text);
+  msg_puts(*this);
 }

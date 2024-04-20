@@ -25,13 +25,13 @@ void Jiemeng::run()
         {
           Time_Class tm;
           Message msg;
-          msg.place.user_id="10000";
-          msg.place.user_nm="时钟消息";
-          msg.place.set_private();
+          msg.user_id="10000";
+          msg.user_nm="时钟消息";
+          msg.set_private();
           ti=tm.time_mark();
           if(ti!=tp){
             tp=ti;
-            msg.text.change(ti);
+            msg.change(ti);
             std::thread([this, msg]
                   { this->process_message(msg); })
             .detach();
@@ -118,7 +118,7 @@ void Jiemeng::process_operation(Message &message, Operation_List &list, string &
     catch (Operation::Clear)
     {
       CQMessage ms(buf);
-      message_output(message.place, ms);
+      message_output(message, ms);
       buf = "";
     }
     catch (Operation::reRecv &e)
@@ -169,9 +169,9 @@ Message Jiemeng::generate_message(const json &js)
   {
     Message message;
     message.init(js);
-    message.place.get_level(&config);
+    message.get_level(&config);
     if (message.is_group())
-      message.place.group_nm = get_group_name(message.place.group_id);
+      message.group_nm = get_group_name(message.group_id);
     return message;
   }
   throw Not_Serious();

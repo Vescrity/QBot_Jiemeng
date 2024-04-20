@@ -21,7 +21,7 @@ function _cpp_core(cpp_code)
     else
         os.remove(temp_file_name)
         os.remove(executable_file_name)
-        return compile_output -- 返回编译错误的信息
+        return compile_output 
     end
 end
 

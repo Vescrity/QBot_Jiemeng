@@ -79,8 +79,8 @@ string Jiemeng::exec_operation(Message &message, const Operation &operation)
       dout << "paras1" << paras[1] << "\n";
       auto Para = string_cut(paras[1], config.spliter, 3);
       auto &Paras = *Para;
-      message_replace(Paras[2], message.place);
-      str_replace(Paras[2], "[Repeat]", message.text.const_str());
+      message_replace(Paras[2], message);
+      str_replace(Paras[2], "[Repeat]", message.const_str());
       Operation op;
       op.str = Paras[2];
       op.type = Type::message;
@@ -88,13 +88,13 @@ string Jiemeng::exec_operation(Message &message, const Operation &operation)
       msg.change("");
       if (Paras[0] != "0")
       {
-        msg.place.set_group();
-        msg.place.group_id = Paras[0];
+        msg.set_group();
+        msg.group_id = Paras[0];
       }
       else
       {
-        msg.place.set_private();
-        msg.place.user_id = Paras[1];
+        msg.set_private();
+        msg.user_id = Paras[1];
       }
       Operation_List opl;
       opl += op;
