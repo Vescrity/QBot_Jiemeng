@@ -90,14 +90,14 @@ string Request::curl_get()
   return execmd(cmds);
 }
 //?
-static size_t Wset(void *buf, size_t size, size_t nm, void *lp)
+static size_t Wset(void *buf, size_t size, size_t nmemb, void *userp)
 {
-  string *str = dynamic_cast<string *>((string *)lp);
-  if (str == NULL || buf == NULL)
-    return -1;
-  char *pd = (char *)buf;
-  str->append(pd, size * nm);
-  return nm;
+  if (userp == nullptr)
+    return 0;
+  string *str = (string *)userp;
+  size_t totalBytes = size * nmemb;
+  str->append((char *)buf, totalBytes);
+  return totalBytes;
 }
 // libcurl-Post
 string Request::Post()
@@ -121,7 +121,6 @@ string Request::Post()
     }
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
   }
-
   curl_easy_setopt(curl, CURLOPT_URL, url_link().c_str());
   curl_easy_setopt(curl, CURLOPT_POST, 1);
   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, msgs.c_str());
@@ -143,9 +142,9 @@ FILE *Request::FPost(FILE *fp)
   if (!curl)
     throw std::runtime_error("CURL_INIT_ERROR");
   int nhds = Headers.size();
+  curl_slist *headers = NULL;
   if (nhds)
   {
-    curl_slist *headers = NULL;
     for (int i = 0; i < nhds; i++)
     {
       headers = curl_slist_append(headers, Headers[i].c_str());
@@ -160,6 +159,7 @@ FILE *Request::FPost(FILE *fp)
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
   curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
   curl_easy_perform(curl);
+  curl_slist_free_all(headers);
   curl_easy_cleanup(curl);
   return fp;
 }
