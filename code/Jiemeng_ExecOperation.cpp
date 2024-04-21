@@ -80,7 +80,6 @@ string Jiemeng::exec_operation(Message &message, const Operation &operation)
       auto Para = string_cut(paras[1], config.spliter, 3);
       auto &Paras = *Para;
       message_replace(Paras[2], message);
-      str_replace(Paras[2], "[Repeat]", message.const_str());
       Operation op;
       op.str = Paras[2];
       op.type = Type::message;
