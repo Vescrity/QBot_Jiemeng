@@ -4,7 +4,7 @@
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_String.hpp"
 
-void message_replace(string &str, Message_Place &place)
+void message_replace(string &str, Message &message)
 {
   str = chg_Rcode(str);
   Time_Class tm;
@@ -16,8 +16,9 @@ void message_replace(string &str, Message_Place &place)
   str_replace(str, "[hour]", tm.get_hour());
   str_replace(str, "[min]", tm.get_min());
   str_replace(str, "[sec]", tm.get_sec());
-  str_replace(str, "[group_name]", place.group_nm);
-  str_replace(str, "[group_id]", place.group_id);
-  str_replace(str, "[user_name]", place.user_nm);
-  str_replace(str, "[user_id]", place.user_id);
+  str_replace(str, "[group_name]", message.group_nm);
+  str_replace(str, "[group_id]", message.group_id);
+  str_replace(str, "[user_name]", message.user_nm);
+  str_replace(str, "[user_id]", message.user_id);
+  str_replace(str, "[Repeat]", message.const_str());
 }

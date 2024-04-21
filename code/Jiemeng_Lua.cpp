@@ -114,6 +114,7 @@ void Lua_Shell::init(Jiemeng *b)
       "new", sol::constructors<Message()>(),
       "str", &Message::str,
       "json", &Message::js,
+      "place", &Message::place,
       "change", sol::overload([](Message &m, const char *str)
                               { return m.change(str); },
                               [](Message &m, json &js)
@@ -166,10 +167,10 @@ void Lua_Shell::init(Jiemeng *b)
       { return this->bot->deck->list(); });
   botlib.set_function(
       "message_replace",
-      [this](const string str, Message_Place place)
+      [this](const string str, Message& message)
       {
         string s = str;
-        message_replace(s, place);
+        message_replace(s, message);
         return s;
       });
   botlib.set_function(
