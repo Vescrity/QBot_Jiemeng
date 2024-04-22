@@ -19,7 +19,7 @@ public:
   string port;
   string self_id;
   string spliter;
-  int text_length;
+  unsigned int text_length;
   int time_check;
   int wait_time;
   json lua_state_list;
