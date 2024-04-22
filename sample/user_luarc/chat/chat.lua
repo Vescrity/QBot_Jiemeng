@@ -40,7 +40,7 @@ function _chat(session, message_str, cat)
     local output = bot.api(send_data).message.content
     local ta = chat_make_content('assistant', output)
     table.insert(chat_session[session].messages, ta)
-    return output
+    return bot.string_only(output)
 end
 
 function chat(message)

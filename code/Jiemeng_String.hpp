@@ -24,7 +24,7 @@ inline void str_replace(std::string &str, const std::string &from, const std::st
 }
 inline std::string string2CQ(const std::string &str)
 {
-  string text;
+  string text = str;
   str_replace(text, "&", "&amp;");
   str_replace(text, "[", "&#91;");
   str_replace(text, "]", "&#93;");
