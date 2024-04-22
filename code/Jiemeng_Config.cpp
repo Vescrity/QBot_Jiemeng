@@ -12,7 +12,7 @@ void Config::init(const json &js)
   //js_getval(delay_time,                 js, "delay_time",                 2000                );
     js_getval(time_check,                 js, "time_check",                 30000               );
   //js_getval(Self_ID,                    js, "Self_ID",                    "0"s                );
-    js_getval(text_length,                js, "text_length",                1 << 10             );
+    js_getval(text_length,                js, "text_length",                1u << 10            );
     js_getval(spliter,                    js, "spliter",                    "#"s                );
   //js_getval(MAX_SINGLE_MESSAGE_LENGTH,  js, "MAX_SINGLE_MESSAGE_LENGTH",  1 << 11             );
   //js_getval(MAX_MESSAGE_LENGTH,         js, "MAX_MESSAGE_LENGTH",         1 << 14             );
