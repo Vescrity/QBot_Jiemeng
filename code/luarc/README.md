@@ -5,7 +5,9 @@
 
 文档对于函数原型的表示方法如下：
 
-`[返回类型] 函数名([参数类型] 参数名)`
+```
+[返回类型] 函数名([参数类型] 参数名)
+```
 
 文档对于格式的描述方法：
 - `(一些文本)` : 一般表示此处内容应该是什么。
@@ -141,9 +143,9 @@
 ## 函数
 
 #### bot.group_output
-
+```
 [bool] bot.group_output([string] group_id, [string] message)
-
+```
 ###### 参数
 
 - `group_id`: 字符串，表示群号
@@ -154,9 +156,9 @@
 bool 型，表示是否发送成功。
 
 #### bot.private_output
-
+```
 [bool] bot.private_output([string] user_id, [string] message)
-
+```
 ###### 参数
 
 - `user_id`: 字符串，表示用户QQ号
@@ -206,6 +208,39 @@ bool 型，表示是否发送成功。
 ###### 返回
 
 所有非隐藏牌堆名，一行一个。
+
+
+#### bot.deck_reload
+
+```
+[void] bot.deck_reload()
+```
+
+重新加载牌堆。当前实现为同步调用。
+
+#### bot.lua_reload
+
+```
+[string=""] bot.lua_reload()
+```
+
+调用后立即返回空字符串。当前 lua 状态不再被占用时重置当前 lua 状态。 
+
+#### bot.ws_send
+
+```
+[json] bot.ws_send([?] data)
+```
+
+尝试将 data 格式化为 json 后对 OneBot 发送请求并等待响应，以 json 类型返回。
+
+#### bot._ws_send
+
+```
+[void] bot._ws_send([?] data)
+```
+同上，但不等待返回值。调用后程序内部创建新的线程，此函数即刻返回。
+
 
 
 
