@@ -19,7 +19,7 @@ Operation_List All_Answer::get_list(const Message &message) const
         dout << "检索完成！已成功生成 Operation_LIst\n";
         return rt;
       }
-      catch (Not_Serious)
+      catch (const Not_Serious&)
       {
         continue;
       }
@@ -27,11 +27,11 @@ Operation_List All_Answer::get_list(const Message &message) const
     throw Not_Serious();
   };
   try  {return c(pre_answer_list);  }
-  catch (Not_Serious){}
+  catch (const Not_Serious&){}
   try  {return main_answer->get_list(message);}
-  catch(Not_Serious) {}
+  catch (const Not_Serious&) {}
   try{return c(suf_answer_list);}
-  catch (Not_Serious){}
+  catch (const Not_Serious&){}
   debug_lable("[Get_List]");
   debug_puts( "检索完成！没有发现匹配项。");
   throw Not_Serious();

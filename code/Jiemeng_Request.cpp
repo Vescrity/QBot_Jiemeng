@@ -85,7 +85,7 @@ string Request::curl_get()
   string cmds = "curl -s \"";
   cmds = cmds + url_link() + datas_urlencode();
   char *temps = new char[1 << 14];
-  memset(temps, 0, sizeof temps);
+  memset(temps, 0, 1 << 14);
   cmds = cmds + "\"";
   return execmd(cmds);
 }

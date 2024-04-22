@@ -43,7 +43,7 @@ void Deck::init(const string &folderPath)
       ifstream file(entry.path());
       if (file)
       {
-        //json jsonData;
+        // json jsonData;
         file >> jsonData;
         file.close();
         for (auto it = jsonData.begin(); it != jsonData.end(); ++it)
@@ -69,15 +69,15 @@ string Deck::get_output(string str)
   bool if_flg = 0;
   /// 获取复制起点
   l = get_st(str.c_str(), "{");
-  char ss[1 << 12];
+  string ss;
   while (l != -1)
   {
     if_flg = (str[l + 1] != '%');
-    get_copy(0, l, str.c_str(), ss);
+    ss = str.substr(0, l);
     opt += ss;
     r = get_st(str.c_str() + l, "}") + l;
     l += 2 - if_flg;
-    get_copy(l, r, str.c_str(), ss);
+    ss = str.substr(l, r - l);
     int rjs;
     int clc = clock();
     try
