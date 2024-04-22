@@ -30,16 +30,16 @@ private:
   bool msg_flag;
 
   net::io_context ioContext;
-  tcp::resolver resolver;
 
   std::string serverHost;
   std::string serverPort;
   boost::beast::multi_buffer buffer;
+  tcp::resolver resolver;
 
 public:
   websocket::stream<tcp::socket> ws;
   WSIO_Cache(const std::string &host, const std::string &port)
-      : resolver(ioContext), ws(ioContext), serverHost(host), serverPort(port)
+      : serverHost(host), serverPort(port), resolver(ioContext), ws(ioContext)
   {
     auto const results = resolver.resolve(serverHost, serverPort);
     boost::asio::connect(ws.next_layer(), results.begin(), results.end());

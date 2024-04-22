@@ -28,25 +28,25 @@ public:
   string time_mark()
   {
     char str[10];
-    sprintf(str,"[%02d:%02d]",nhour,nmin);
+    sprintf(str, "[%02d:%02d]", nhour, nmin);
     return str;
   }
-  string get_year()      { return year; }
-  string get_month()     { return month; }
-  string get_monthday()  { return mday; }
-  string get_weekday()   { return wday; }
-  string get_yearday()   { return yday; }
-  string get_hour()      { return hour; }
-  string get_min()       { return min; }
-  string get_sec()       { return sec; }
-  int    nget_year()     { return nyear; }
-  int    nget_month()    { return nmonth; }
-  int    nget_monthday() { return nmday; }
-  int    nget_weekday()  { return nwday; }
-  int    nget_yearday()  { return nyday; }
-  int    nget_hour()     { return nhour; }
-  int    nget_min()      { return nmin; }
-  int    nget_sec()      { return nsec; }
+  string get_year() { return year; }
+  string get_month() { return month; }
+  string get_monthday() { return mday; }
+  string get_weekday() { return wday; }
+  string get_yearday() { return yday; }
+  string get_hour() { return hour; }
+  string get_min() { return min; }
+  string get_sec() { return sec; }
+  int nget_year() { return nyear; }
+  int nget_month() { return nmonth; }
+  int nget_monthday() { return nmday; }
+  int nget_weekday() { return nwday; }
+  int nget_yearday() { return nyday; }
+  int nget_hour() { return nhour; }
+  int nget_min() { return nmin; }
+  int nget_sec() { return nsec; }
   Time_Class(time_t now = time(0))
   {
     tself = now;
@@ -57,6 +57,10 @@ public:
     nhour = ltm->tm_hour;
     nmin = ltm->tm_min;
     nsec = ltm->tm_sec;
+    
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
+
     sprintf(year, "%d", nyear);
     sprintf(month, "%d", 1 + (ltm->tm_mon));
     sprintf(mday, "%d", ltm->tm_mday);
@@ -65,7 +69,8 @@ public:
     sprintf(sec, "%d", ltm->tm_sec);
     sprintf(wday, "%d", ltm->tm_wday);
     sprintf(yday, "%d", 1 + (ltm->tm_yday));
+
+#pragma GCC diagnostic pop
   }
-  
 };
 #endif

@@ -47,7 +47,7 @@ void Jiemeng::run()
     {
       msg = generate_message(js);
     }
-    catch (Not_Serious)
+    catch (const Not_Serious&)
     {
       return;
     }
@@ -115,7 +115,7 @@ void Jiemeng::process_operation(Message &message, Operation_List &list, string &
     {
       buf = buf + exec_operation(message, i);
     }
-    catch (Operation::Clear)
+    catch (const Operation::Clear&)
     {
       CQMessage ms(buf);
       message_output(message, ms);
@@ -151,7 +151,7 @@ void Jiemeng::process_message(Message message)
     Operation_List list = answer.get_list(message);
     process_operation(message, list);
   }
-  catch (Not_Serious)
+  catch (const Not_Serious&)
   {
   }
 }

@@ -51,17 +51,7 @@ inline int get_st(const char *a, const char *sub_str)
 #endif
 }
 
-/// @brief 区间字符串复制 [l,r)
-/// @param l 左索引
-/// @param r 右索引
-/// @param txt 原字符串
-/// @param copy 复制至这里
-inline void get_copy(int l, int r, const char *txt, char *copy)
-{
-  memset(copy, 0, sizeof copy);
-  strncpy(copy, txt + l, size_t(r - l));
-  copy[r - l] = 0;
-}
+
 inline std::string escape_string(const std::string &s)
 {
   std::string result;

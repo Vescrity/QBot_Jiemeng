@@ -208,7 +208,7 @@ void Answer::init(const json &js)
 
 void Answer::Array_init(const json &js)
 {
-  int cnt = js.size();
+  //int cnt = js.size();
   if (is_or())
   {
     lvs.push_back(0);
