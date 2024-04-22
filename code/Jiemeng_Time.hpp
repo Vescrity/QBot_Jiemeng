@@ -57,9 +57,9 @@ public:
     nhour = ltm->tm_hour;
     nmin = ltm->tm_min;
     nsec = ltm->tm_sec;
-    
+
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wformat-overflow"
 
     sprintf(year, "%d", nyear);
     sprintf(month, "%d", 1 + (ltm->tm_mon));
