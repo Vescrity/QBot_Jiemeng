@@ -8,7 +8,6 @@
 class Jiemeng;
 class Lua_Shell
 {
-  //sol::state &lua;
   std::unique_ptr<sol::state>lua;
   Jiemeng *bot;
   void init(Jiemeng *b);
