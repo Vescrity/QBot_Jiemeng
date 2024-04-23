@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.17)
 project(Jiemeng)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -17,7 +17,4 @@ foreach(SOURCE_PATH ${SOURCES})
 endforeach()
 # 指定生成目标
 add_executable(Jiemeng ${SOURCES})
-# 链接CURL库
-target_link_libraries(Jiemeng ${CURL_LIBRARY})
-# 指定可执行文件输出的文件夹
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test_runspace")
+

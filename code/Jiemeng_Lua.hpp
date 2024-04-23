@@ -1,7 +1,6 @@
 #ifndef JIEMENG_LUA
 #define JIEMENG_LUA
 #include "Jiemeng_Message.hpp"
-
 #include <sol/sol.hpp>
 #include <mutex>
 #include <condition_variable>
