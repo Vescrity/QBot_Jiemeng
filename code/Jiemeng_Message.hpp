@@ -17,8 +17,7 @@ public:
   string group_nm;
   string user_id;
   string user_nm;
-  int level;
-  Message_Place() { level = 0; }
+  int level = 0;
   void get_level(Config *);
   void set_private() { group_flag = 0; }
   void set_group() { group_flag = 1; }
@@ -34,9 +33,11 @@ class Message : public Message_Place, public CQMessage
   void notice_init(const json &);
 
 public:
-  Message_Place &place(){return (*this);}
+  Message() : CQMessage(""s) {}
+  Message(const string &s) : CQMessage(s) {}
+  Message_Place &place() { return (*this); }
   /// @brief 显示消息内容
-  void show()const;
+  void show() const;
   void init(const json &);
   CQMessage &message() { return (*this); }
 };

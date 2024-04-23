@@ -84,7 +84,6 @@ string Jiemeng::exec_operation(const Message &message, const Operation &operatio
       op.str = Paras[2];
       op.type = Type::message;
       Message msg;
-      msg.change("");
       if (Paras[0] != "0")
       {
         msg.set_group();

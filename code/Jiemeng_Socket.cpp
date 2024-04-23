@@ -131,11 +131,8 @@ json WSIO_Cache::get_message()
 
 void Server::init(const string &h, const string &p)
 {
-  ids = 0;
   host = h;
   port = p;
-  flag = 0;
-  // lock = unique_lock(mtx);
 }
 void Server::run(std::function<void(const json &)> func)
 {

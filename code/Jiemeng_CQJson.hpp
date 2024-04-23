@@ -12,26 +12,13 @@ class CQMessage
 {
   mutable string cq;
   mutable json js;
-  mutable bool json_ready, string_ready;
+  mutable bool json_ready = 0, string_ready = 0;
   void generate_json() const;
   void generate_string() const;
 
 public:
-  CQMessage() { json_ready = string_ready = 0; }
-  CQMessage(const string &s)
-  {
-    CQMessage();
-    cq = s;
-    string_ready = 1;
-    json_ready = 0;
-  }
-  CQMessage(const json &s)
-  {
-    CQMessage();
-    js = s;
-    json_ready = 1;
-    string_ready = 0;
-  }
+  CQMessage(const string &s) { change(s); }
+  CQMessage(const json &j) { change(j); }
   json &get_json() const
   {
     if (!json_ready)

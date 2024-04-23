@@ -23,14 +23,14 @@ void Jiemeng::run()
         for(;;)
         {
           Time_Class tm;
-          Message msg;
-          msg.user_id="10000";
-          msg.user_nm="时钟消息";
-          msg.set_private();
           ti=tm.time_mark();
-          if(ti!=tp){
+          if(ti!=tp)
+          {
             tp=ti;
-            msg.change(ti);
+            Message msg(ti);
+            msg.user_id="10000";
+            msg.user_nm="时钟消息";
+            msg.set_private();
             std::thread([this, msg]
                   { this->process_message(msg); })
             .detach();
@@ -41,17 +41,16 @@ void Jiemeng::run()
 
   auto pmsg = [this](const json &js)
   {
-    Message msg;
     try
     {
-      msg = generate_message(js);
+      Message msg = generate_message(js);
+      msg.show();
+      process_message(msg);
     }
-    catch (const Not_Serious&)
+    catch (const Not_Serious &)
     {
       return;
     }
-    msg.show();
-    process_message(msg);
   };
   server->run(pmsg);
 }
@@ -114,7 +113,7 @@ void Jiemeng::process_operation(const Message &message, Operation_List &list, st
     {
       buf = buf + exec_operation(message, i);
     }
-    catch (const Operation::Clear&)
+    catch (const Operation::Clear &)
     {
       CQMessage ms(buf);
       message_output(message, ms);
@@ -122,8 +121,7 @@ void Jiemeng::process_operation(const Message &message, Operation_List &list, st
     }
     catch (Operation::reRecv &e)
     {
-      Message msg;
-      msg = message;
+      Message msg = message;
       msg.change(string(e.what()));
       Operation_List rl;
       rl = answer.get_list(msg);
@@ -150,7 +148,7 @@ void Jiemeng::process_message(Message message)
     Operation_List list = answer.get_list(message);
     process_operation(message, list);
   }
-  catch (const Not_Serious&)
+  catch (const Not_Serious &)
   {
   }
 }
