@@ -61,8 +61,7 @@ class Answer_List
   vector<Answer_Group *> answer_group;
 
 public:
-  int priority;
-  Answer_List() { priority = 0; }
+  int priority = 0;
   auto size() { return answer_group.size(); }
   void init(const json &js);
   void clear()

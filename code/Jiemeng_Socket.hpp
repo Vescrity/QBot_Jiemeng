@@ -13,9 +13,9 @@ class Server
 {
 private:
   WSIO_Cache *wsio_cache;
-  unsigned short ids;
+  unsigned short ids=0;
   WSIO_Cache *get_cache();
-  bool flag;
+  bool flag=0;
   //void flag_cache_true();
   //void flag_cache_false();
   
