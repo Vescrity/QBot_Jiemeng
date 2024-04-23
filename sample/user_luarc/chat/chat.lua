@@ -57,7 +57,7 @@ end
 function random_chat(message)
     local session = 'random'
     chat_session[session]=nil
-    local rt = _chat(session, message:str())
+    local rt = _chat(session, message:get_string())
     return rt
 end
 

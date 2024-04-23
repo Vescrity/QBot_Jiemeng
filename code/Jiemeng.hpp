@@ -20,12 +20,12 @@ class Jiemeng
   map<string, Lua_Shell *> map_lua;
   Message generate_message(const json &);
   void process_message(Message);
-  bool message_output(Message &);
-  bool message_output(const Message_Place &, CQMessage &);
-  bool group_output(const string &group_id, CQMessage &message);
-  bool private_output(const string &user_id, CQMessage &message);
+  bool message_output(const Message &);
+  bool message_output(const Message_Place &, const CQMessage &);
+  bool group_output(const string &group_id, const CQMessage &message);
+  bool private_output(const string &user_id, const CQMessage &message);
   string get_group_name(const string &group_id);
-  string exec_operation(Message &, const Operation &);
+  string exec_operation(const Message &, const Operation &);
 
   void answer_init();
   void config_init();
@@ -35,10 +35,10 @@ class Jiemeng
   void answer_reload();
   void deck_reload();
   void save_config();
-  void process_operation(Message &, Operation_List &);
-  void process_operation(Message &, Operation_List &, string &);
+  void process_operation(const Message &, Operation_List &);
+  void process_operation(const Message &, Operation_List &, string &);
   friend class Lua_Shell;
-  friend Operation_List extract(Operation oper, Message message, Jiemeng *bot);
+  friend Operation_List extract(Operation oper, const Message &message, Jiemeng *bot);
 
 public:
   Jiemeng();

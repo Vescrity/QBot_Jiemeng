@@ -105,7 +105,7 @@ void Jiemeng::clear()
 }
 
 json Jiemeng::ws_send(json &a) { return server->ws_send(a); }
-void Jiemeng::process_operation(Message &message, Operation_List &list, string &buf)
+void Jiemeng::process_operation(const Message &message, Operation_List &list, string &buf)
 {
   list.upgrade(message, this);
   for (auto &i : list.list)
@@ -135,7 +135,7 @@ void Jiemeng::process_operation(Message &message, Operation_List &list, string &
     }
   }
 }
-void Jiemeng::process_operation(Message &message, Operation_List &list)
+void Jiemeng::process_operation(const Message &message, Operation_List &list)
 {
   string uwu = "";
   Operation clears;

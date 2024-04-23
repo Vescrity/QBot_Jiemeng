@@ -112,8 +112,8 @@ void Lua_Shell::init(Jiemeng *b)
   lua->new_usertype<Message>(
       "Message",
       "new", sol::constructors<Message()>(),
-      "str", &Message::str,
-      "json", &Message::js,
+      "get_string", &Message::get_string,
+      "get_json", &Message::get_json,
       "place", &Message::place,
       "change", sol::overload([](Message &m, const char *str)
                               { return m.change(str); },
@@ -278,7 +278,7 @@ void Lua_Shell::init(Jiemeng *b)
   load("./luarc");
   load("./user_luarc");
 }
-string Lua_Shell::call(const string &func, Message &message)
+string Lua_Shell::call(const string &func, Message message)
 {
   std::lock_guard<std::mutex> locker(mtx);
   debug_lable("[Lua_Call]");
@@ -310,6 +310,7 @@ string Lua_Shell::exec(const string &code)
   catch (const sol::error &e)
   {
     JM_EXCEPTION("[Lua_Call]")
+    return "";
   }
   return str;
 }

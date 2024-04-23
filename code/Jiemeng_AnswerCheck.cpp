@@ -3,7 +3,7 @@
 bool Answer_Group::check(const Message &message) const
 {
   if (type_check(message))
-    return regex.check(message);
+    return regex.check(message.const_str());
   return 0;
 }
 

@@ -9,7 +9,7 @@
 #include "Jiemeng_MessageReplace.hpp"
 using Type = Operation::Type;
 
-Operation_List extract(Operation oper, Message message, Jiemeng *bot)
+Operation_List extract(Operation oper, const Message &message, Jiemeng *bot)
 {
   Operation_List rt;
   Operation clears;
@@ -89,7 +89,7 @@ Operation_List extract(Operation oper, Message message, Jiemeng *bot)
   return rt;
 }
 
-void Operation_List::upgrade(Message &message, Jiemeng *bot)
+void Operation_List::upgrade(const Message &message, Jiemeng *bot)
 {
   debug_lable("[Upgrade]");
   dout << "开始对 Operation_List 执行更新操作\n";

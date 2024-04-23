@@ -3,11 +3,11 @@
 
 // TODO: 允许用户定义 lua 函数在消息发送前处理消息内容
 
-bool Jiemeng::private_output(const string &user_id, CQMessage &message)
+bool Jiemeng::private_output(const string &user_id, const CQMessage &message)
 {
   try
   {
-    if (message.str().length() == 0 || user_id == "10000")
+    if (message.const_str().length() == 0 || user_id == "10000")
       return false;
     blue_lable("[Output]");
     blue_puts(message.const_str());
@@ -30,11 +30,11 @@ bool Jiemeng::private_output(const string &user_id, CQMessage &message)
     return false;
   }
 }
-bool Jiemeng::group_output(const string &group_id, CQMessage &message)
+bool Jiemeng::group_output(const string &group_id, const CQMessage &message)
 {
   try
   {
-    if (message.str().length() == 0)
+    if (message.const_str().length() == 0)
       return false;
     blue_lable("[Output]");
     blue_puts(message.const_str());
@@ -57,9 +57,9 @@ bool Jiemeng::group_output(const string &group_id, CQMessage &message)
     return false;
   }
 }
-bool Jiemeng::message_output(const Message_Place &place, CQMessage &message)
+bool Jiemeng::message_output(const Message_Place &place, const CQMessage &message)
 {
-  string str = message.str();
+  string str = message.const_str();
   if (str.length() > config.text_length)
   {
     str = txt2img(str);

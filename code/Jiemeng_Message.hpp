@@ -35,10 +35,8 @@ class Message : public Message_Place, public CQMessage
 
 public:
   Message_Place &place(){return (*this);}
-  string &str() { return get_string(); }
-  json &js() { return get_json(); }
   /// @brief 显示消息内容
-  void show() const;
+  void show()const;
   void init(const json &);
   CQMessage &message() { return (*this); }
 };

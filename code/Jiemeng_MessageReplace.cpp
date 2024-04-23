@@ -4,7 +4,7 @@
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_String.hpp"
 
-void message_replace(string &str, Message &message)
+void message_replace(string &str, const Message &message)
 {
   str = chg_Rcode(str);
   Time_Class tm;
