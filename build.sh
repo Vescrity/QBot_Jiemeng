@@ -11,7 +11,7 @@ cd build
 echo '开始执行编译'
 
 cmake ..
-make
+make -j$(nproc)
 
 echo '尝试构建工作目录'
 
