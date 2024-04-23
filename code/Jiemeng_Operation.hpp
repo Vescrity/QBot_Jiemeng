@@ -49,7 +49,7 @@ class Operation_List
 
 public:
   std::vector<Operation> list;
-  void upgrade(Message &, Jiemeng *);
+  void upgrade(const Message &, Jiemeng *);
   void push_back(const Operation &b) { *this += b; };
   Operation_List &operator+=(const Operation_List &b)
   {

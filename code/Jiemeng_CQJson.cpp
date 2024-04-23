@@ -21,7 +21,7 @@ std::string json2CQ(const json &message)
     for (auto it = cqData.begin(); it != cqData.end(); ++it)
     {
       std::string key = it.key();
-      std::string value = it.value();
+      std::string value = it.value().is_string() ? string(it.value()) : to_string(it.value());
       str_replace(value, "&", "&amp;");
       str_replace(value, "[", "&#91;");
       str_replace(value, "]", "&#93;");
@@ -96,21 +96,21 @@ json CQ2json(const string &message)
   return result;
 }
 
-void CQMessage::generate_json()
+void CQMessage::generate_json() const
 {
   if (!string_ready)
     throw runtime_error("未初始化");
   js = CQ2json(cq);
   json_ready = 1;
 }
-void CQMessage::generate_string()
+void CQMessage::generate_string() const
 {
   if (!json_ready)
     throw runtime_error("未初始化");
   cq = json2CQ(js);
   string_ready = 1;
 }
-string CQMessage::true_str()
+string CQMessage::true_str() const
 {
   get_json();
   string rt;

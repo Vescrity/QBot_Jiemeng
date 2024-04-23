@@ -3,7 +3,7 @@
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_MessageReplace.hpp"
 using Type = Operation::Type;
-string Jiemeng::exec_operation(Message &message, const Operation &operation)
+string Jiemeng::exec_operation(const Message &message, const Operation &operation)
 {
   dout << "OPER:" << int(operation.type) << "\n";
   dout << "OPER:" << operation.str << "\n";

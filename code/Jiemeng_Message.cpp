@@ -27,7 +27,7 @@ void Message::message_init(const json &js)
     set_group();
   else
     set_private();
-  change(string(js["raw_message"]));
+  change(js["message"]);
   const json &sender = js["sender"];
   user_id = to_string(js["user_id"]);
   try
@@ -62,11 +62,11 @@ void Message::notice_init(const json &js)
     message().str() += notice_type;
     if (notice_type == "notify")
     {
-      message() = message().str() + ",subtype=" + to_string(js["sub_type"]);
+      message() = message().const_str() + ",subtype=" + to_string(js["sub_type"]);
     }
     if (notice_type == "group_recall")
     {
-      message() = message().str() + ",message_id=" + to_string(js["message_id"]);
+      message() = message().const_str() + ",message_id=" + to_string(js["message_id"]);
     }
     message().str() += "]";
   }
@@ -104,5 +104,5 @@ void Message::show() const
   info_lable("[user_id]");
   info_puts(user_id);
   msg_lable("[message]");
-  msg_puts(*this);
+  msg_puts(const_str());
 }
