@@ -5,10 +5,7 @@
 #include "Jiemeng_Algorithm.hpp"
 #include "Jiemeng_Config.hpp"
 using namespace std;
-void Message_Place::get_level(Config *config)
-{
-  level = config->get_admin_level(user_id);
-}
+void Message_Place::get_level(Config *config) { level = config->get_admin_level(user_id); }
 void Message::init(const json &js)
 {
   if (js["post_type"] != "notice")
@@ -16,11 +13,6 @@ void Message::init(const json &js)
   else
     notice_init(js);
 }
-/*Message::Message(const Message &msg)
-{
-  text=msg.text;
-  group_id
-}*/
 void Message::message_init(const json &js)
 {
   if (js["message_type"] == "group")
