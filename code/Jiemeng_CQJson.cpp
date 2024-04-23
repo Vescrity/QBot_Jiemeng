@@ -10,7 +10,7 @@ std::string json2CQ(const json &message)
     json cqData = item["data"];
     if (cqType == "text")
     {
-      std::string text = cqData["text"];
+      std::string text = cqData["text"].is_null() ? "" : cqData["text"];
       str_replace(text, "&", "&amp;");
       str_replace(text, "[", "&#91;");
       str_replace(text, "]", "&#93;");
