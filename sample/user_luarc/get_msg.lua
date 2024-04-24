@@ -31,7 +31,7 @@ function msg_echo(message)
     local js = get_msg(id, 1)
     local msg = Message:new()
     msg:change(js.message)
-    return msg:str()
+    return msg:get_string()
 end
 
 function get_info(message)
