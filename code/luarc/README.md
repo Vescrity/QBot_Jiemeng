@@ -142,6 +142,8 @@
 
 ## 函数
 
+### bot
+
 #### bot.group_output
 ```
 [bool] bot.group_output([string] group_id, [string] message)
@@ -218,6 +220,22 @@ bool 型，表示是否发送成功。
 
 重新加载牌堆。当前实现为同步调用。
 
+#### bot.deck_size
+
+```
+[int] bot.deck_size()
+```
+
+牌堆大小 = 所有可调用的牌堆项
+
+#### bot.answer_size
+
+```
+[int] bot.answer_size()
+```
+
+应答库大小 = 基础应答库所有的应答组数量
+
 #### bot.lua_reload
 
 ```
@@ -243,6 +261,21 @@ bool 型，表示是否发送成功。
 
 
 
+### bot(config)
 
+#### bot.get_group_list
+
+```
+[string[]] bot.get_group_list()
+```
+获取已生效群聊列表
+
+#### bot.get_custom_config
+
+```
+[table] get_custom_config()
+```
+
+获取 Config 文件中 Custom_Config 值。
 
 

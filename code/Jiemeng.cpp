@@ -101,6 +101,8 @@ void Jiemeng::clear()
   delete server;
   delete lua;
   delete deck;
+  debug_lable("[Clear]");
+  debug_puts("清理完毕。");
 }
 
 json Jiemeng::ws_send(json &a) { return server->ws_send(a); }

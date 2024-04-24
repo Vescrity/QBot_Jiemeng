@@ -166,7 +166,7 @@ void Lua_Shell::init(Jiemeng *b)
       { return this->bot->deck->list(); });
   botlib.set_function(
       "message_replace",
-      [this](const string str, Message& message)
+      [this](const string str, Message &message)
       {
         string s = str;
         message_replace(s, message);
@@ -211,11 +211,6 @@ void Lua_Shell::init(Jiemeng *b)
             [this,a]
             { json b=a;this->bot->ws_send(b); })
             .detach(); });
-
-  botlib.set_function(
-      "get_group_list",
-      [this]
-      { return bot->config.get_group_list(); });
   botlib.set_function("start_up_time", start_up_time);
   botlib.set_function("txt2img", txt2img);
   botlib.set_function(
@@ -226,14 +221,11 @@ void Lua_Shell::init(Jiemeng *b)
       "answer_size",
       [this]
       { return this->bot->answer.main_answer->size(); });
-  jsonlib.set_function(
-      "table2json",
-      lua_table_to_json);
-  jsonlib.set_function(
-      "json2table",
-      [&](json &js)
-      { return json_to_lua_table(js, *lua); });
   // Config
+  botlib.set_function(
+      "get_group_list",
+      [this]
+      { return bot->config.get_group_list(); });
   botlib.set_function(
       "get_custom_config",
       [this]
@@ -266,6 +258,14 @@ void Lua_Shell::init(Jiemeng *b)
       "save_config",
       [this]()
       { this->bot->save_config(); });
+  jsonlib.set_function(
+      "table2json",
+      lua_table_to_json);
+  jsonlib.set_function(
+      "json2table",
+      [&](json &js)
+      { return json_to_lua_table(js, *lua); });
+
   (*lua)["bot"] = botlib;
   (*lua)["jsonlib"] = jsonlib;
   (*lua)["bot"]["_version"] = JIEMENG_VERSION;
