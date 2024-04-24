@@ -28,9 +28,7 @@ private:
   condition_variable msg_cv;
   json msg_cache;
   bool msg_flag;
-
   net::io_context ioContext;
-
   std::string serverHost;
   std::string serverPort;
   boost::beast::multi_buffer buffer;
@@ -45,12 +43,10 @@ public:
     boost::asio::connect(ws.next_layer(), results.begin(), results.end());
     ws.handshake(serverHost, "/");
   }
-
   void listen(std::function<void(const json &)> func);
   json read(const int &index);
   json get_message();
 };
-
 void WSIO_Cache::listen(std::function<void(const json &)> func)
 {
   try
@@ -90,11 +86,6 @@ void WSIO_Cache::listen(std::function<void(const json &)> func)
             .detach();
         debug_lable("[WSIO]");
         debug_puts("Detach!");
-        /*std::unique_lock<std::mutex> lock(msg_mtx);
-        msg_cache = recv;
-        msg_flag = true;
-        lock.unlock();
-        msg_cv.notify_one();*/
       }
     }
   }
@@ -126,9 +117,6 @@ json WSIO_Cache::get_message()
   lock.unlock();
   return result;
 }
-
-//-----Server------
-
 void Server::init(const string &h, const string &p)
 {
   host = h;
@@ -143,7 +131,6 @@ void Server::run(std::function<void(const json &)> func)
       debug_lable("[Server]");
       debug_puts("Server::run 开始一次循环");
       wsio_cache = new WSIO_Cache(host, port);
-      // flag_cache_true();
       try
       {
         wsio_cache->listen(func);
@@ -152,7 +139,6 @@ void Server::run(std::function<void(const json &)> func)
       }
       catch (std::exception &e)
       {
-        // flag_cache_false();
         JM_EXCEPTION("[Server]")
         delete wsio_cache;
       }
@@ -192,15 +178,3 @@ WSIO_Cache *Server::get_cache()
   lk.unlock();
   return wsio_cache;
 }
-/*
-void Server::flag_cache_true()
-{
-  flag = 1;
-  lock.unlock();
-  cv.notify_all();
-}
-void Server::flag_cache_false()
-{
-  lock = unique_lock(mtx);
-  flag = 0;
-}*/
