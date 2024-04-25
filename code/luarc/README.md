@@ -273,9 +273,31 @@ bool 型，表示是否发送成功。
 #### bot.get_custom_config
 
 ```
-[table] get_custom_config()
+[table] bot.get_custom_config()
 ```
 
 获取 Config 文件中 Custom_Config 值。
+
+#### bot.add_group_list
+#### bot.add_private_list
+#### bot.add_black_list
+#### bot.del_private_list
+#### bot.del_group_list
+#### bot.del_black_list
+
+```
+[void] bot.add/del_xx_list([string] id)
+```
+
+向指定的list中添加或删除对应的 id 。执行save前只是暂时更改。
+
+#### bot.save_config
+
+```
+[void] bot.save_config()
+```
+
+保存配置。
+
 
 
