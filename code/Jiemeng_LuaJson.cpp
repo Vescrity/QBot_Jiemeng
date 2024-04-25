@@ -106,8 +106,7 @@ json parse_to_json(const sol::object &obj)
     }
     catch (const json::parse_error &e)
     {
-      // For the purpose of this example, we'll just rethrow it
-      throw;
+      throw e;
     }
   }
   else if (obj.is<json>())
