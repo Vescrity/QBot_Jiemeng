@@ -261,6 +261,20 @@ void Lua_Shell::init(Jiemeng *b)
       "save_config",
       [this]()
       { this->bot->save_config(); });
+  botlib.set_function(
+      "state_run",
+      [this](const string &state_name, const string &code)
+      { return this->bot->map_lua[state_name]->exec(code); });
+  botlib.set_function(
+      "_state_run",
+      [this](const string &state_name, const string &code)
+      {
+        string n = state_name;
+        string c = code;
+        thread([this, n, c]
+               { this->bot->map_lua[n]->exec(c); })
+            .detach();
+      });
   jsonlib.set_function(
       "table2json",
       lua_table_to_json);
