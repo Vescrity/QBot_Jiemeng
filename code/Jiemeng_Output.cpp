@@ -60,13 +60,14 @@ bool Jiemeng::group_output(const string &group_id, const CQMessage &message)
 bool Jiemeng::message_output(const Message_Place &place, const CQMessage &message)
 {
   string str = message.const_str();
-  if (str.length() > config.text_length)
+  string t_str = message.true_str();
+  auto l = message.true_str().length();
+  if (l > config.text_length)
   {
-    str = txt2img(str);
+    str = txt2img(t_str);
   }
   CQMessage ms(str);
   if (place.is_group())
     return group_output(place.group_id, ms);
   return private_output(place.user_id, ms);
 }
-
