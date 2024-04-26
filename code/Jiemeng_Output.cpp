@@ -71,3 +71,7 @@ bool Jiemeng::message_output(const Message_Place &place, const CQMessage &messag
     return group_output(place.group_id, ms);
   return private_output(place.user_id, ms);
 }
+bool Jiemeng::message_output(const Message &message)
+{
+  return message_output(message, message);
+}
