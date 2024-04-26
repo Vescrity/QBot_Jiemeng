@@ -129,6 +129,9 @@ void Lua_Shell::init(Jiemeng *b)
       "user_nm", &Message::user_nm,
       "group_id", &Message::group_id,
       "group_nm", &Message::group_nm,
+      "get_level",
+      [b](Message &place)
+      { place.get_level(&(b->config)); },
       "level", &Message::level);
   lua->new_usertype<Operation>(
       "Operation",

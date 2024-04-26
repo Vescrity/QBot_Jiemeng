@@ -56,9 +56,10 @@ json Request::js_post()
     std::string msg = "Exception caught: ";
     msg += e.what();
     error_lable("[Post]");
-    error_puts(msg.c_str());
+    error_puts(msg);
     error_lable("[Post]");
-    error_puts(ss.c_str());
+    error_print("接收到的内容: ");
+    error_puts(ss);
     return json::parse("null");
   }
 }
