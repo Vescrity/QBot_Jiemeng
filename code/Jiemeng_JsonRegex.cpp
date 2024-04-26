@@ -1,5 +1,6 @@
 #include "Jiemeng_JsonRegex.hpp"
 #include "Jiemeng_Exception.hpp"
+#include "Jiemeng_String.hpp"
 #include <boost/regex.hpp>
 #include <string>
 #include <locale>
@@ -12,8 +13,10 @@ std::wstring string_to_wstring(const std::string &str)
 bool reg_check(const string &msg, const json &regs);
 inline bool reg_str_check(const string &msg, const std::string &rstr)
 {
-  auto wrstr=string_to_wstring(rstr);
-  auto wmsg=string_to_wstring(msg);
+  string m = msg;
+  str_replace(m, "\n", "|");
+  auto wrstr = string_to_wstring(rstr);
+  auto wmsg = string_to_wstring(m);
   boost::wregex reg(wrstr);
   return boost::regex_search(wmsg, reg);
 }
