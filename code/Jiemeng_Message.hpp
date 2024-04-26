@@ -29,6 +29,7 @@ public:
 /// @brief 消息类
 class Message : public Message_Place, public CQMessage
 {
+  string message_id;
   void message_init(const json &);
   void notice_init(const json &);
 

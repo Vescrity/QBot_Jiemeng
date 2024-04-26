@@ -15,6 +15,7 @@ void Message::init(const json &js)
 }
 void Message::message_init(const json &js)
 {
+  message_id = to_string(js["message_id"]);
   if (js["message_type"] == "group")
     set_group();
   else
@@ -39,10 +40,45 @@ void Message::message_init(const json &js)
   if (is_group())
     group_id = to_string(js["group_id"]);
 }
+std::string notice2str(const json &j)
+{
+  std::vector<std::string> exclude_fields = {
+      "post_type", "notice_type", "group_id", "user_id", "time", "self_id"};
+  std::string formatted;
+  for (auto &el : j.items())
+  {
+    if (std::find(exclude_fields.begin(), exclude_fields.end(), el.key()) == exclude_fields.end())
+    {
+      std::string value = (el.value().type() == json::value_t::string) ? string(el.value()) : el.value().dump();
+      formatted += "," + el.key() + "=" + value;
+    }
+  }
+  return formatted;
+}
 void Message::notice_init(const json &js)
 {
+  message_id = "0";
   const string notice_type = js["notice_type"];
-  string able_type[] = {
+  auto af = [&]
+  {
+    message() = "[JM:";
+    message().str() += notice_type + notice2str(js);
+    message().str() += "]";
+  };
+  if (js.contains("group_id"))
+  {
+    set_group();
+    group_id = to_string(js["group_id"]);
+    user_id = js.contains("user_id") ? to_string(js["user_id"]) : "0";
+    af();
+  }
+  else if (js.contains("user_id"))
+  {
+    set_private();
+    user_id = to_string(js["user_id"]);
+    af();
+  }
+  /*string able_type[] = {
       "group_upload", "group_increase", "group_ban",
       "group_admin", "group_recall", "notify"};
   if (array_search(notice_type, able_type))
@@ -61,7 +97,7 @@ void Message::notice_init(const json &js)
       message() = message().const_str() + ",message_id=" + to_string(js["message_id"]);
     }
     message().str() += "]";
-  }
+  }*/
   else
   {
     /// TODO
