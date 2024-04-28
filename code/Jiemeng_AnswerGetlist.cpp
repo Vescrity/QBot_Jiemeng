@@ -5,7 +5,6 @@ using Type = Operation::Type;
 Operation_List All_Answer::get_list(const Message &message) const
 {
   Operation_List rt;
-  auto b=message;
   debug_lable("[Get_List]");
   dout << "开始检索匹配\n";
   auto c = [&](const vector<Answer_List *> &x)
@@ -19,21 +18,42 @@ Operation_List All_Answer::get_list(const Message &message) const
         dout << "检索完成！已成功生成 Operation_LIst\n";
         return rt;
       }
-      catch (const Not_Serious&)
+      catch (const Not_Serious &)
       {
         continue;
       }
     }
     throw Not_Serious();
   };
-  try  {return c(pre_answer_list);  }
-  catch (const Not_Serious&){}
-  try  {return main_answer->get_list(message);}
-  catch (const Not_Serious&) {}
-  try{return c(suf_answer_list);}
-  catch (const Not_Serious&){}
+  try
+  {
+    return c(pre_answer_list);
+  }
+  catch (const Not_Serious &)
+  {
+  }
+  try
+  {
+    return main_answer->get_list(message);
+  }
+  catch (const Not_Serious &)
+  {
+  }
+  try
+  {
+    return c(suf_answer_list);
+  }
+  catch (const Not_Serious &)
+  {
+  }
+  if (!rt.list.empty())
+  {
+    debug_lable("[Get_List]");
+    debug_puts("检索完成！已成功生成 Operation_LIst。");
+    return rt;
+  }
   debug_lable("[Get_List]");
-  debug_puts( "检索完成！没有发现匹配项。");
+  debug_puts("检索完成！没有发现匹配项。");
   throw Not_Serious();
 }
 Operation_List Answer_List::get_list(const Message &message) const
