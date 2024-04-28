@@ -51,6 +51,7 @@ json Config::save()
   rt["spliter"] = spliter;
   rt["Debug_Mode"] = Debug_Mode;
   rt["private_black"] = is_private_black;
+  rt["private_list"] = private_list;
   rt["admin_list"] = admin_list;
   rt["black_list"] = black_list;
   rt["group_list"] = group_list;
