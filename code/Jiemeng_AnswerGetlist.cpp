@@ -11,41 +11,24 @@ Operation_List All_Answer::get_list(const Message &message) const
   {
     for (auto &i : x)
     {
-      try
-      {
-        rt = i->get_list(message);
-        debug_lable("[Get_List]");
-        dout << "检索完成！已成功生成 Operation_LIst\n";
-        return rt;
-      }
-      catch (const Not_Serious &)
-      {
-        continue;
-      }
+      rt += i->get_list(message);
+      if (!rt.list.empty())
+        if (rt.list.back().type == Type::ignore)
+          continue;
+      debug_lable("[Get_List]");
+      dout << "检索完成！已成功生成 Operation_LIst\n";
+      return;
     }
-    throw Not_Serious();
   };
-  try
-  {
-    return c(pre_answer_list);
-  }
-  catch (const Not_Serious &)
-  {
-  }
-  try
-  {
-    return main_answer->get_list(message);
-  }
-  catch (const Not_Serious &)
-  {
-  }
-  try
-  {
-    return c(suf_answer_list);
-  }
-  catch (const Not_Serious &)
-  {
-  }
+  c(pre_answer_list);
+  if (!rt.list.empty())
+    if (rt.list.back().type != Type::ignore)
+      return rt;
+  rt += main_answer->get_list(message);
+  if (!rt.list.empty())
+    if (rt.list.back().type != Type::ignore)
+      return rt;
+  c(suf_answer_list);
   if (!rt.list.empty())
   {
     debug_lable("[Get_List]");
@@ -70,7 +53,7 @@ Operation_List Answer_List::get_list(const Message &message) const
         return rt;
     }
   }
-  throw Not_Serious();
+  return rt;
 }
 
 Operation_List Answer::get_list() const
