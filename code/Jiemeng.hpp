@@ -24,6 +24,7 @@ class Jiemeng
   bool message_output(const Message_Place &, const CQMessage &);
   bool group_output(const string &group_id, const CQMessage &message);
   bool private_output(const string &user_id, const CQMessage &message);
+  bool is_white(const Message_Place &);
   string get_group_name(const string &group_id);
   string exec_operation(const Message &, const Operation &);
 
