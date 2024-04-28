@@ -143,8 +143,11 @@ void Jiemeng::process_operation(const Message &message, Operation_List &list)
   list += clears;
   process_operation(message, list, uwu);
 }
+
 void Jiemeng::process_message(Message message)
 {
+  if (!is_white(message))
+    return;
   try
   {
     Operation_List list = answer.get_list(message);
@@ -154,7 +157,22 @@ void Jiemeng::process_message(Message message)
   {
   }
 }
-
+bool Jiemeng::is_white(const Message_Place &place)
+{
+  if (config.is_black(place.user_id))
+    return false;
+  if (place.is_group())
+  {
+    if (!config.group_white(place.group_id))
+      return false;
+  }
+  else
+  {
+    if (!config.private_white(place.user_id))
+      return false;
+  }
+  return true;
+}
 Message Jiemeng::generate_message(const json &js)
 {
   const string &post_type = js["post_type"];
