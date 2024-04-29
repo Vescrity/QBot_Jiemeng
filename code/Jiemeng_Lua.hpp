@@ -8,12 +8,13 @@
 class Jiemeng;
 class Lua_Shell
 {
-  std::unique_ptr<sol::state>lua;
+  std::unique_ptr<sol::state> lua;
   Jiemeng *bot;
   void init(Jiemeng *b);
-  std::mutex mtx;
 
 public:
+  std::mutex mtx;
+  sol::protected_function_result get_func(const string &);
   Lua_Shell(Jiemeng *b)
   {
     lua = std::make_unique<sol::state>();

@@ -39,12 +39,9 @@ void Lua_Shell::load(const string &path)
 }
 void Lua_Shell::reload()
 {
-  debug_puts("Call Reload");
   std::lock_guard<std::mutex> locker(mtx);
-  debug_puts("Start Reload");
   lua.reset();
   lua = std::make_unique<sol::state>();
-  debug_puts("Reset!");
   init(bot);
   return;
 }
@@ -294,6 +291,16 @@ void Lua_Shell::init(Jiemeng *b)
   load("./luarc");
   load("./user_luarc");
 }
+
+sol::protected_function_result Lua_Shell::get_func(const string &func)
+{
+  // bool l = mtx.try_lock();
+  auto fun = lua->script("return "s + func);
+  // if (l)
+  // mtx.unlock();
+  return fun;
+}
+
 string Lua_Shell::call(const string &func, Message message)
 {
   std::lock_guard<std::mutex> locker(mtx);
