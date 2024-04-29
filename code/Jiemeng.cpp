@@ -43,6 +43,34 @@ void Jiemeng::run()
   {
     try
     {
+      {
+        std::lock_guard<std::mutex> locker(lua->mtx);
+        auto res = lua->get_func("pre_process");
+        if (res.valid())
+        {
+          sol::type result_type = res.get_type();
+          if (result_type == sol::type::function)
+          {
+            sol::function fu = res;
+            auto r = fu(js);
+            sol::type rty = r.get_type();
+            if (rty == sol::type::boolean)
+            {
+              if (r)
+                return;
+            }
+          }
+          else if (result_type == sol::type::nil)
+          {
+          }
+          else
+          {
+            warn_lable("[Pre_Process]");
+            warn_puts("pre_process 被置为了非函数类型");
+          }
+        }
+      }
+
       Message msg = generate_message(js);
       msg.show();
       process_message(msg);
