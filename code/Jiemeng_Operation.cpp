@@ -153,3 +153,12 @@ Operation::Operation()
   type = Type::message;
   str = "clear";
 }
+void Operation_List::clear_ignore()
+{
+  while (!list.empty())
+  {
+    if (list.back().type != Type::ignore)
+      break;
+    list.pop_back();
+  }
+}

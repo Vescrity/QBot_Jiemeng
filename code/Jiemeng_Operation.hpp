@@ -51,6 +51,7 @@ public:
   std::vector<Operation> list;
   void upgrade(const Message &, Jiemeng *);
   void push_back(const Operation &b) { *this += b; };
+  void clear_ignore();
   Operation_List &operator+=(const Operation_List &b)
   {
     list.insert(list.end(), b.list.begin(), b.list.end());
