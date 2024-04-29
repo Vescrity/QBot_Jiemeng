@@ -29,6 +29,7 @@ Operation_List All_Answer::get_list(const Message &message) const
     if (rt.list.back().type != Type::ignore)
       return rt;
   c(suf_answer_list);
+  rt.clear_ignore();
   if (!rt.list.empty())
   {
     debug_lable("[Get_List]");
