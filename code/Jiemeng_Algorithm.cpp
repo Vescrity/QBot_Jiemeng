@@ -107,7 +107,6 @@ std::string string_format_with_json(const string &begin, const string &end, cons
 
 std::unique_ptr<std::vector<std::string>> string_cut(const std::string &a, const std::string &b, const int &n)
 {
-  dout << "n=" << n << "\n";
   auto result = std::make_unique<std::vector<std::string>>();
   size_t start = 0;
   size_t end = 0;

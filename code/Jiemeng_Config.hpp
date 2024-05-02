@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include "Jiemeng_Algorithm.hpp"
 using namespace std;
-using json=nlohmann::json;
+using json = nlohmann::json;
 class Config
 {
   

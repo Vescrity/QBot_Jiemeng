@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Jiemeng_Algorithm.hpp"
 #include "Jiemeng_Config.hpp"
+#include "Jiemeng_Socket.hpp"
 using namespace std;
 void Message_Place::get_level(Config *config) { level = config->get_admin_level(user_id); }
 void Message::init(const json &js)
@@ -23,20 +24,13 @@ void Message::message_init(const json &js)
   change(js["message"]);
   const json &sender = js["sender"];
   user_id = to_string(js["user_id"]);
-  try
-  {
-    if (sender.contains("card"))
-    {
-      if (sender["card"].is_string())
-        user_nm = sender["card"];
-    }
-    if (user_nm.length() == 0)
-      throw Not_Serious();
-  }
-  catch (...)
-  {
+
+  if (sender.contains("card"))
+    if (sender["card"].is_string())
+      user_nm = sender["card"];
+  if (user_nm.length() == 0)
     user_nm = sender["nickname"];
-  }
+
   if (is_group())
     group_id = to_string(js["group_id"]);
 }
@@ -78,26 +72,6 @@ void Message::notice_init(const json &js)
     user_id = to_string(js["user_id"]);
     af();
   }
-  /*string able_type[] = {
-      "group_upload", "group_increase", "group_ban",
-      "group_admin", "group_recall", "notify"};
-  if (array_search(notice_type, able_type))
-  {
-    set_group();
-    group_id = to_string(js["group_id"]);
-    user_id = to_string(js["user_id"]);
-    message() = "[JM:";
-    message().str() += notice_type;
-    if (notice_type == "notify")
-    {
-      message() = message().const_str() + ",subtype=" + to_string(js["sub_type"]);
-    }
-    if (notice_type == "group_recall")
-    {
-      message() = message().const_str() + ",message_id=" + to_string(js["message_id"]);
-    }
-    message().str() += "]";
-  }*/
   else
   {
     /// TODO
