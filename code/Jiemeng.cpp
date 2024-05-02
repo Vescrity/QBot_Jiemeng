@@ -217,6 +217,13 @@ Message Jiemeng::generate_message(const json &js)
     message.get_level(&config);
     if (message.is_group())
       message.group_nm = get_group_name(message.group_id);
+    if (message.user_nm.length() == 0)
+    {
+      if (message.is_group())
+        message.user_nm = get_user_name(message.group_id, message.user_id);
+      else
+        message.user_nm = get_user_name(message.user_id);
+    }
     return message;
   }
   throw Not_Serious();
@@ -244,4 +251,50 @@ string Jiemeng::get_group_name(const string &group_id)
   if (js.is_null())
     return "";
   return js;
+}
+
+string Jiemeng::get_user_name(const string &group_id, const string &user_id)
+{
+  json js;
+  js["params"]["user_id"] = stoull(user_id);
+  js["params"]["group_id"] = stoull(group_id);
+  js["action"] = "get_group_member_info";
+  auto result = async(launch::async, [this, &js]
+                      { return server->ws_send(js); });
+  if (result.wait_for(chrono::milliseconds(config.wait_time)) == future_status::timeout)
+  {
+    warn_lable("[Get_User_Name]");
+    warn_puts("获取名片超时，放弃等待。");
+    return "";
+  }
+  js = result.get();
+  if (js["data"].is_null())
+    return "";
+  js = js["data"];
+  string user_nm;
+  if (js.contains("card"))
+    if (js["card"].is_string())
+      return js["card"];
+  if (user_nm.length() == 0)
+    return js["nickname"];
+  else
+    return user_nm;
+}
+string Jiemeng::get_user_name(const string &user_id)
+{
+  json js;
+  js["params"]["user_id"] = stoull(user_id);
+  js["action"] = "get_stranger_info";
+  auto result = async(launch::async, [this, &js]
+                      { return server->ws_send(js); });
+  if (result.wait_for(chrono::milliseconds(config.wait_time)) == future_status::timeout)
+  {
+    warn_lable("[Get_User_Name]");
+    warn_puts("获取名片超时，放弃等待。");
+    return "";
+  }
+  js = result.get();
+  if (js["data"].is_null())
+    return "";
+  return js["data"]["nickname"];
 }
