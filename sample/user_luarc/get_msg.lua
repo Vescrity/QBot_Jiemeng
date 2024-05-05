@@ -50,7 +50,7 @@ end
 function echo_recall(message)
     -- 复读撤回的内容
     local ids = string.match(message:get_string(),
-                             "%[JM:group_recall,message_id=(%-?%d+)%]")
+                             "%[JM:group_recall,.*message_id=(%-?%d+).*%]")
     local id = tonumber(ids)
     local js = get_msg(id, 1)
     local msg = Message:new()
