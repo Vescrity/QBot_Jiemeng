@@ -129,7 +129,78 @@
 
 ### Message
 
-[TODO]
+#### 成员
+
+- `[string] group_id`
+- `[string] group_nm`
+- `[string] user_id`
+- `[string] user_nm`
+- `[int] level`
+
+#### 成员函数
+
+##### new
+
+##### get_string
+
+```
+[string] get_string()
+```
+
+##### get_json
+
+```
+[json] get_json()
+```
+##### get_level
+
+```
+[int] get_level()
+```
+
+##### place
+
+```
+[Message_Place] place()
+```
+
+##### true_str
+
+```
+[string] true_str()
+```
+返回消息的原始文本 (移除所有非 text 段)
+##### is_group
+
+```
+[bool] is_group()
+```
+##### is_private
+
+```
+[bool] is_private()
+```
+##### set_group
+
+```
+[void] set_group()
+```
+标记为群消息
+
+##### set_private
+
+```
+[void] set_private()
+```
+标记为私聊消息
+##### show
+
+```
+[void] show()
+```
+
+在终端打印消息内容
+
 
 ### Operaton
 
@@ -260,6 +331,15 @@ bool 型，表示是否发送成功。
 同上，但不等待返回值。调用后程序内部创建新的线程，此函数即刻返回。
 
 
+#### bot.state_run
+#### bot._state_run
+
+```
+[string] bot.state_run([string] code)
+[void] bot._state_run([string] code)
+```
+
+使另一 lua 环境内执行指定代码块。`_state_run` 调用后不等待结果。
 
 ### bot(config)
 
@@ -300,4 +380,16 @@ bool 型，表示是否发送成功。
 保存配置。
 
 
+### jsonlib
 
+#### jsonlib.table2json
+
+```
+[json] jsonlib.table2json([table] t)
+```
+
+#### jsonlib.json2table
+
+```
+[table] jsonlib.json2table([json] j)
+```
