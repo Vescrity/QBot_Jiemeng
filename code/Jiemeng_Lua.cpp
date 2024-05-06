@@ -111,24 +111,25 @@ void Lua_Shell::init(Jiemeng *b)
       "new", sol::constructors<Message()>(),
       "get_string", &Message::get_string,
       "get_json", &Message::get_json,
+      "get_level",
+      [b](Message &place)
+      { place.get_level(&(b->config));
+        return place.level; },
       "place", &Message::place,
-      "change", sol::overload([](Message &m, const char *str)
-                              { return m.change(str); },
-                              [](Message &m, json &js)
-                              { return m.change(js); }),
       "true_str", &Message::true_str,
       "show", &Message::show,
       "is_group", &Message::is_group,
       "is_private", &Message::is_private,
+      "change", sol::overload([](Message &m, const char *str)
+                              { return m.change(str); },
+                              [](Message &m, json &js)
+                              { return m.change(js); }),
       "set_group", &Message::set_group,
       "set_private", &Message::set_private,
       "user_id", &Message::user_id,
       "user_nm", &Message::user_nm,
       "group_id", &Message::group_id,
       "group_nm", &Message::group_nm,
-      "get_level",
-      [b](Message &place)
-      { place.get_level(&(b->config)); },
       "level", &Message::level);
   lua->new_usertype<Operation>(
       "Operation",
