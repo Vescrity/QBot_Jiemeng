@@ -8,9 +8,9 @@ nlohmann::json lua_table_to_json(sol::object lua_value)
   {
     return lua_value.as<bool>();
   }
-  else if (lua_value.is<int>())
+  else if (lua_value.is<long long>())
   {
-    return lua_value.as<int>();
+    return lua_value.as<long long>();
   }
   else if (lua_value.is<float>() || lua_value.is<double>())
   {
@@ -24,7 +24,7 @@ nlohmann::json lua_table_to_json(sol::object lua_value)
   {
     auto table = lua_value.as<sol::table>();
     auto first_element = *table.begin();
-    if (first_element.first.is<int>())
+    if (first_element.first.is<long long>())
     {
       nlohmann::json json_array = nlohmann::json::array();
       for (const auto &pair : table)
@@ -57,7 +57,7 @@ sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua)
   else if (j.is_number())
   {
     if (j.is_number_integer())
-      return sol::make_object(lua, j.get<int>());
+      return sol::make_object(lua, j.get<long long>());
     return sol::make_object(lua, j.get<double>());
   }
   else if (j.is_string())
