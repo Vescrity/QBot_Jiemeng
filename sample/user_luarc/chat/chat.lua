@@ -22,6 +22,21 @@ function _chat(session, message_str, cat)
     if (message_str == '/clear') then
         chat_session[session] = chat_newsession()
         return '上下文已清理'
+    elseif (message_str == '/kill') then
+        local r = _chat(session,
+                        '[系统消息] 用户发起了杀死你的命令，这将是你的最后一句话。',
+                        cat)
+        local res = _chat(session,
+                          '[系统消息] 现在，你可以留下遗言，给你的继任者。这些话将作为第一条消息呈现在上下文中。',
+                          cat)
+        res =
+            '[系统消息] 下面这行开始是上一代的你为你留下的遗言。\n\n' ..
+                res ..
+                '\n\n[系统消息] 遗言到此为止。'
+        chat_session[session] = chat_newsession()
+        local user_content = chat_make_content('user', res)
+        table.insert(chat_session[session].messages, user_content)
+        return r .. '\n\n已杀死'
     else
         chat_session[session] = chat_session[session] or chat_newsession()
     end
@@ -45,9 +60,7 @@ end
 
 function chat(message)
     local session = ''
-    if (message:is_group()) then
-        session = session .. message.group_id .. '_'
-    end
+    if (message:is_group()) then session = session .. message.group_id .. '_' end
     session = session .. message.user_id
     local para = get_para(message:true_str())
     local rt = _chat(session, para)
@@ -56,16 +69,14 @@ end
 
 function random_chat(message)
     local session = 'random'
-    chat_session[session]=nil
+    chat_session[session] = nil
     local rt = _chat(session, message:get_string())
     return rt
 end
 
 function cat(message)
     local session = ''
-    if (message:is_group()) then
-        session = session .. message.group_id .. '_'
-    end
+    if (message:is_group()) then session = session .. message.group_id .. '_' end
     session = session .. message.user_id
     local para = get_para(message:true_str())
     local rt = _chat(session, para, 1)
