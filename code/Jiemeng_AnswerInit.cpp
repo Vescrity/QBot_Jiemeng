@@ -159,8 +159,19 @@ void Answer::init(const json &js)
         operation.data = js["sleep"];
         if (!operation.data.is_number())
         {
-          // TODO: 情况处理
-          throw invalid_argument("Sleep expect NUMBER");
+          try
+          {
+            if (operation.data.is_string())
+            {
+              operation.data = stoll(string(operation.data));
+            }
+            else
+              throw;
+          }
+          catch (...)
+          {
+            throw invalid_argument("Sleep expect NUMBER");
+          }
         }
       }
       else if (js.count("ignore"))
@@ -208,7 +219,7 @@ void Answer::init(const json &js)
 
 void Answer::Array_init(const json &js)
 {
-  //int cnt = js.size();
+  // int cnt = js.size();
   if (is_or())
   {
     lvs.push_back(0);
