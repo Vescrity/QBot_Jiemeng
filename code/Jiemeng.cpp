@@ -204,7 +204,7 @@ bool Jiemeng::is_white(const Message_Place &place)
 Message Jiemeng::generate_message(const json &js)
 {
   const string &post_type = js["post_type"];
-  string able_type[] = {"message", "message_sent", "notice"};
+  string able_type[] = {"message", "message_sent", "notice", "request"};
   if (!array_search(post_type, able_type))
   {
     debug_lable("[Event]");
