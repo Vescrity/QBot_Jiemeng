@@ -9,7 +9,7 @@ using namespace std;
 void Message_Place::get_level(Config *config) { level = config->get_admin_level(user_id); }
 void Message::init(const json &js)
 {
-  if (js["post_type"] != "notice")
+  if (js["post_type"] != "notice" && js["post_type"] != "request")
     message_init(js);
   else
     notice_init(js);
@@ -37,7 +37,7 @@ void Message::message_init(const json &js)
 std::string notice2str(const json &j)
 {
   std::vector<std::string> exclude_fields = {
-      "post_type", "notice_type", "group_id", "user_id", "time", "self_id"};
+      "post_type", "request_type", "notice_type", "group_id", "user_id", "time", "self_id"};
   std::string formatted;
   for (auto &el : j.items())
   {
@@ -52,7 +52,8 @@ std::string notice2str(const json &j)
 void Message::notice_init(const json &js)
 {
   message_id = "0";
-  const string notice_type = js["notice_type"];
+  const string keys = js.contains("notice_type") ? "notice_type" : "request_type";
+  const string notice_type = js[keys];
   auto af = [&]
   {
     message() = "[JM:";
