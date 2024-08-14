@@ -7,7 +7,7 @@ function bot.basic_draw_deck(message, key, times)
         local raw = bot._draw_deck(key)
         rt = rt .. bot.message_replace(raw, message) .. '\n'
     end
-    return rt
+    return rt:gsub("%s+$","")
 end
 
 function bot.draw_deck(message)

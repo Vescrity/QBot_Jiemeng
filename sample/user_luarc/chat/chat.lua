@@ -35,7 +35,9 @@ function _chat(session, message_str, cat)
                 '\n\n[系统消息] 遗言到此为止。'
         chat_session[session] = chat_newsession()
         local user_content = chat_make_content('user', res)
+        local res_content = chat_make_content('assistant', '我知道了。这是一条系统消息。')
         table.insert(chat_session[session].messages, user_content)
+        table.insert(chat_session[session].messages, res_content)
         return r .. '\n\n已杀死'
     else
         chat_session[session] = chat_session[session] or chat_newsession()
