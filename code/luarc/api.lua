@@ -26,9 +26,9 @@ end
 ---@param Data table
 ---@param return_json boolean (false)
 ---@return json|table
---- Data.url string
---- Data.api string
---- Data.data table
+--- Data.url string  
+--- Data.api string  
+--- Data.data table  
 function bot.api(Data, return_json)
     local get = Data.get or false
     local rtj = return_json or false

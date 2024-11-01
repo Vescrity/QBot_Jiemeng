@@ -1,3 +1,8 @@
+---
+---@param message Message
+---@param key string
+---@param times string | integer
+---@return string
 function bot.basic_draw_deck(message, key, times)
     times = times or 1
     times = tonumber(times)
@@ -9,11 +14,14 @@ function bot.basic_draw_deck(message, key, times)
     end
     return rt:gsub("%s+$","")
 end
-
+---
+---@param message Message
+---@return string
 function bot.draw_deck(message)
     --  @param Message message
     --  @return string 抽取结果
     local key = get_para(message:true_str())
     local times, keys = get_para(key)
+    --times = tonumber(times)
     return bot.basic_draw_deck(message, keys, times)
 end
