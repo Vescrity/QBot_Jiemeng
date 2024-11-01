@@ -1,3 +1,10 @@
+---
+---@param url string
+---@param api string
+---@param is_Get boolean
+---@param data_table table
+---@param return_json boolean
+---@return json|table
 function bot._api(url, api, is_Get, data_table, return_json)
     -- 
     local req = Request.new()
@@ -15,14 +22,14 @@ function bot._api(url, api, is_Get, data_table, return_json)
     return jsonlib.json2table(rt)
 end
 
+---
+---@param Data table
+---@param return_json boolean (false)
+---@return json|table
+--- Data.url string
+--- Data.api string
+--- Data.data table
 function bot.api(Data, return_json)
-    --  @param table Data
-    --  --  string url
-    --  --  string api
-    --  --  [bool get = false]
-    --  --  table data
-    --  @param [bool return_json=false]
-    --  @return table
     local get = Data.get or false
     local rtj = return_json or false
     return bot._api(Data.url, Data.api, get, Data.data, rtj)
