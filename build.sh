@@ -22,6 +22,8 @@ mkdir deck
 mkdir jm_script
 mkdir Answer
 mkdir user_luarc
+mkdir luaclib
+mkdir lualib
 
 cp -r ../code/txt2img .
 cp -r ../code/luarc .
