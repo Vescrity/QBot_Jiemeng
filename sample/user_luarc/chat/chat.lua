@@ -18,7 +18,7 @@ function chat_make_content(roles, str)
     return con
 end
 
-function _chat(session, message_str, cat)
+function _chat(session, message_str, model)
     if (message_str == '/clear') then
         chat_session[session] = chat_newsession()
         return '上下文已清理'
@@ -49,14 +49,21 @@ function _chat(session, message_str, cat)
         api = '/api/chat',
         data = chat_session[session]
     }
-    if (cat) then
-        send_data.data.model = 'Jiemeng_cat'
+    
+    if (module) then
+        send_data.data.model = module
     else
         send_data.data.model = 'Jiemeng'
     end
-    local output = bot.api(send_data).message.content
-    local ta = chat_make_content('assistant', output)
-    table.insert(chat_session[session].messages, ta)
+    local output = ''
+    local sts, err = pcall(function()
+        output = bot.api(send_data).message.content
+        local ta = chat_make_content('assistant', output)
+        table.insert(chat_session[session].messages, ta)
+    end)
+    if not sts then
+        output = '咦，脑袋没了！！'
+    end
     return bot.string_only(output)
 end
 
@@ -81,6 +88,14 @@ function cat(message)
     if (message:is_group()) then session = session .. message.group_id .. '_' end
     session = session .. message.user_id
     local para = get_para(message:true_str())
-    local rt = _chat(session, para, 1)
+    local rt = _chat(session, para, 'Jiemeng_cat')
+    return rt
+end
+function chat_jmd(message)
+    local session = ''
+    if (message:is_group()) then session = session .. message.group_id .. '_' end
+    session = session .. message.user_id
+    local para = get_para(message:true_str())
+    local rt = _chat(session, para, 'Jiemengd')
     return rt
 end
