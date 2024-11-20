@@ -12,7 +12,7 @@ string txt2img(const string &txt)
   sprintf(name, "text%03d", Now++);
   sprintf(txtname, "tmp/%s.txt", name);
   sprintf(filename, "tmp/%s.png", name);
-  sprintf(excmd, "python txt2img/txt2img.py %s %s", txtname, filename);
+  sprintf(excmd, "txt2img/txt2img %s %s", txtname, filename);
   if (Now >= N)
     Now = 0;
   FILE *fp = fopen(txtname, "w");
