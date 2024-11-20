@@ -1,0 +1,3 @@
+#!/bin/bash
+cat "$1" | t2img -f 'Monospace 15' > "$2"
+echo -n "[CQ:image,file=file://$(pwd)/$2]"
