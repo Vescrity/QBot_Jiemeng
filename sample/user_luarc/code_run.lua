@@ -62,7 +62,7 @@ function _cpp_run(code)
     local script= 'g++ ' .. temp_file_name .. ' -o /tmp/qwq && /tmp/qwq' 
     temp_file:write(script)
     temp_file:close()
-    local rt=bot.os_sh('./wrap --ro-bind '.. temp_file_name  
+    local rt=bot.os_sh('./wrap -GC --ro-bind '.. temp_file_name  
         .. ' ' .. temp_file_name 
         .. ' --ro-bind ' .. tmpscript_file_name .. ' ' .. tmpscript_file_name
         .. ' sh ' .. tmpscript_file_name)
