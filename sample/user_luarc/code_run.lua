@@ -69,7 +69,7 @@ function _cpp_run(code)
     os.remove(temp_file_name)
     os.remove(tmpscript_file_name)
     os.remove(executable_file_name)
-    return rt
+    return bot.string_only(rt)
 end
 
 function cpp_run(message)
@@ -88,7 +88,7 @@ function _lua_run(lua_code)
         ' ' .. temp_file_name .. ' /usr/bin/lua ' .. temp_file_name)
     os.remove(temp_file_name)
     os.remove(executable_file_name)
-    return rt
+    return bot.string_only(rt)
 end
 function _py_run(code)
     local executable_file_name = os.tmpname()
@@ -101,7 +101,7 @@ function _py_run(code)
         ' ' .. temp_file_name .. ' /usr/bin/python ' .. temp_file_name)
     os.remove(temp_file_name)
     os.remove(executable_file_name)
-    return rt
+    return bot.string_only(rt)
 end
 function lua_run(message)
     local para = get_para(message:true_str())
