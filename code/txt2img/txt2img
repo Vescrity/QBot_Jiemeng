@@ -1,2 +1,10 @@
 #!/bin/bash
-cat "$1" | t2img -w 1000 -f 'Monospace 18' > "$2" && echo -n "[CQ:image,file=file://$(pwd)/$2]"
+
+filesize=$(stat -c%s "$1")
+threshold=20480
+if (( filesize > threshold )); then
+    echo "输出过长: $filesize 字节"
+    exit 1
+else
+    cat "$1" | t2img -w 1000 -f 'Monospace 18' > "$2" && echo -n "[CQ:image,file=file://$(pwd)/$2]"
+fi
