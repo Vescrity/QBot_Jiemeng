@@ -83,6 +83,7 @@ void Lua_Shell::init(Jiemeng *b)
   lua->new_usertype<Request>(
       "Request",
       "new", sol::constructors<Request()>(),
+      "add_Headers", &Request::add_Headers,
       "set_url", &Request::set_url,
       "set_api", &Request::set_api,
       "set_data", &Request::set_data,
