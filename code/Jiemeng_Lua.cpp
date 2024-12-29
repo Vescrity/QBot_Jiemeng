@@ -1,12 +1,8 @@
-#include <fstream>
-#include <iostream>
 #include <filesystem>
-#include <sstream>
 #include <thread>
 #include "txt2img_api.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng.hpp"
-#include "Jiemeng_LogIO.hpp"
 #include "Jiemeng_Version.hpp"
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_MessageReplace.hpp"
@@ -48,8 +44,7 @@ void Lua_Shell::reload()
 void Lua_Shell::init(Jiemeng *b)
 {
   lua->open_libraries();
-  if (bot == nullptr)
-    bot = b;
+  if (bot == nullptr) bot = b;
 
   auto json_index = [](nlohmann::json &j, sol::this_state s, const std::string &key) -> sol::object
   {
@@ -116,7 +111,7 @@ void Lua_Shell::init(Jiemeng *b)
       [b](Message &place)
       { place.get_level(&(b->config));
         return place.level; },
-      "place", &Message::place,
+      "get_place", &Message::place,
       "true_str", &Message::true_str,
       "show", &Message::show,
       "is_group", &Message::is_group,
@@ -159,7 +154,7 @@ void Lua_Shell::init(Jiemeng *b)
         CQMessage ms(message);
         return this->bot->private_output(user_id, ms); });
   botlib.set_function(
-      "_draw_deck",
+      "draw_deck",
       [this](const string key)
       { return this->bot->deck->draw(key); });
   botlib.set_function(
@@ -205,7 +200,7 @@ void Lua_Shell::init(Jiemeng *b)
         return this->bot->ws_send(a);
       });
   botlib.set_function(
-      "_ws_send",
+      "ws_send_async",
       [this](const sol::object &obj)
       { 
         json a = parse_to_json(obj);
@@ -216,11 +211,11 @@ void Lua_Shell::init(Jiemeng *b)
   botlib.set_function("start_up_time", start_up_time);
   botlib.set_function("txt2img", txt2img);
   botlib.set_function(
-      "deck_size",
+      "get_deck_size",
       [this]
       { return this->bot->deck->size(); });
   botlib.set_function(
-      "answer_size",
+      "get_answer_size",
       [this]
       { return this->bot->answer.main_answer->size(); });
   // Config
@@ -228,10 +223,6 @@ void Lua_Shell::init(Jiemeng *b)
       "get_group_list",
       [this]
       { return bot->config.get_group_list(); });
-  botlib.set_function(
-      "get_custom_config",
-      [this]
-      { return json_to_lua_table(bot->config.custom_config, *lua); });
   botlib.set_function(
       "add_group_list",
       [this](const string &str)
@@ -265,7 +256,7 @@ void Lua_Shell::init(Jiemeng *b)
       [this](const string &state_name, const string &code)
       { return this->bot->map_lua[state_name]->exec(code); });
   botlib.set_function(
-      "_state_run",
+      "state_run_async",
       [this](const string &state_name, const string &code)
       {
         string n = state_name;
@@ -290,8 +281,9 @@ void Lua_Shell::init(Jiemeng *b)
   (*lua)["bot"]["spliter"] = bot->config.spliter;
   (*lua)["bot"]["custom_config"] = json_to_lua_table(bot->config.custom_config, *lua);
   (*lua)["bot"]["group_list"] = bot->config.get_group_list();
-  load("./luarc");
-  load("./user_luarc");
+  lua->script_file("./init.lua");
+  //load("./luarc");
+  //load("./user_luarc");
 }
 
 sol::protected_function_result Lua_Shell::get_func(const string &func)

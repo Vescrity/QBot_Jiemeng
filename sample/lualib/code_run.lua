@@ -1,3 +1,6 @@
+mapi = mapi or {}
+require('bot_string')
+local reverse_split = bot.string.reverse_split
 --[[
 function _cpp_core(cpp_code)
     local executable_file_name = os.tmpname()
@@ -49,8 +52,10 @@ function _cpp_run(code)
 end
 ]]
 
-
-function _cpp_run(code)
+---
+---@param code string
+---@return string
+function cpp_run(code)
     local executable_file_name = os.tmpname()
     local tmpscript_file_name = os.tmpname()
     local temp_file_name = executable_file_name .. ".cpp"
@@ -71,13 +76,17 @@ function _cpp_run(code)
     os.remove(executable_file_name)
     return bot.string_only(rt)
 end
-
-function cpp_run(message)
-    local para = get_para(message:true_str())
-    return _cpp_run(para)
+---comment
+---@param message Message
+---@return string
+function mapi.cpp_run(message)
+    local para = reverse_split(message:true_str()) or ''
+    return cpp_run(para)
 end
-
-function _lua_run(lua_code)
+---comment
+---@param lua_code string
+---@return string
+function lua_run(lua_code)
     local executable_file_name = os.tmpname()
     local temp_file_name = executable_file_name .. ".lua"
     -- local executable_file_name = os.tmpname()
@@ -90,28 +99,40 @@ function _lua_run(lua_code)
     os.remove(executable_file_name)
     return bot.string_only(rt)
 end
-function _py_run(code)
+---comment
+---@param code string
+---@return string
+function py_run(code)
     local executable_file_name = os.tmpname()
     local temp_file_name = executable_file_name .. ".py"
     -- local executable_file_name = os.tmpname()
     local temp_file = assert(io.open(temp_file_name, "w"))
     temp_file:write(code)
     temp_file:close()
-    local rt=bot.os_sh('./wrap --ro-bind '.. temp_file_name .. 
+    local rt=bot.os_sh('./wrap --ro-bind '.. temp_file_name ..
         ' ' .. temp_file_name .. ' /usr/bin/python ' .. temp_file_name)
     os.remove(temp_file_name)
     os.remove(executable_file_name)
     return bot.string_only(rt)
 end
-function lua_run(message)
-    local para = get_para(message:true_str())
-    return _lua_run(para)
+---comment
+---@param message Message
+---@return string
+function mapi.lua_run(message)
+    local para = reverse_split(message:true_str()) or ''
+    return lua_run(para)
 end
-function py_run(message)
-    local para = get_para(message:true_str())
-    return _py_run(para)
+---comment
+---@param message Message
+---@return string
+function mapi.py_run(message)
+    local para = reverse_split(message:true_str()) or ''
+    return py_run(para)
 end
-function wrap_shell(message)
-    local para = get_para(message:true_str())
-    return _lua_run([=[os.execute([==[]=] .. para .. [=[]==])]=])
+---comment
+---@param message Message
+---@return string
+function mapi.wrap_shell(message)
+    local para = reverse_split(message:true_str())
+    return lua_run([=[os.execute([==[]=] .. para .. [=[]==])]=])
 end
