@@ -1,0 +1,7 @@
+require('bot_api')
+require('bot_deck')
+require('bot_info')
+require('bot_os_shell')
+require('bot_lua_shell')
+require('bot_order')
+require('bot_reRecv')
