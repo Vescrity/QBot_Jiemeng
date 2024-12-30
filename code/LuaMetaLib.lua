@@ -169,6 +169,10 @@ function bot.sleep(ms) end
 --- @param r integer
 --- @return integer rand_number
 function bot.rand(l, r) end
+--- 对 rstr 中的 Rcode 变换
+--- @param rstr string
+--- @return string
+function bot.change_Rcode(rstr) end
 
 --- 将字符串转换为 CQ 码 (\&->\&amp; 等)，使之发送后的表面值等于传入值
 --- @param str string 要转换的字符串
