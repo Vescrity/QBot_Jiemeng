@@ -63,7 +63,6 @@ function chat.chat(session, message_str, model)
         api = '/api/chat',
         data = chat.chat_session[session]
     }
-    
     if (model) then
         send_data.data.model = model
     else
@@ -71,6 +70,8 @@ function chat.chat(session, message_str, model)
     end
     local output = ''
     local sts, err = pcall(function()
+        ---@type string
+        ---@diagnostic disable-next-line 
         output = bot.request_api(send_data).message.content
         local ta = chat_make_content('assistant', output)
         table.insert(chat.chat_session[session].messages, ta)
@@ -92,8 +93,8 @@ end]]
 
 function chat.mapi.random_chat(message)
     local session = 'random'
-    chat_session[session] = nil
-    local rt = _chat(session, message:get_string())
+    chat.chat_session[session] = nil
+    local rt = chat.chat(session, message:get_string())
     return rt
 end
 local function chat_all(message, model)
