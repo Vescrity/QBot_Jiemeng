@@ -1,5 +1,15 @@
 # Jiemeng Lua
 
+- 可使用 luals 查看内置方法。
+- 另见 (这里)[code/LuaMetaLib.lua]
+
+## 规范
+
+- 对于只接受消息 (Message) 做为参数的接口方法，应定义在 `mapi` 或 `*.mapi` (Message API) 表下。
+
+
+> 以下内容已废弃并在代码内通过 luals 支持，仅供参考
+
 预定义了一些变量、函数、类。  
 桔梦提供的 Lua api 可极大地扩展 bot 功能。  
 
