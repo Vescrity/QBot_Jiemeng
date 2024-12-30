@@ -37,10 +37,10 @@ function chat.chat(session, message_str, model)
         chat.chat_session[session] = chat_newsession()
         return '上下文已清理'
     elseif (message_str == '/kill') then
-        local r = chat(session,
+        local r = chat.chat(session,
                         '[系统消息] 用户发起了杀死你的命令，这将是你的最后一句话。',
                         model)
-        local res = chat(session,
+        local res = chat.chat(session,
                           '[系统消息] 现在，你可以留下遗言，给你的继任者。这些话将作为第一条消息呈现在上下文中。',
                           model)
         res =
