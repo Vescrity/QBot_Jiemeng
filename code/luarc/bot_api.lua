@@ -24,12 +24,15 @@ function bot.requset_wrap(url, api, is_Get, data_table, return_json)
     else
         rt = req:js_post()
     end
-    if (return_json) then return rt end
+    if (return_json) then
+        ---@type json
+        return rt
+    end
     rt = jsonlib.json2table(rt)
     if type(rt) == "number" then
         error("Excp: Why the server gave us a number?")
     end
-    ---@type json|table
+    ---@type table
     return rt
 end
 
@@ -116,7 +119,7 @@ end
 
 ---@deprecated
 ---@param text string
----@return integer
+---@return integer?
 function find_reply_id(text)
     local id = string.match(text, "%[CQ:reply,id=(%-?%d+)%]")
     return tonumber(id)
