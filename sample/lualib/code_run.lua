@@ -19,8 +19,7 @@ function _cpp_core(cpp_code)
         local execute_handle = io.popen(execute_command, "r")
         local execute_output = execute_handle:read("*a")
         execute_handle:close()
-        os.remove(temp_file_name)
-        os.remove(executable_file_name)
+        os.remove(temp_file_name) os.remove(executable_file_name)
         return execute_output
     else
         os.remove(temp_file_name)
@@ -80,7 +79,7 @@ end
 ---@param message Message
 ---@return string
 function mapi.cpp_run(message)
-    local para = reverse_split(message:true_str()) or ''
+    local para = reverse_split(message:true_str())
     return cpp_run(para)
 end
 ---comment
@@ -119,14 +118,14 @@ end
 ---@param message Message
 ---@return string
 function mapi.lua_run(message)
-    local para = reverse_split(message:true_str()) or ''
+    local para = reverse_split(message:true_str())
     return lua_run(para)
 end
 ---comment
 ---@param message Message
 ---@return string
 function mapi.py_run(message)
-    local para = reverse_split(message:true_str()) or ''
+    local para = reverse_split(message:true_str())
     return py_run(para)
 end
 ---comment
