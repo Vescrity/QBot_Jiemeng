@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <thread>
+#include "Jiemeng_Random.hpp"
 #include "txt2img_api.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng.hpp"
@@ -140,6 +141,7 @@ void Lua_Shell::init(Jiemeng *b)
   sol::table jsonlib = lua->create_table();
   botlib.set_function("sleep", minisleep);
   botlib.set_function("rand", Rands);
+  botlib.set_function("change_Rcode", chg_Rcode);
   botlib.set_function("string_only", string2CQ);
   botlib.set_function(
       "group_output",
