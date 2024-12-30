@@ -1,6 +1,20 @@
-Character = {}
+local game = {}
+require('bot_string')
+---@diagnostic disable-next-line
+---@class Character
+local Character = {}
+game.Character = Character
 Character.__index = Character
 -- 定义Character的构造函数
+
+---@param character? Character
+---@param name? string
+---@param level? integer
+---@param hp? number
+---@param atk? number
+---@param def? number
+---@param mdef? number
+---@return Character
 function Character:new(character, name, level, hp, atk, def, mdef)
     local default = {
         name = "无名氏",
@@ -68,8 +82,10 @@ function Character:level_up(select)
     self.mdef = self.mdef * 1.2
     return '升级成功'
 end
-
-function pk(a, b)
+---
+---@param a Character
+---@param b Character
+local function pk(a, b)
     if (a.def >= b.atk and b.def >= a.atk) then
         a.hp = 0.1
         return
@@ -93,7 +109,7 @@ function pk(a, b)
     return
 end
 
-function challenge(player, mon)
+local function challenge(player, mon)
     local tryplay = Character:new(player)
     tryplay.hp = player.hp + player.mdef
     pk(tryplay, mon)
@@ -105,7 +121,7 @@ function challenge(player, mon)
     end
 end
 
-function gen_monster(level)
+local function gen_monster(level)
     local mon = Character:new(nil, '怪物' .. tostring(level), level, 5, 1.65,
                               1.1, 0)
     local times = (1.6 ^ (level - 1))
@@ -116,13 +132,13 @@ function gen_monster(level)
     return mon
 end
 
-function new_player(name)
+local function new_player(name)
     local player = Character:new(nil, name, 1, 50, 2, 1, 2)
     player.stage = 1
     return player
 end
 
-function save_game_data(file_path, game_data)
+local function save_game_data(file_path, game_data)
     -- 把Lua table转换为JSON对象
     local json_obj = jsonlib.table2json(game_data)
     -- 转换为字符串格式，并确保进行缩进以便于阅读
@@ -136,8 +152,8 @@ function save_game_data(file_path, game_data)
     file:close()
     return true, '成功写入'
 end
-game_data = {}
-function load_game_data(file_path)
+local game_data = {}
+local function load_game_data(file_path)
     -- 打开文件用于读取
     local file = io.open(file_path, "r")
     if not file then return "无法打开文件进行读取" end
@@ -156,7 +172,7 @@ function load_game_data(file_path)
     return '加载成功'
 end
 
-function Character:_game(oper, oper2)
+function Character:game(oper, oper2)
     if (oper == 'status') then
         return self:status()
     elseif (oper == 'challenge') then
@@ -212,14 +228,15 @@ function Character:_game(oper, oper2)
             '操作：\nstatus 状态信息\nmon_info 怪物信息\nchallenge[#1/2/3] 挑战[并升级]\nup#[1/2/3] 升级 ATK/DEF/MDEF\nnewgame[#name] 新游戏[名称]'
     end
 end
+game.mapi = {}
 
-function game(message)
+function game.mapi.game(message)
     local player = game_data[message.user_id] or
                        new_player(message.user_nm)
     if (player.level == 0) then player = new_player(player.name) end
-    local ord = get_para(message:true_str())
-    local op2, op1 = get_para(ord)
-    local rt = player:_game(op1, op2)
+    local ord = bot.string.reverse_split(message:true_str())
+    local op2, op1 = bot.string.reverse_split(ord)
+    local rt = player:game(op1, op2)
     if (op1 ~= 'load') then
         game_data[message.user_id] = Character:new(player)
     end
