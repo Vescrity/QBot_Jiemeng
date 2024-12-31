@@ -15,13 +15,10 @@ make -j$(nproc)
 
 echo '尝试构建工作目录'
 
-mkdir background
-mkdir plugin
 mkdir tmp
 mkdir deck
 mkdir jm_script
 mkdir Answer
-mkdir user_luarc
 mkdir luaclib
 mkdir lualib
 
