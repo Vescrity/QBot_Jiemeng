@@ -325,21 +325,6 @@ bool 型，表示是否发送成功。
 
 调用后立即返回空字符串。当前 lua 状态不再被占用时重置当前 lua 状态。 
 
-#### bot.ws_send
-
-```
-[json] bot.ws_send([?] data)
-```
-
-尝试将 data 格式化为 json 后对 OneBot 发送请求并等待响应，以 json 类型返回。
-
-#### bot._ws_send
-
-```
-[void] bot._ws_send([?] data)
-```
-同上，但不等待返回值。调用后程序内部创建新的线程，此函数即刻返回。
-
 
 #### bot.state_run
 #### bot._state_run

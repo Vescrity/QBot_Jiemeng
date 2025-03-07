@@ -1,7 +1,6 @@
 #include "Jiemeng.hpp"
-int main()
-{
-  work_dir_check();
-  Jiemeng bot;
-  bot.run();
+int main() {
+    Jiemeng::work_dir_check();
+    Jiemeng::Bot bot;
+    bot.run();
 }

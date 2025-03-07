@@ -3,7 +3,7 @@
 #include "Jiemeng_Time.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_String.hpp"
-
+namespace Jiemeng{
 void message_replace(string &str, const Message &message)
 {
   str = chg_Rcode(str);
@@ -21,4 +21,5 @@ void message_replace(string &str, const Message &message)
   str_replace(str, "[user_name]", message.user_nm);
   str_replace(str, "[user_id]", message.user_id);
   str_replace(str, "[Repeat]", message.const_str());
+}
 }

@@ -50,21 +50,18 @@ end
 ---@param msg_id integer
 ---@return nil
 function bot.onebot.del_msg(msg_id)
-    local dt = {action = 'delete_msg', params = {message_id = msg_id}}
-    bot.ws_send_async(dt)
+    local dt = {message_id = msg_id}
+    bot.onebot_api_async('delete_msg', dt)
 end
 ---comment
 ---@param gid integer
 ---@param uid integer
 function bot.onebot.group_poke(gid, uid)
     local dt={
-        action = 'group_poke',
-        params = {
-            group_id=gid,
-            user_id=uid
-        }
+        group_id=gid,
+        user_id=uid
     }
-    bot.ws_send_async(dt)
+    bot.onebot_api_async('group_poke',dt)
 end
 ---comment
 ---@param gid integer
@@ -72,14 +69,11 @@ end
 ---@param title string
 function bot.onebot.set_group_special_title(gid, uid, title)
     local dt={
-        action = 'set_group_special_title',
-        params = {
-            group_id=gid,
-            user_id=uid,
-            special_title=title
-        }
+        group_id=gid,
+        user_id=uid,
+        special_title=title
     }
-    bot.ws_send_async(dt)
+    bot.onebot_api_async('set_group_special_title', dt)
 end
 ---comment
 ---@param message Message
@@ -129,8 +123,8 @@ end
 ---@param isjson? boolean
 ---@return table | json
 function bot.get_msg(msgid, isjson)
-    local t = {action = 'get_msg', params = {message_id = msgid}}
-    local qwq = bot.ws_send(t)
+    local t = {message_id = msgid}
+    local qwq = bot.onebot_api('get_msg' ,t)
     if (isjson) then return qwq.data end
     ---@type table<string, table>
     ---@diagnostic disable-next-line: assign-type-mismatch
