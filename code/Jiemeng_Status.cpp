@@ -1,7 +1,5 @@
 #include "Jiemeng_Time.hpp"
 #include <string>
-#include <iostream>
-#include <sstream>
 
 using namespace std;
 Time_Class start_time;

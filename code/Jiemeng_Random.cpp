@@ -1,3 +1,4 @@
+#include <random>
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_String.hpp"
 static auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();

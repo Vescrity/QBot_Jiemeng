@@ -225,14 +225,16 @@ function bot.deck_reload() end
 
 --- 重新加载 Lua 脚本 (Async)
 function bot.lua_reload() end
---- 与 Onebot 实例进行 websocket 通信
+--- 与 Onebot 实例进行  通信
 ---@param data table
+---@param api string
 ---@return json msg 响应
-function bot.ws_send(data) end
---- 与 Onebot 实例进行 websocket 通信(Async)
+function bot.onebot_api(api, data) end
+--- 与 Onebot 实例进行  通信(Async)
+---@param api string
 ---@param data table
 ---@return nil 
-function bot.ws_send_async(data) end
+function bot.onebot_api_async(api, data) end
 
 ---@return string
 function bot.start_up_time() end

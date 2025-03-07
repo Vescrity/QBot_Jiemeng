@@ -1,10 +1,5 @@
 #ifndef JIEMENG_RANDOM
 #define JIEMENG_RANDOM
-#include <stdio.h>
-#include <random>
-#include <chrono>
-#include <time.h>
-#include <string.h>
 #include <boost/regex.hpp>
 
 #define Lint long long

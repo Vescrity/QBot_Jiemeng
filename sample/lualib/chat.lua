@@ -56,10 +56,12 @@ function chat.chat(session, message_str, model)
     else
         chat.chat_session[session] = chat.chat_session[session] or chat_newsession()
     end
+    message_str = message_str .. string.format("[system: date='%s']", bot.os_sh('date'))
     local user_content = chat_make_content('user', message_str)
     table.insert(chat.chat_session[session].messages, user_content)
     local send_data = {
         url = '127.0.0.1:11434',
+        --url = '183.71.240.211:11434',
         api = '/api/chat',
         data = chat.chat_session[session]
     }
@@ -116,5 +118,8 @@ function chat.mapi.cat(message)
 end
 function chat.mapi.chat_jmd(message)
     return chat_all(message, 'Jiemengd')
+end
+function chat.mapi.chat_jmdp(message)
+    return chat_all(message, 'Jiemengdp')
 end
 return chat

@@ -1,0 +1,9 @@
+BasedOnStyle: LLVM  # 可以选择的基础风格：LLVM, Google, Chromium, Mozilla, WebKit
+IndentWidth: 4      # 缩进宽度
+TabWidth: 4         # Tab 的宽度
+UseTab: Never       # 使用 Tab 进行缩进（可以选择 Always, Never, ForIndentation）
+ColumnLimit: 80     # 每行的最大字符数
+AllowShortBlocksOnASingleLine: true  # 允许短块在一行中
+AllowShortFunctionsOnASingleLine: Inline  # 允许短函数在一行中
+BreakBeforeBraces: Attach  # 控制花括号的位置（可以选择 Attach, Linux, Stroustrup, Allman）
+SpaceBeforeParens: ControlStatements  # 控制语句前的空格
