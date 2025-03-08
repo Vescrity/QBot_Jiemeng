@@ -57,8 +57,6 @@ void WSIO_Cache::listen(std::function<void(const json &)> func) {
             ws.read(buffer);
             std::string message(boost::asio::buffers_begin(buffer.data()),
                                 boost::asio::buffers_end(buffer.data()));
-            debug_lable("[WSIO_Recive]");
-            debug_puts(message);
             buffer.consume(buffer.size());
             json recv;
             try {

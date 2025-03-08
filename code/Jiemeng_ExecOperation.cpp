@@ -5,8 +5,6 @@
 namespace Jiemeng {
 using Type = Operation::Type;
 string Bot::exec_operation(const Message &message, const Operation &operation) {
-    dout << "OPER:" << int(operation.type) << "\n";
-    dout << "OPER:" << operation.str << "\n";
     if (operation.type == Type::message)
         return (operation.str);
     if (operation.type == Type::sleep) {
@@ -64,7 +62,6 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
             return "";
         }
         if (order == "type_rePost") {
-            dout << "paras1" << paras[1] << "\n";
             auto Para = string_cut(paras[1], config.spliter, 3);
             auto &Paras = *Para;
             message_replace(Paras[2], message);
