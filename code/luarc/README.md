@@ -1,7 +1,7 @@
 # Jiemeng Lua
 
 - 可使用 luals 查看内置方法。
-- 另见 [这里](code/LuaMetaLib.lua)
+- 另见 [这里](../LuaMetaLib.lua)
 
 ## 规范
 
