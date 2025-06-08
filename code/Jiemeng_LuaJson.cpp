@@ -1,6 +1,8 @@
 #include "Jiemeng.hpp"
 #include <nlohmann/json.hpp>
+#include <sol/forward.hpp>
 #include <sol/sol.hpp>
+#include <sol/state_view.hpp>
 using json = nlohmann::json;
 namespace Jiemeng {
 
@@ -31,7 +33,9 @@ nlohmann::json lua_table_to_json(sol::object lua_value) {
             return json_object;
         }
     } else {
-        return "<Not Support Type>"s;
+        sol::state_view l = lua_value.lua_state();
+        sol::function f = l["tostring"];
+        return f(lua_value).get<std::string>();
     }
 }
 sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua) {

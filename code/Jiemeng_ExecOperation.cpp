@@ -84,6 +84,7 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
         if (order == "reRecv") {
             throw Operation::reRecv(paras[1]);
         }
+        throw invalid_argument("未知的 Order");
     }
     // 理论上不应该出现draw_deck
     if (operation.type == Type::draw_deck)

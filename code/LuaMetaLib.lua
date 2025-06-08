@@ -15,12 +15,12 @@ function json.new() end
 function json:dump(n) end
 
 --- 将一个键值对添加到 json 对象
---- @param key string 键
+--- @param key string|int 键
 --- @param value json 要设置的值
 function json:__newindex(key, value) end
 
 --- 从 json 对象中获取值
---- @param key string 键
+--- @param key string|int 键
 --- @return json
 function json:__index(key) end
 

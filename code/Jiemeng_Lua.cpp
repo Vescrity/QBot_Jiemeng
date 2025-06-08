@@ -58,13 +58,38 @@ void Lua_Shell::init(Bot *b) {
         "json", "new", sol::constructors<json()>(), "dump",
         sol::overload([](json &js) { return js.dump(); },
                       [](json &js, int n) { return js.dump(n); }),
-        "__index", json_index,
+        //"__index", json_index,
+        "__index", [](nlohmann::json &j, sol::stack_object key) {
+            if (key.is<std::string>()) {
+                return j[key.as<std::string>()];
+            } else if (key.is<int>()) {
+                return j[key.as<int>()];
+            }
+            return nlohmann::json();
+        },
         // __newindex metamethod，设置子键
-        "__newindex",
+        /*"__newindex",
         [](nlohmann::json &this_json, const std::string &key,
            const sol::stack_object &value) {
             this_json[key] = value.as<nlohmann::json>();
+        },*/
+        "__newindex", 
+        [](nlohmann::json &j, sol::stack_object key, sol::stack_object value) {
+            if (key.is<std::string>()) {
+                j[key.as<std::string>()] = value.as<nlohmann::json>();
+            } else if (key.is<int>()) {
+                j[key.as<int>()] = value.as<nlohmann::json>();
+            }
         },
+        "__len", [](nlohmann::json &j) { return j.size(); },
+        /*"__ipairs", [](nlohmann::json &j) {
+            return sol::as_function([](nlohmann::json &js, int i) {
+                    if (i + 1 <= js.size()) {
+                    return std::make_tuple(i + 1, js[i]);
+                    }
+                    return std::make_tuple(sol::nil, sol::nil);
+                    });
+        },*/
         "val",
         [&](json &js) -> sol::object { return json_to_lua_table(js, *lua); },
         "parse",
