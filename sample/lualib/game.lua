@@ -122,9 +122,9 @@ local function challenge(player, mon)
 end
 
 local function gen_monster(level)
-    local mon = Character:new(nil, '怪物' .. tostring(level), level, 5, 1.65,
+    local mon = Character:new(nil, '怪物' .. tostring(level), level, 50, 1.65,
                               1.1, 0)
-    local times = (1.6 ^ (level - 1))
+    local times = (1.4 ^ (level - 1))
     mon.hp = mon.hp * times
     mon.def = mon.def * times
     mon.atk = mon.atk * times
@@ -221,7 +221,7 @@ function Character:game(oper, oper2)
         其余属性 *1.2
 怪物属性：
     初始值为 5 1.65 1.1 0
-    随后每升级一次全属性 *1.6]====]
+    随后每升级一次全属性 *1.4]====]
         return r
     else
         return
@@ -242,4 +242,4 @@ function game.mapi.game(message)
     end
     return rt
 end
-
+return game

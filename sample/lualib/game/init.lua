@@ -1,0 +1,2 @@
+game = require('game')
+
