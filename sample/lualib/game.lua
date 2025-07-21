@@ -228,9 +228,9 @@ function Character:game(oper, oper2)
             '操作：\nstatus 状态信息\nmon_info 怪物信息\nchallenge[#1/2/3] 挑战[并升级]\nup#[1/2/3] 升级 ATK/DEF/MDEF\nnewgame[#name] 新游戏[名称]'
     end
 end
-game.mapi = {}
+mapi.game = {}
 
-function game.mapi.game(message)
+function mapi.game.game(message)
     local player = game_data[message.user_id] or
                        new_player(message.user_nm)
     if (player.level == 0) then player = new_player(player.name) end

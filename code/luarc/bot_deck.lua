@@ -1,5 +1,7 @@
 
 require('bot_string')
+mapi = mapi or {}
+mapi.bot = mapi.bot or {}
 local reverse_split = bot.string.reverse_split
 DECK_MAX = DECK_MAX or 20
 ---
@@ -19,7 +21,7 @@ end
 ---
 ---@param message Message
 ---@return string
-function bot.mapi.draw_deck(message)
+function mapi.bot.draw_deck(message)
     local key = reverse_split(message:true_str())
     local times, keys = reverse_split(key)
     local t = 0
@@ -30,3 +32,4 @@ function bot.mapi.draw_deck(message)
     end
     return bot.basic_draw_deck(message, keys, t)
 end
+

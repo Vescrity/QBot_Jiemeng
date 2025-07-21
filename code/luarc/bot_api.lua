@@ -3,7 +3,8 @@
 
 require('bot_string')
 local reverse_split = bot.string.reverse_split
-bot.mapi = bot.mapi or {}
+mapi = mapi or {}
+mapi.bot = mapi.bot or {}
 bot.onebot = bot.onebot or {}
 ---
 ---@param url string
@@ -78,7 +79,7 @@ end
 ---comment
 ---@param message Message
 ---@return string
-function bot.mapi.set_title(message)
+function mapi.bot.set_title(message)
     local title = reverse_split(message:true_str()) or ''
     ---@type integer
     local gid=tonumber(message.group_id)

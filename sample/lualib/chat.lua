@@ -1,7 +1,8 @@
 local chat = chat or {}
 chat.chat_session = {}
 chat.cat_session = {}
-chat.mapi = chat.mapi or {}
+mapi = mapi or {}
+mapi.chat = mapi.chat or {}
 require("bot_string")
 require("bot_api")
 
@@ -93,7 +94,7 @@ function chat(message)
     return rt
 end]]
 
-function chat.mapi.random_chat(message)
+function mapi.chat.random_chat(message)
     local session = 'random'
     chat.chat_session[session] = nil
     local rt = chat.chat(session, message:get_string())
@@ -107,19 +108,19 @@ local function chat_all(message, model)
     local rt = chat.chat(session, para, model)
     return rt
 end
-function chat.mapi.chat(message)
+function mapi.chat.chat(message)
     return chat_all(message, 'Jiemeng')
 end
-function chat.mapi.chat32(message)
+function mapi.chat.chat32(message)
     return chat_all(message, 'gddisney/llama3.2-uncensored')
 end
-function chat.mapi.cat(message)
+function mapi.chat.cat(message)
     return chat_all(message, 'Jiemeng_cat')
 end
-function chat.mapi.chat_jmd(message)
+function mapi.chat.chat_jmd(message)
     return chat_all(message, 'Jiemengd')
 end
-function chat.mapi.chat_jmdp(message)
+function mapi.chat.chat_jmdp(message)
     return chat_all(message, 'Jiemengdp')
 end
 return chat
