@@ -35,7 +35,7 @@ nlohmann::json lua_table_to_json(sol::object lua_value) {
     } else {
         sol::state_view l = lua_value.lua_state();
         sol::function f = l["tostring"];
-        return f(lua_value).get<std::string>();
+        return "<" + f(lua_value).get<std::string>() + ">";
     }
 }
 sol::object json_to_lua_table(const nlohmann::json &j, sol::state &lua) {
