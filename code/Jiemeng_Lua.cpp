@@ -9,6 +9,7 @@
 #include "Jiemeng_String.hpp"
 #include "txt2img_api.hpp"
 #include <filesystem>
+#include <sol/types.hpp>
 #include <thread>
 #include "Jiemeng_Exception.hpp"
 using json = nlohmann::json;
@@ -193,8 +194,10 @@ void Lua_Shell::init(Bot *b) {
         return this->bot->answer.main_answer->size();
     });
     // Config
-    botlib.set_function("get_group_list",
-                        [this] { return bot->config.get_group_list(); });
+    botlib.set_function("get_group_list", 
+        [this]() -> sol::as_table_t<vector<string>> { 
+        return bot->config.get_group_list(); 
+    });
     botlib.set_function("add_group_list", [this](const string &str) {
         this->bot->config.add_group_list(str);
     });
