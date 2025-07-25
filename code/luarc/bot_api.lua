@@ -13,10 +13,13 @@ bot.onebot = bot.onebot or {}
 ---@param data_table table
 ---@param return_json boolean
 ---@return json|table
-function bot.requset_wrap(url, api, is_Get, data_table, return_json)
+function bot.requset_wrap(url, api, is_Get, data_table, headers, return_json)
     local req = Request.new()
     req:set_url(url)
     req:set_api(api)
+    for i, str in ipairs(headers) do
+        req:add_Headers(str)
+    end
     local js = jsonlib.table2json(data_table)
     req:set_data(js)
     local rt = json.new()
@@ -29,12 +32,12 @@ function bot.requset_wrap(url, api, is_Get, data_table, return_json)
         ---@type json
         return rt
     end
-    rt = jsonlib.json2table(rt)
-    if type(rt) == "number" then
+    local rrt = jsonlib.json2table(rt)
+    if type(rrt) == "number" then
         error("Excp: Why the server gave us a number?")
     end
     ---@type table
-    return rt
+    return rrt
 end
 
 ---
@@ -44,7 +47,8 @@ end
 function bot.request_api(Data, return_json)
     local get = Data.get or false
     local rtj = return_json or false
-    return bot.requset_wrap(Data.url, Data.api, get, Data.data, rtj)
+    local headers = Data.headers or {}
+    return bot.requset_wrap(Data.url, Data.api, get, Data.data, headers, rtj)
 end
 
 ---
