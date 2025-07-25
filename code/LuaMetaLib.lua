@@ -45,7 +45,7 @@ function Request.new() end
 --- 添加请求头
 --- @param header string
 --- @return nil
-function Request.add_Headers(header) end
+function Request:add_Headers(header) end
 
 --- 设置 URL
 --- @param url string URL
