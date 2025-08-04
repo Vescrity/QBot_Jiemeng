@@ -17,6 +17,7 @@ class Message_Place {
     string group_nm;
     string user_id;
     string user_nm;
+    string user_nk;
     int level = 0;
     void get_level(Config *);
     void set_private() { group_flag = 0; }

@@ -24,12 +24,13 @@ void Message::message_init(const json &js) {
     change(js["message"]);
     const json &sender = js["sender"];
     user_id = to_string(js["user_id"]);
+    user_nk = sender["nickname"];
 
     if (sender.contains("card"))
         if (sender["card"].is_string())
             user_nm = sender["card"];
     if (user_nm.length() == 0)
-        user_nm = sender["nickname"];
+        user_nm = user_nk;
 
     if (is_group())
         group_id = to_string(js["group_id"]);
@@ -96,6 +97,8 @@ void Message::show() const {
     }
     info_lable("[user_nm]");
     info_puts(user_nm);
+    info_lable("[user_nk]");
+    info_puts(user_nk);
     info_lable("[user_id]");
     info_puts(user_id);
     msg_lable("[message]");

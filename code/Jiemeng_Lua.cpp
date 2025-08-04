@@ -93,6 +93,7 @@ void Lua_Shell::init(Bot *b) {
         },*/
         "val",
         [&](json &js) -> sol::object { return json_to_lua_table(js, *lua); },
+        "contains", [&](json &js, const string &str){ return js.contains(str);},
         "parse",
         [&](json &js, const sol::object &obj) { js = parse_to_json(obj); });
     lua->new_usertype<Request>(
@@ -103,13 +104,17 @@ void Lua_Shell::init(Bot *b) {
         &Request::js_post, "js_get", &Request::js_get, "Get", &Request::Get);
     lua->new_usertype<Message_Place>(
         "Message_Place", "new", sol::constructors<Message_Place()>(),
-        "group_id", &Message_Place::group_id, "group_nm",
-        &Message_Place::group_nm, "user_id", &Message_Place::user_id, "user_nm",
-        &Message_Place::user_nm, "level", &Message_Place::level, "set_group",
-        &Message_Place::set_group, "set_private", &Message_Place::set_private,
-        "is_group", &Message_Place::is_group, "is_private",
-        &Message_Place::is_private, "get_level",
-        [b](Message_Place &place) { place.get_level(&(b->config)); });
+        "group_id", &Message_Place::group_id,
+        "group_nm", &Message_Place::group_nm, 
+        "user_id", &Message_Place::user_id, 
+        "user_nm", &Message_Place::user_nm,
+        "user_nk", &Message_Place::user_nk,
+        "level", &Message_Place::level,
+        "set_group", &Message_Place::set_group,
+        "set_private", &Message_Place::set_private,
+        "is_group", &Message_Place::is_group,
+        "is_private", &Message_Place::is_private,
+        "get_level", [b](Message_Place &place) { place.get_level(&(b->config)); });
     lua->new_usertype<Message>(
         "Message", "new", sol::constructors<Message()>(), "get_string",
         &Message::get_string, "get_json", &Message::get_json, "get_level",
@@ -123,7 +128,10 @@ void Lua_Shell::init(Bot *b) {
         sol::overload([](Message &m, const char *str) { return m.change(str); },
                       [](Message &m, json &js) { return m.change(js); }),
         "set_group", &Message::set_group, "set_private", &Message::set_private,
-        "user_id", &Message::user_id, "user_nm", &Message::user_nm, "group_id",
+        "user_id", &Message::user_id,
+        "user_nm", &Message::user_nm,
+        "user_nk", &Message::user_nk,
+        "group_id",
         &Message::group_id, "group_nm", &Message::group_nm, "level",
         &Message::level);
     lua->new_usertype<Operation>(
