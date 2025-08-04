@@ -23,6 +23,10 @@ function json:__newindex(key, value) end
 --- @param key string|int 键
 --- @return json
 function json:__index(key) end
+--- contains
+--- @param key string
+--- @return nil
+function json:contains(key) end
 
 --- 将一个字符串/表解析为 json
 --- @param obj string|table
@@ -86,6 +90,7 @@ function Request:js_get() end
 ---@field group_nm string
 ---@field user_id string
 ---@field user_nm string
+---@field user_nk string
 ---@field level integer 权限等级
 Message_Place = {}
 ---
