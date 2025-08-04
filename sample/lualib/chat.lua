@@ -8,6 +8,7 @@ require("bot_api")
 ---@field userRole string
 ---@field modelRole string
 ---@field sessions table<string, table>
+---@field shared boolean
 local Chat = {}
 Chat.__index = Chat
 
@@ -15,6 +16,7 @@ function Chat.new(api_type)
     local self = setmetatable({}, Chat)
     self.apiType = api_type or "ollama"
     self.initContent = '大家好，我是桔梦！欢迎大家和我聊天！'
+    self.shared = false
     self.sessions = {}
     self.userRole = 'user'
     if self.apiType == 'gemini' then
@@ -72,25 +74,30 @@ end
 ---@param session string
 ---@param message_str string
 ---@param model string
+---@param user_prompt string
 ---@return string
-function Chat:Chat(session, message_str, model)
+function Chat:Chat(session, message_str, model, user_prompt)
     if (message_str == '/clear') then
         self.sessions[session] = self:newsession()
         return '上下文已清理'
     elseif (message_str == '/kill') then
-        local r = self:Chat(session,
-                        '[系统消息] 用户发起了杀死你的命令，这将是你的最后一句话。',
-                        model)
-        local res = self:Chat(session,
-                          '[系统消息] 现在，你可以留下遗言，给你的继任者。这些话将作为第一条消息呈现在上下文中。',
-                          model)
-        res =
-            '[系统消息] 下面这行开始是上一代的你为你留下的遗言。\n\n' ..
-                res ..
-                '\n\n[系统消息] 遗言到此为止。'
+        local r = self:Chat(
+            session,
+            '[SYSTEM] 用户发起了杀死你的命令，这将是你的最后一句话。',
+            model
+        )
+        local res = self:Chat(
+            session,
+            '[SYSTEM] 现在，你可以留下遗言，给你的继任者。这些话将作为第一条消息呈现在上下文中。',
+            model
+        )
+        res = (
+            '[SYSTEM] 下面这行开始是上一代的你为你留下的遗言。\n\n' .. 
+            res ..  '\n\n[SYSTEM] 遗言到此为止。'
+        )
         self.sessions[session] = self:newsession()
-        local user_content = self:make_content('user', res)
-        local res_content = self:make_content('assistant', '我知道了。这是一条系统消息。')
+        local user_content = self:make_content(self.userRole, res)
+        local res_content = self:make_content(self.modelRole, '我知道了。这是一条系统消息。')
         local target = nil
         if self.apiType == 'ollama' then
             target = self.sessions[session].messages
@@ -103,7 +110,10 @@ function Chat:Chat(session, message_str, model)
     else
         self.sessions[session] = self.sessions[session] or self:newsession()
     end
-    message_str = message_str .. string.format("[system: date='%s']", bot.os_sh('date'))
+    message_str = string.format(
+        "[SYSTEM: date='%s']%s%s", 
+        bot.os_sh('date'),
+        user_prompt, message_str)
     local user_content = self:make_content('user', message_str)
     if self.apiType == 'ollama' then
         table.insert(self.sessions[session].messages, user_content)
@@ -126,33 +136,41 @@ function Chat:Chat(session, message_str, model)
     else
         send_data = {
             url = 'https://generativelanguage.googleapis.com',
-            api = '/v1beta/models/gemini-2.0-flash:generateContent',
+            api = '/v1beta/models/gemini-2.5-flash-lite:generateContent',
             headers = {'X-goog-api-key: '.. gemini_key},
             data = self.sessions[session]
         }
     end
     local output = ''
-    local sts, err = pcall(function()
-
-        local dt = bot.request_api(send_data)
+    local response = {}
+    local status, err = pcall(function()
+        ---@type table
+        response = bot.request_api(send_data)
         ---@type table
         local target = nil
         if self.apiType == 'ollama' then
             ---@type string
             ---@diagnostic disable-next-line 
-            output = dt.message.content
+            output = response.message.content
             target = self.sessions[session].messages
         else
-            print(jsonlib.table2json(dt):dump(2))
+            print(jsonlib.table2json(response):dump(2))
             ---@type string
             ---@diagnostic disable-next-line 
-            output = dt.candidates[1].content.parts[1].text
+            output = response.candidates[1].content.parts[1].text
             target = self.sessions[session].contents
         end
         local ta = self:make_content(self.modelRole, output)
         table.insert(target, ta)
     end)
-    if not sts then
+    if not status then
+        if response == nil then
+            err = '似乎连不到大脑了…… '
+        elseif not (response.error == nil) then
+            err = response.error.message
+        elseif not (response.promptFeedback == nil) then
+            err = '似乎被捂嘴了…… ' .. response.promptFeedback.blockReason
+        end
         output = '咦，脑袋没了！！\n'..err
     end
     return bot.string_only(output)
@@ -170,35 +188,26 @@ end
 function Chat:chat_all(message, model)
     local session = ''
     if (message:is_group()) then session = session .. message.group_id .. '_' end
-    session = session .. message.user_id
+    if (not self.shared) then  session = session .. message.user_id end
     local para = bot.string.reverse_split(message:true_str())
-    local rt = self:Chat(session, para, model)
+    local user_prompt = [[[SYSTEM: USER_NICK=']] .. message.user_nk .. '\']\n'
+    local rt = self:Chat(session, para, model, user_prompt)
+    if #rt > 1024 then rt = string.format('[CQ:image,file=file://%s]',md2png(rt)) end
     return rt
 end
 function Chat:chat(message)
 	return self:chat_all(message, 'Jiemeng')
 end
-function mapi.chat.chat(message)
-    return chat_all(message, 'Jiemeng')
-end
 
-
-function mapi.chat.chat32(message)
-    return chat_all(message, 'gddisney/llama3.2-uncensored')
-end
-function mapi.chat.cat(message)
-    return chat_all(message, 'Jiemeng_cat')
-end
-function mapi.chat.chat_jmd(message)
-    return chat_all(message, 'Jiemengd')
-end
-function mapi.chat.chat_jmdp(message)
-    return chat_all(message, 'Jiemengdp')
-end
 mapi.gchat = Chat.new('gemini')
+mapi.gschat = Chat.new('gemini')
+mapi.gschat.shared = true
 
 function mapi.Gchat(message)
     return mapi.gchat:chat(message)
+end
+function mapi.Gschat(message)
+    return mapi.gschat:chat(message)
 end
 function random_chat(message)
     return mapi.gchat:random_chat(message)

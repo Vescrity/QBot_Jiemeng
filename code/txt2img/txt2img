@@ -1,7 +1,7 @@
 #!/bin/bash
 
 filesize=$(stat -c%s "$1")
-threshold=20480
+threshold=104800
 if (( filesize > threshold )); then
     echo "输出过长: $filesize 字节"
     exit 1

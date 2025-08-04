@@ -84,16 +84,24 @@ function mapi.cpp_run(message)
 end
 ---comment
 ---@param lua_code string
+---@param jit boolean
 ---@return string
-function lua_run(lua_code)
+function lua_run(lua_code, jit)
     local executable_file_name = os.tmpname()
+    local LUA =  jit and '/usr/bin/luajit' or '/usr/bin/lua'
     local temp_file_name = executable_file_name .. ".lua"
     -- local executable_file_name = os.tmpname()
+    local RUN = string.format(
+        './wrap --ro-bind %s %s %s %s',
+        temp_file_name,
+        temp_file_name,
+        LUA,
+        temp_file_name
+    )
     local temp_file = assert(io.open(temp_file_name, "w"))
     temp_file:write(lua_code)
     temp_file:close()
-    local rt=bot.os_sh('./wrap --ro-bind '.. temp_file_name .. 
-        ' ' .. temp_file_name .. ' /usr/bin/lua ' .. temp_file_name)
+    local rt=bot.os_sh(RUN)
     os.remove(temp_file_name)
     os.remove(executable_file_name)
     return bot.string_only(rt)
@@ -120,6 +128,13 @@ end
 function mapi.lua_run(message)
     local para = reverse_split(message:true_str())
     return lua_run(para)
+end
+---comment
+---@param message Message
+---@return string
+function mapi.luajit_run(message)
+    local para = reverse_split(message:true_str())
+    return lua_run(para,true)
 end
 ---comment
 ---@param message Message
