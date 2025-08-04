@@ -28,7 +28,7 @@ function mapi.bot.draw_deck(message)
     if times == '' then
         t = 1
     else
-        t = tonumber(times) // 1
+        t = math.floor(tonumber(times))
     end
     return bot.basic_draw_deck(message, keys, t)
 end

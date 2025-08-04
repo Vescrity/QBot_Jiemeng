@@ -99,8 +99,8 @@ local function pk(a, b)
         return
     end
     if (harm_a == 0) then return end
-    local na = (a.hp - 0.001) // harm_a + 1
-    local nb = (b.hp - 0.001) // harm_b + 1
+    local na = math.floor((a.hp - 0.001) / harm_a) + 1
+    local nb = math.floor((b.hp - 0.001) / harm_b) + 1
     if (nb > na) then
         a.hp = 0
         return
