@@ -283,6 +283,9 @@ jsonlib = {}
 ---@param t table
 ---@return json
 function jsonlib.table2json(t) end
+---@param t table|string
+---@return json
+function jsonlib.parse(t) end
 ---@param j json
 ---@return table|number|string
 function jsonlib.json2table(j) end

@@ -1,17 +1,17 @@
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng.hpp"
 #include "Jiemeng_Deck.hpp"
+#include "Jiemeng_Exception.hpp"
 #include "Jiemeng_MessageReplace.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_Request.hpp"
 #include "Jiemeng_Status.hpp"
-#include "Jiemeng_Version.hpp"
 #include "Jiemeng_String.hpp"
+#include "Jiemeng_Version.hpp"
 #include "txt2img_api.hpp"
 #include <filesystem>
 #include <sol/types.hpp>
 #include <thread>
-#include "Jiemeng_Exception.hpp"
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 namespace Jiemeng {
@@ -56,9 +56,11 @@ void Lua_Shell::init(Bot *b) {
         }
     };
     lua->new_usertype<json>(
-        "json", "new", sol::constructors<json()>(), "dump",
-        sol::overload([](json &js) { return js.dump(); },
-                      [](json &js, int n) { return js.dump(n); }),
+        "json", "new", sol::constructors<json()>(), 
+        "dump", sol::overload(
+            [](json &js) { return js.dump(); },
+            [](json &js, int n) { return js.dump(n); }
+        ),
         //"__index", json_index,
         "__index", [](nlohmann::json &j, sol::stack_object key) {
             if (key.is<std::string>()) {
@@ -68,14 +70,12 @@ void Lua_Shell::init(Bot *b) {
             }
             return nlohmann::json();
         },
-        // __newindex metamethod，设置子键
         /*"__newindex",
         [](nlohmann::json &this_json, const std::string &key,
            const sol::stack_object &value) {
             this_json[key] = value.as<nlohmann::json>();
         },*/
-        "__newindex", 
-        [](nlohmann::json &j, sol::stack_object key, sol::stack_object value) {
+        "__newindex", [](nlohmann::json &j, sol::stack_object key, sol::stack_object value) {
             if (key.is<std::string>()) {
                 j[key.as<std::string>()] = value.as<nlohmann::json>();
             } else if (key.is<int>()) {
@@ -91,17 +91,22 @@ void Lua_Shell::init(Bot *b) {
                     return std::make_tuple(sol::nil, sol::nil);
                     });
         },*/
-        "val",
-        [&](json &js) -> sol::object { return json_to_lua_table(js, *lua); },
-        "contains", [&](json &js, const string &str){ return js.contains(str);},
-        "parse",
-        [&](json &js, const sol::object &obj) { js = parse_to_json(obj); });
+        "val", [&](json &js) -> sol::object { return json_to_lua_table(js, *lua); },
+        "contains", [&](json &js, const string &str) { return js.contains(str); },
+        "parse", [&](json &js, const sol::object &obj) { js = parse_to_json(obj); });
+    /* clang-format off */
     lua->new_usertype<Request>(
-        "Request", "new", sol::constructors<Request()>(), "add_Headers",
-        &Request::add_Headers, "set_url", &Request::set_url, "set_api",
-        &Request::set_api, "set_data", &Request::set_data, "set_msgs",
-        &Request::set_msgs, "Post", &Request::Post, "js_post",
-        &Request::js_post, "js_get", &Request::js_get, "Get", &Request::Get);
+        "Request", "new", sol::constructors<Request()>(), 
+        "add_Headers", &Request::add_Headers,
+        "set_url", &Request::set_url,
+        "set_api", &Request::set_api,
+        "set_data", &Request::set_data,
+        "set_msgs", &Request::set_msgs,
+        "Post", &Request::Post,
+        "js_post", &Request::js_post,
+        "js_get", &Request::js_get,
+        "Get", &Request::Get
+    );
     lua->new_usertype<Message_Place>(
         "Message_Place", "new", sol::constructors<Message_Place()>(),
         "group_id", &Message_Place::group_id,
@@ -114,32 +119,44 @@ void Lua_Shell::init(Bot *b) {
         "set_private", &Message_Place::set_private,
         "is_group", &Message_Place::is_group,
         "is_private", &Message_Place::is_private,
-        "get_level", [b](Message_Place &place) { place.get_level(&(b->config)); });
+        "get_level", [b](Message_Place &place) { place.get_level(&(b->config)); }
+    );
     lua->new_usertype<Message>(
-        "Message", "new", sol::constructors<Message()>(), "get_string",
-        &Message::get_string, "get_json", &Message::get_json, "get_level",
-        [b](Message &place) {
+        "Message", "new", sol::constructors<Message()>(), 
+        "get_string", &Message::get_string, 
+        "get_json", &Message::get_json,
+        "get_level", [b](Message &place) {
             place.get_level(&(b->config));
             return place.level;
         },
-        "get_place", &Message::place, "true_str", &Message::true_str, "show",
-        &Message::show, "is_group", &Message::is_group, "is_private",
-        &Message::is_private, "change",
-        sol::overload([](Message &m, const char *str) { return m.change(str); },
-                      [](Message &m, json &js) { return m.change(js); }),
-        "set_group", &Message::set_group, "set_private", &Message::set_private,
+        "get_place", &Message::place, 
+        "true_str", &Message::true_str,
+        "show", &Message::show, 
+        "is_group", &Message::is_group, 
+        "is_private", &Message::is_private, 
+        "change",
+        sol::overload(
+            [](Message &m, const char *str) { return m.change(str); },
+            [](Message &m, json &js) { return m.change(js); }),
+        "set_group", &Message::set_group, 
+        "set_private", &Message::set_private,
         "user_id", &Message::user_id,
         "user_nm", &Message::user_nm,
         "user_nk", &Message::user_nk,
-        "group_id",
-        &Message::group_id, "group_nm", &Message::group_nm, "level",
-        &Message::level);
+        "group_id", &Message::group_id,
+        "group_nm", &Message::group_nm,
+        "level", &Message::level
+    );
     lua->new_usertype<Operation>(
-        "Operation", "new", sol::constructors<Operation()>(), "str",
-        &Operation::str, "set_type", &Operation::set_type);
-    lua->new_usertype<Operation_List>("Operation_List", "new",
-                                      sol::constructors<Operation_List()>(),
-                                      "push_back", &Operation_List::push_back);
+        "Operation", "new", sol::constructors<Operation()>(),
+        "str", &Operation::str,
+        "set_type", &Operation::set_type
+    );
+    lua->new_usertype<Operation_List>(
+        "Operation_List", "new", sol::constructors<Operation_List()>(),
+        "push_back", &Operation_List::push_back
+    );
+    /* clang-format on */
     sol::table botlib = lua->create_table();
     sol::table jsonlib = lua->create_table();
     botlib.set_function("sleep", minisleep);
@@ -183,17 +200,19 @@ void Lua_Shell::init(Bot *b) {
         return "";
     });
     // TODO
-    botlib.set_function("onebot_api", [this](const string &api,const sol::object &obj) {
-        auto a = parse_to_json(obj);
-        return this->bot->onebot_api(api,a);
-    });
-    botlib.set_function("onebot_api_async", [this](const string &api, const sol::object &obj) {
-        json a = parse_to_json(obj);
-        thread([this, a, api] {
-            json b = a;
-            this->bot->onebot_api(api, b);
-        }).detach();
-    });
+    botlib.set_function("onebot_api",
+                        [this](const string &api, const sol::object &obj) {
+                            auto a = parse_to_json(obj);
+                            return this->bot->onebot_api(api, a);
+                        });
+    botlib.set_function("onebot_api_async",
+                        [this](const string &api, const sol::object &obj) {
+                            json a = parse_to_json(obj);
+                            thread([this, a, api] {
+                                json b = a;
+                                this->bot->onebot_api(api, b);
+                            }).detach();
+                        });
     botlib.set_function("start_up_time", start_up_time);
     botlib.set_function("txt2img", txt2img);
     botlib.set_function("get_deck_size",
@@ -202,10 +221,10 @@ void Lua_Shell::init(Bot *b) {
         return this->bot->answer.main_answer->size();
     });
     // Config
-    botlib.set_function("get_group_list", 
-        [this]() -> sol::as_table_t<vector<string>> { 
-        return bot->config.get_group_list(); 
-    });
+    botlib.set_function("get_group_list",
+                        [this]() -> sol::as_table_t<vector<string>> {
+                            return bot->config.get_group_list();
+                        });
     botlib.set_function("add_group_list", [this](const string &str) {
         this->bot->config.add_group_list(str);
     });
@@ -236,6 +255,7 @@ void Lua_Shell::init(Bot *b) {
         thread([this, n, c] { this->bot->map_lua[n]->exec(c); }).detach();
     });
     jsonlib.set_function("table2json", lua_table_to_json);
+    jsonlib.set_function("parse", parse_to_json);
     jsonlib.set_function("json2table",
                          [&](json &js) { return json_to_lua_table(js, *lua); });
 
