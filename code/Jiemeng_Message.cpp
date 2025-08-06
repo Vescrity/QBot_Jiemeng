@@ -6,7 +6,7 @@
 using namespace std;
 namespace Jiemeng {
 
-void Message_Place::get_level(Config *config) {
+void Message_Place::get_level(const Config *config) {
     level = config->get_admin_level(user_id);
 }
 void Message::init(const json &js) {

@@ -8,16 +8,15 @@ namespace Jiemeng {
 class Bot;
 class Lua_Shell {
     std::unique_ptr<sol::state> lua;
-    Bot *bot;
-    void init(Bot *b);
+    Bot* const bot;
+    void init();
 
   public:
     std::mutex mtx;
     sol::protected_function_result get_func(const string &);
-    Lua_Shell(Bot *b) {
+    Lua_Shell(Bot* const b) : bot(b) {
         lua = std::make_unique<sol::state>();
-        bot = nullptr;
-        init(b);
+        init();
     };
     void reload();
     /// @brief 调用一个 Lua 函数，并将 Message 转为 Lua table 传递

@@ -36,10 +36,10 @@ namespace Jiemeng{
         void del_group_list     (const string &id) { vec_remove_first_value(group_list, id); }
         void del_private_list   (const string &id) { vec_remove_first_value(private_list, id); }
         void del_black_list     (const string &id) { vec_remove_first_value(black_list, id); }
-        bool private_white      (const string &id) { return is_private_black ^ Vec_Find(private_list, id); }
-        bool group_white        (const string &id) { return Vec_Find(group_list, id); }
-        bool is_black           (const string &id) { return Vec_Find(black_list, id); }
-        int  get_admin_level    (const string &id) { return admin_list.count(id) ? int(admin_list[id]) : 0; }
+        bool private_white      (const string &id) const { return is_private_black ^ Vec_Find(private_list, id); }
+        bool group_white        (const string &id) const { return Vec_Find(group_list, id); }
+        bool is_black           (const string &id) const { return Vec_Find(black_list, id); }
+        int  get_admin_level    (const string &id) const { return admin_list.count(id) ? int(admin_list[id]) : 0; }
         json custom_config;
         
         void init(const json&);

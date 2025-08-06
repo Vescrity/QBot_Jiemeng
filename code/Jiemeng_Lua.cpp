@@ -38,13 +38,11 @@ void Lua_Shell::reload() {
     std::lock_guard<std::mutex> locker(mtx);
     lua.reset();
     lua = std::make_unique<sol::state>();
-    init(bot);
+    init();
     return;
 }
-void Lua_Shell::init(Bot *b) {
+void Lua_Shell::init() {
     lua->open_libraries();
-    if (bot == nullptr)
-        bot = b;
 
     auto json_index = [](nlohmann::json &j, sol::this_state s,
                          const std::string &key) -> sol::object {
@@ -119,14 +117,14 @@ void Lua_Shell::init(Bot *b) {
         "set_private", &Message_Place::set_private,
         "is_group", &Message_Place::is_group,
         "is_private", &Message_Place::is_private,
-        "get_level", [b](Message_Place &place) { place.get_level(&(b->config)); }
+        "get_level", [this](Message_Place &place) { place.get_level(&(this->bot->config)); }
     );
     lua->new_usertype<Message>(
         "Message", "new", sol::constructors<Message()>(), 
         "get_string", &Message::get_string, 
         "get_json", &Message::get_json,
-        "get_level", [b](Message &place) {
-            place.get_level(&(b->config));
+        "get_level", [this](Message &place) {
+            place.get_level(&(this->bot->config));
             return place.level;
         },
         "get_place", &Message::place, 

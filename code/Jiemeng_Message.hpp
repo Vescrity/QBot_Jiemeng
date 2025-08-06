@@ -19,7 +19,7 @@ class Message_Place {
     string user_nm;
     string user_nk;
     int level = 0;
-    void get_level(Config *);
+    void get_level(const Config *);
     void set_private() { group_flag = 0; }
     void set_group() { group_flag = 1; }
     bool is_group() const { return group_flag; }
