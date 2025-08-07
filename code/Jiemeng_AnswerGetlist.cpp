@@ -10,7 +10,7 @@ Operation_List All_Answer::get_list(const Message &message) const {
     debug_lable("[Get_List]");
     dout << "开始检索匹配\n";
     auto c = [&](const vector<unique_ptr<Answer_List>> &x) {
-        for (auto &i : x) {
+        for (const auto &i : x) {
             rt += i->get_list(message);
             if (!rt.list.empty())
                 if (rt.list.back().type == Type::ignore)
@@ -41,7 +41,7 @@ Operation_List All_Answer::get_list(const Message &message) const {
 }
 Operation_List Answer_List::get_list(const Message &message) const {
     Operation_List rt;
-    for (auto &i : answer_group) {
+    for (const auto &i : answer_group) {
         if (i->check(message)) {
             rt += i->get_list();
             if (rt.list.back().type == Type::ignore)
@@ -58,7 +58,7 @@ Operation_List Answer::get_list() const {
     if (is_leaf())
         return rt + operation;
     if (is_and()) {
-        for (auto &i : sub_ans)
+        for (const auto &i : sub_ans)
             rt += i->get_list();
         return rt;
     } else

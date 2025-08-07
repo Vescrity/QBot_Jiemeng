@@ -84,7 +84,7 @@ void print_cutline() {
     blue_print(JIEMENG_PLATFORM);
     blue_print(" ");
     blue_print(JIEMENG_VERSION);
-    blue_puts(hf.c_str());
+    blue_puts(hf);
 }
 
 void Message::show() const {

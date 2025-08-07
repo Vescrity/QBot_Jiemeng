@@ -10,7 +10,7 @@ class Config;
 class Message;
 /// @brief 消息位置
 class Message_Place {
-    bool group_flag;
+    bool group_flag = false;
 
   public:
     string group_id;
@@ -37,7 +37,7 @@ class Message : public Message_Place, public CQMessage {
 
   public:
     Message() : CQMessage(""s) {}
-    Message(const string &s) : CQMessage(s) {}
+    explicit Message(const string &s) : CQMessage(s) {}
     Message_Place &place() { return (*this); }
     /// @brief 显示消息内容
     void show() const;

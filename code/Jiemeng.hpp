@@ -19,7 +19,7 @@ class Bot {
     unique_ptr<Lua_Shell> lua;
     map<string, unique_ptr<Lua_Shell> > map_lua;
     Message generate_message(const json &);
-    void process_message(Message);
+    void process_message(const Message &);
     bool message_output(const Message &);
     bool message_output(const Message_Place &, const CQMessage &);
     bool group_output(const string &group_id, const CQMessage &message);

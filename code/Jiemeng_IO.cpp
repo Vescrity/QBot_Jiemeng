@@ -59,5 +59,5 @@ void error_print(const string &s) { basic_IO(s, ERROR, PRINT); }
 void error_puts(const string &s) { basic_IO(s, ERROR, PUTS); }
 inline void exception_show(const string &lable, const string &msg) {
     error_lable(lable.c_str());
-    error_puts(msg.c_str());
+    error_puts(msg);
 }

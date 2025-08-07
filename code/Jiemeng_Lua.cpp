@@ -162,31 +162,31 @@ void Lua_Shell::init() {
     botlib.set_function("change_Rcode", chg_Rcode);
     botlib.set_function("string_only", string2CQ);
     botlib.set_function("group_output",
-                        [this](const string group_id, string message) {
+                        [this](const string &group_id, const string &message) {
                             CQMessage ms(message);
                             return this->bot->group_output(group_id, ms);
                         });
     botlib.set_function("private_output",
-                        [this](const string user_id, string message) {
+                        [this](const string &user_id, const string &message) {
                             CQMessage ms(message);
                             return this->bot->private_output(user_id, ms);
                         });
-    botlib.set_function("draw_deck", [this](const string key) {
+    botlib.set_function("draw_deck", [this](const string &key) {
         return this->bot->deck->draw(key);
     });
     botlib.set_function("deck_list",
                         [this]() { return this->bot->deck->list(); });
     botlib.set_function("message_replace",
-                        [this](const string str, Message &message) {
+                        [this](const string &str, Message &message) {
                             string s = str;
                             message_replace(s, message);
                             return s;
                         });
-    botlib.set_function("process_message", [this](Message message) {
+    botlib.set_function("process_message", [this](const Message &message) {
         return this->bot->process_message(message);
     });
     botlib.set_function("process_operation",
-                        [this](Message message, Operation_List list) {
+                        [this](const Message &message, Operation_List &list) {
                             return this->bot->process_operation(message, list);
                         });
     botlib.set_function("answer_reload",

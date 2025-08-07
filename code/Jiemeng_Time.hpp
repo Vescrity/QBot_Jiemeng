@@ -46,9 +46,8 @@ public:
   int nget_hour() { return nhour; }
   int nget_min() { return nmin; }
   int nget_sec() { return nsec; }
-  Time_Class(time_t now = time(0))
+  explicit Time_Class(time_t now = time(0)): tself(now)
   {
-    tself = now;
     tm *ltm = localtime(&now);
     nyear = 1900 + (ltm->tm_year);
     nmonth = 1 + (ltm->tm_mon);
@@ -56,6 +55,8 @@ public:
     nhour = ltm->tm_hour;
     nmin = ltm->tm_min;
     nsec = ltm->tm_sec;
+    nwday = ltm->tm_wday;
+    nyday = ltm->tm_yday;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-overflow"

@@ -11,6 +11,6 @@ class Json_Regex
 public:
   bool check(const std::string &msg) const;
   Json_Regex(){}
-  Json_Regex(const nlohmann::json &r) : regex(r) {}
+  explicit Json_Regex(const nlohmann::json &r) : regex(r) {}
 };
 #endif

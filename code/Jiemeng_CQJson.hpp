@@ -17,8 +17,8 @@ class CQMessage {
     void generate_string() const;
 
   public:
-    CQMessage(const string &s) { change(s); }
-    CQMessage(const json &j) { change(j); }
+    explicit CQMessage(const string &s) { change(s); }
+    explicit CQMessage(const json &j) { change(j); }
     json &get_json() const {
         if (!json_ready)
             generate_json();

@@ -51,7 +51,7 @@ void HTTP_Backend::run(std::function<void(const json &)> func) {
                 std::string response =
                     "HTTP/1.1 200 OK\r\nContent-Length: 6\r\n\r\nHello!";
                 boost::asio::write(socket, boost::asio::buffer(response));
-                debug_puts(request.c_str());
+                debug_puts(request);
                 // TODO: Run func
                 // std::thread(func).detach();
             };

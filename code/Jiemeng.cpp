@@ -119,7 +119,7 @@ json Bot::onebot_api(const string &api, json &a) {
 void Bot::process_operation(const Message &message, Operation_List &list,
                             string &buf) {
     list.upgrade(message, this);
-    for (auto &i : list.list) {
+    for (const auto &i : list.list) {
         try {
             buf = buf + exec_operation(message, i);
         } catch (const Operation::Clear &) {
@@ -143,7 +143,7 @@ void Bot::process_operation(const Message &message, Operation_List &list) {
     process_operation(message, list, uwu);
 }
 
-void Bot::process_message(Message message) {
+void Bot::process_message(const Message &message) {
     if (!is_white(message))
         return;
     try {

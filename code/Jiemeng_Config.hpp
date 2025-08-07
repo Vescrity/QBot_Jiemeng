@@ -15,20 +15,20 @@ namespace Jiemeng{
         vector<string> black_list;
         vector<string> group_list;
         
-        bool is_private_black;
+        bool is_private_black = true;
     public:
         int port;
         int sendport;
-        string self_id;
-        string spliter;
         unsigned int text_length;
         int time_check;
         int wait_time;
+        string self_id;
+        string spliter;
         json lua_state_list;
         
-        vector<string> get_group_list(){return group_list;}
-        vector<string> get_black_list(){return black_list;}
-        vector<string> get_private_list(){return private_list;}
+        const vector<string>& get_group_list()   const { return group_list;   }
+        const vector<string>& get_black_list()   const { return black_list;   }
+        const vector<string>& get_private_list() const { return private_list; }
         
         void add_group_list     (const string &id) { group_list.push_back(id); }
         void add_private_list   (const string &id) { private_list.push_back(id); }

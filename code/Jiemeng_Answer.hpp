@@ -9,8 +9,8 @@ using namespace std;
 namespace Jiemeng {
 class Answer {
   private:
-    bool leaf;
-    bool and_flag;
+    bool leaf = false;
+    bool and_flag = false;
     Operation operation;
     vector<int> lvs;
     vector<unique_ptr<Answer>> sub_ans;
@@ -19,10 +19,6 @@ class Answer {
     int rand_get() const;
 
   public:
-    Answer() { leaf = and_flag = 0; }
-    ~Answer() {
-        sub_ans.clear();
-    }
     bool is_leaf() const noexcept { return leaf; }
     bool is_and() const noexcept { return and_flag; }
     bool is_or() const noexcept { return !is_and(); }
@@ -51,7 +47,7 @@ class Answer_Group {
     bool check(const Message &message) const;
     void init(const json &js);
     Operation_List get_list() const { return answer.get_list(); }
-    Answer_Group(const json &js) { init(js); };
+    explicit Answer_Group(const json &js) { init(js); };
 };
 class Answer_List {
     vector<unique_ptr<Answer_Group>> answer_group;
@@ -60,27 +56,19 @@ class Answer_List {
     int priority = 0;
     auto size() { return answer_group.size(); }
     void init(const json &js);
-    void clear() {
-        answer_group.clear();
-    }
+    void clear() { answer_group.clear(); }
     Operation_List get_list(const Message &message) const;
-    ~Answer_List() { clear(); }
 };
 class All_Answer {
     vector<unique_ptr<Answer_List>> pre_answer_list;
     vector<unique_ptr<Answer_List>> suf_answer_list;
 
   public:
-    unique_ptr<Answer_List> main_answer;
+    unique_ptr<Answer_List> main_answer = nullptr;
     void clear() {
-        auto c = [this](vector<unique_ptr<Answer_List>> &x) {
-            x.clear();
-        };
-        c(pre_answer_list);
-        c(suf_answer_list);
+        pre_answer_list.clear();
+        suf_answer_list.clear();
     }
-    All_Answer() { main_answer = nullptr; }
-    ~All_Answer() { clear(); }
     void init(const json &);
     void main_answer_reload(const json &);
     Operation_List get_list(const Message &message) const;

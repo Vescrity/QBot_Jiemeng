@@ -102,7 +102,7 @@ namespace Jiemeng{
     string CQMessage::true_str() const {
         get_json();
         string rt;
-        for (auto &item : js) {
+        for (const auto &item : js) {
             std::string cqType = item["type"];
             if (cqType == "text")
                 rt += item["data"]["text"];

@@ -19,7 +19,7 @@ Operation_List extract(Operation oper, const Message &message, Bot *bot) {
         Operation op;
         op.type = Type::message;
         int qwq = 0;
-        for (auto &i : *uwu) {
+        for (const auto &i : *uwu) {
             op.str = i;
             rt += op;
             if (qwq++)
@@ -47,7 +47,7 @@ Operation_List extract(Operation oper, const Message &message, Bot *bot) {
     if (oper.type == Type::order) {
         auto para = string_cut(oper.str, bot->config.spliter, 2);
         auto &paras = (*para);
-        string &order = paras[0];
+        const string &order = paras[0];
         if (order == "order") {
             auto Pa = string_cut(message.true_str(), bot->config.spliter, 2);
             oper.str = (*Pa)[1];
@@ -124,10 +124,7 @@ void Operation::set_type(const string &t) {
     throw invalid_argument("未定义的 Operation_Type");
 }
 
-Operation::Operation() {
-    type = Type::message;
-    str = "clear";
-}
+Operation::Operation():type(Type::message), str("clear"){}
 void Operation_List::clear_ignore() {
     while (!list.empty()) {
         if (list.back().type != Type::ignore)

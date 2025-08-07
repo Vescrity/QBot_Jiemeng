@@ -12,7 +12,6 @@
 
 std::string url_encode(std::string_view input) {
     std::ostringstream encoded;
-    encoded.fill('0');
     encoded << std::hex;
 
     for (auto ch : input) {

@@ -31,20 +31,12 @@ inline string url_encode(const string &msg) {
 std::string url_encode(std::string_view input);
 */
 inline int get_st(const char *a, const char *sub_str) {
-#ifdef _WIN32
-    char *d = strstr(a, sub_str);
-    if (d == NULL)
-        return -1;
-    else
-        return d - a;
-#else
     char *aa = (char *)a;
     const char *d = strstr(aa, sub_str);
     if (d == NULL)
         return -1;
     else
         return d - aa;
-#endif
 }
 
 inline std::string escape_string(const std::string &s) {

@@ -33,7 +33,7 @@ class Operation {
         std::string message;
 
       public:
-        reRecv(const std::string &msg) : message(msg) {}
+        explicit reRecv(const std::string &msg) : message(msg) {}
         virtual const char *what() const noexcept override {
             return message.c_str();
         }

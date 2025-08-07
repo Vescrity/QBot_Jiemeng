@@ -10,7 +10,7 @@
   msg += e.what();                         \
   msg += "\nin function "s + __FUNCTION__; \
   error_lable((LABLE));                    \
-  error_puts(msg.c_str());
+  error_puts(msg);
 
 class Not_Serious : public std::exception
 {
