@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <string>
-#include <string.h>
 using namespace std;
 class Time_Class
 {
