@@ -84,8 +84,8 @@ string Request::Post() {
     if (!curl)
         throw std::runtime_error("CURL_INIT_ERROR");
     int nhds = Headers.size();
+    curl_slist *headers = NULL;
     if (nhds) {
-        curl_slist *headers = NULL;
         for (int i = 0; i < nhds; i++) {
             headers = curl_slist_append(headers, Headers[i].c_str());
         }
@@ -99,6 +99,7 @@ string Request::Post() {
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_perform(curl);
     curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
     return rt;
 }
 FILE *Request::FPost(FILE *fp) {
@@ -125,8 +126,8 @@ FILE *Request::FPost(FILE *fp) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_perform(curl);
-    curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
     return fp;
 }
 string Request::Get() {

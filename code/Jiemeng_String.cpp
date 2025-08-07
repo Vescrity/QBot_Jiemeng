@@ -2,13 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <string>
-#include <sstream>
 using namespace std;
 string num2str(long long num)
 {
-  char *slfid = new char[20];
-  sprintf(slfid, "%lld", (num));
-  return slfid;
+  return to_string(num);
 }
 
 static unsigned char enc_tab[] = "0123456789ABCDEF";
