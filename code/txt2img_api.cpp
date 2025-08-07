@@ -1,5 +1,6 @@
 #include "txt2img_api.hpp"
 #include "Jiemeng_Basic.h"
+#include <fstream>
 using string = std::string;
 string txt2img(const string &txt)
 {
@@ -15,8 +16,11 @@ string txt2img(const string &txt)
   sprintf(excmd, "txt2img/txt2img %s %s", txtname, filename);
   if (Now >= N)
     Now = 0;
-  FILE *fp = fopen(txtname, "w");
-  fprintf(fp, "%s", txt.c_str());
-  fclose(fp);
+
+  std::ofstream out_file(txtname);
+  if (out_file) {
+    out_file << txt;
+  }
+ 
   return execmd(excmd);
 }

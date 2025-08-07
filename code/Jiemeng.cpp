@@ -11,6 +11,7 @@
 #include <chrono>
 #include <filesystem>
 #include <future>
+#include <fstream>
 #include <thread>
 namespace fs = std::filesystem;
 using namespace std;
@@ -67,10 +68,11 @@ void Bot::run() {
 }
 
 void Bot::save_config() {
-    FILE *fp;
-    fp = fopen("config.json", "w");
-    fprintf(fp, "%s", config.save().dump(2).c_str());
-    fclose(fp);
+    const string CONFIG_FILE = "config.json";
+    std::ofstream out_file(CONFIG_FILE);
+    if (out_file) {
+        out_file << config.save().dump(2);
+    }
 }
 
 bool dir_exists(const string &name) {
