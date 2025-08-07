@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <memory>
 namespace fs = std::filesystem;
 namespace Jiemeng {
 
@@ -13,14 +14,14 @@ json ans_merge(const std::string &folderPath);
 void Answer_List::init(const json &js) {
     clear();
     for (auto &i : js["Answers"]) {
-        Answer_Group *ans = new Answer_Group(i);
-        answer_group.push_back(ans);
+        unique_ptr<Answer_Group> ans = make_unique<Answer_Group>(i);
+        answer_group.push_back(std::move(ans));
     }
     sort(answer_group.begin(), answer_group.end(),
-         [](const Answer_Group *a, const Answer_Group *b) { return *a < *b; });
+         [](const unique_ptr<Answer_Group> &a, const unique_ptr<Answer_Group> &b) { return *a < *b; });
 }
-Answer_List *main_answer_read(const json &custom) {
-    Answer_List *p = new Answer_List;
+unique_ptr<Answer_List> main_answer_read(const json &custom) {
+    auto p = make_unique<Answer_List>();
     std::ostringstream oss;
     oss << ans_merge("./Answer");
     string strdata = oss.str();
@@ -29,11 +30,7 @@ Answer_List *main_answer_read(const json &custom) {
     return p;
 }
 void All_Answer::main_answer_reload(const json &custom) {
-    Answer_List *j = main_answer_read(custom);
-    Answer_List *k;
-    k = main_answer;
-    main_answer = j;
-    delete k;
+    main_answer = main_answer_read(custom) ;
     return;
 }
 void All_Answer::init(const json &custom) {
@@ -173,15 +170,15 @@ void Answer::Array_init(const json &js) {
                 lvs.push_back(lvs.back() + 1);
             else
                 lvs.push_back(int(i["weight"]) + lvs.back());
-            Answer *ans = new Answer;
+            auto ans = make_unique<Answer>();
             ans->init(i);
-            sub_ans.push_back(ans);
+            sub_ans.push_back(std::move(ans));
         }
     } else {
         for (auto &i : js) {
-            Answer *ans = new Answer;
+            auto ans = make_unique<Answer>();
             ans->init(i);
-            sub_ans.push_back(ans);
+            sub_ans.push_back(std::move(ans));
         }
     }
 }

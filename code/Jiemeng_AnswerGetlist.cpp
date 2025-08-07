@@ -9,7 +9,7 @@ Operation_List All_Answer::get_list(const Message &message) const {
     Operation_List rt;
     debug_lable("[Get_List]");
     dout << "开始检索匹配\n";
-    auto c = [&](const vector<Answer_List *> &x) {
+    auto c = [&](const vector<unique_ptr<Answer_List>> &x) {
         for (auto &i : x) {
             rt += i->get_list(message);
             if (!rt.list.empty())

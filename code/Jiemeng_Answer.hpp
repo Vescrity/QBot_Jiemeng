@@ -3,6 +3,7 @@
 #include "Jiemeng_JsonRegex.hpp"
 #include "Jiemeng_Message.hpp"
 #include "Jiemeng_Operation.hpp"
+#include <memory>
 #include <vector>
 using namespace std;
 namespace Jiemeng {
@@ -12,7 +13,7 @@ class Answer {
     bool and_flag;
     Operation operation;
     vector<int> lvs;
-    vector<Answer *> sub_ans;
+    vector<unique_ptr<Answer>> sub_ans;
     /// @brief 根据规则随机取应答
     /// @return 应答索引
     int rand_get() const;
@@ -20,8 +21,6 @@ class Answer {
   public:
     Answer() { leaf = and_flag = 0; }
     ~Answer() {
-        for (auto &i : sub_ans)
-            delete i;
         sub_ans.clear();
     }
     bool is_leaf() const noexcept { return leaf; }
@@ -55,35 +54,29 @@ class Answer_Group {
     Answer_Group(const json &js) { init(js); };
 };
 class Answer_List {
-    vector<Answer_Group *> answer_group;
+    vector<unique_ptr<Answer_Group>> answer_group;
 
   public:
     int priority = 0;
     auto size() { return answer_group.size(); }
     void init(const json &js);
     void clear() {
-        for (auto &i : answer_group)
-            delete i;
         answer_group.clear();
     }
     Operation_List get_list(const Message &message) const;
     ~Answer_List() { clear(); }
 };
 class All_Answer {
-    vector<Answer_List *> pre_answer_list;
-    vector<Answer_List *> suf_answer_list;
+    vector<unique_ptr<Answer_List>> pre_answer_list;
+    vector<unique_ptr<Answer_List>> suf_answer_list;
 
   public:
-    Answer_List *main_answer;
+    unique_ptr<Answer_List> main_answer;
     void clear() {
-        auto c = [this](vector<Answer_List *> &x) {
-            for (auto &i : x)
-                delete i;
+        auto c = [this](vector<unique_ptr<Answer_List>> &x) {
             x.clear();
         };
         c(pre_answer_list);
-        if (main_answer != nullptr)
-            delete main_answer;
         c(suf_answer_list);
     }
     All_Answer() { main_answer = nullptr; }
