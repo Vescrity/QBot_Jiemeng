@@ -15,9 +15,8 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
         return lua->call(operation.str, message);
     }
     if (operation.type == Type::lua_once) {
-        auto one = new Lua_Shell(this);
+        auto one = std::make_unique<Lua_Shell>(this);
         string rt = one->call(operation.str, message);
-        delete one;
         return rt;
     }
     if (operation.type == Type::call_state) {
@@ -44,9 +43,8 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
         }
         if (order == "1_sh") {
             auto &Pa = paras[1];
-            Lua_Shell *l = new Lua_Shell(this);
+            auto l = std::make_unique<Lua_Shell>(this);
             auto r = l->exec(Pa);
-            delete l;
             return r;
         }
         if (order == "sh") {

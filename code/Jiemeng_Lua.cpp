@@ -53,6 +53,7 @@ void Lua_Shell::init() {
             return sol::nil;
         }
     };
+    /* clang-format off */
     lua->new_usertype<json>(
         "json", "new", sol::constructors<json()>(), 
         "dump", sol::overload(
@@ -92,7 +93,6 @@ void Lua_Shell::init() {
         "val", [&](json &js) -> sol::object { return json_to_lua_table(js, *lua); },
         "contains", [&](json &js, const string &str) { return js.contains(str); },
         "parse", [&](json &js, const sol::object &obj) { js = parse_to_json(obj); });
-    /* clang-format off */
     lua->new_usertype<Request>(
         "Request", "new", sol::constructors<Request()>(), 
         "add_Headers", &Request::add_Headers,

@@ -22,12 +22,11 @@ void Bot::init() {
     server_init();
     fans.get();
     deck = fd.get();
-    char *buf = new char[1 << 10];
+    char buf[512];
     sprintf(buf, "初始化成功！共耗时%.3lfms",
             (clock() - st) * 1000.0 / CLOCKS_PER_SEC);
     info_lable("[INIT]");
     info_puts(buf);
-    delete[] buf;
 }
 
 void Bot::deck_reload() {
