@@ -107,8 +107,6 @@ Bot::~Bot() {
 }
 void Bot::clear() {
     delete server;
-    delete lua;
-    delete deck;
     debug_lable("[Clear]");
     debug_puts("清理完毕。");
 }

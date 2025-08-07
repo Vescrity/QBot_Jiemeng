@@ -20,7 +20,7 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
         return rt;
     }
     if (operation.type == Type::call_state) {
-        auto s = map_lua[operation.str];
+        auto &s = map_lua[operation.str];
         return s->call(operation.data["func"], message);
     }
     if (operation.type == Type::lua_shell)

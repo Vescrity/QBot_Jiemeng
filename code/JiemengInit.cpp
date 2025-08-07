@@ -5,6 +5,7 @@
 #include "Jiemeng_Http.hpp"
 #include <fstream>
 #include <future>
+#include <memory>
 using namespace std;
 using namespace Jiemeng;
 void Bot::init() {
@@ -12,7 +13,7 @@ void Bot::init() {
     debug_lable("[INIT]");
     debug_puts("开始执行 Config_init");
     config_init();
-    auto fd = async(launch::async, [] { return new Deck; });
+    auto fd = async(launch::async, [] { return make_unique<Deck>(); });
     auto fans = async(launch::async, [this] { answer_init(); });
     debug_lable("[INIT]");
     debug_puts("开始执行 lua_init");
@@ -30,10 +31,7 @@ void Bot::init() {
 }
 
 void Bot::deck_reload() {
-    Deck *p = new Deck;
-    Deck *r = deck;
-    deck = p;
-    delete r;
+    deck = make_unique<Deck>();
 }
 
 void Bot::answer_init() {
@@ -52,9 +50,9 @@ void Bot::config_init() {
     config.init(json::parse(fread));
 }
 void Bot::lua_init() {
-    lua = new Lua_Shell(this);
+    lua = make_unique<Lua_Shell>(this);
     for (auto &state : config.lua_state_list) {
-        auto s = map_lua[state["name"]] = new Lua_Shell(this);
+        auto &s = map_lua[state["name"]] = make_unique<Lua_Shell>(this);
         s->load(state["path"]);
     }
 }

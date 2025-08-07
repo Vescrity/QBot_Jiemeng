@@ -4,6 +4,7 @@
 #include "Jiemeng_Answer.hpp"
 #include "Jiemeng_Config.hpp"
 #include <map>
+#include <memory>
 using namespace std;
 namespace Jiemeng {
 class Operation;
@@ -11,12 +12,12 @@ class Server;
 class Lua_Shell;
 class Deck;
 class Bot {
-    Deck *deck;
     All_Answer answer;
     Config config;
     Server *server;
-    Lua_Shell *lua;
-    map<string, Lua_Shell *> map_lua;
+    unique_ptr<Deck> deck;
+    unique_ptr<Lua_Shell> lua;
+    map<string, unique_ptr<Lua_Shell> > map_lua;
     Message generate_message(const json &);
     void process_message(Message);
     bool message_output(const Message &);
