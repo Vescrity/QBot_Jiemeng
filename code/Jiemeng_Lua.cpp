@@ -300,7 +300,7 @@ string Lua_Shell::exec(const string &code) {
     std::lock_guard<std::mutex> locker(mtx);
     string str;
     try {
-        str = lua->script(code);
+        str = (*lua)["tostring"](lua->script(code));
     } catch (const sol::error &e) {
         JM_EXCEPTION("[Lua_Call]")
         return "";
