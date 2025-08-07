@@ -1,8 +1,34 @@
 #include "Jiemeng_Request.hpp"
+#include "Jiemeng_String.hpp"
 #include "Jiemeng_Basic.h"
 #include "Jiemeng_IO.hpp"
-#include "Jiemeng_String.hpp"
 #include <curl/curl.h>
+#include <string>
+#include <string_view>
+#include <cctype>
+#include <iomanip>
+#include <sstream>
+
+
+std::string url_encode(std::string_view input) {
+    std::ostringstream encoded;
+    encoded.fill('0');
+    encoded << std::hex;
+
+    for (auto ch : input) {
+        if (std::isalnum(static_cast<unsigned char>(ch)) || 
+            ch == '-' || ch == '_' || ch == '.' || ch == '~') {
+            encoded << ch;
+        } else {
+            encoded << '%' 
+                   << std::setw(2) 
+                   << static_cast<int>(static_cast<unsigned char>(ch));
+        }
+    }
+
+    return encoded.str();
+}
+
 json Request::js_curl_get() {
     string ss = curl_get();
     try {
@@ -48,7 +74,7 @@ string Request::datas_urlencode() {
         string tmp = string(elem.key());
         rt = rt + url_encode(tmp) + "=";
         if (elem.value().is_number())
-            tmp = num2str(elem.value());
+            tmp = std::to_string((long long)(elem.value()));
         else
             tmp = string(elem.value());
         rt = rt + url_encode(tmp);
@@ -162,7 +188,7 @@ string Request::curl_post() {
     }
     string p;
     p = js_default ? to_string(data) : msgs;
-    string len = num2str(p.length());
+    string len = std::to_string(p.length());
     msgs = escape_string(p);
 
     add_Headers("Content-Length: " + len);

@@ -7,6 +7,7 @@
 #include "Jiemeng_String.hpp"
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
+#include <string>
 using boost::asio::ip::tcp;
 using json = nlohmann::json;
 void handle_request(const std::string &request, tcp::socket &socket,
@@ -21,7 +22,7 @@ void handle_request(const std::string &request, tcp::socket &socket,
 namespace Jiemeng {
 json Server::onebot_api(const string &api, json &data) {
     Request rq;
-    rq.set_url("127.0.0.1:"s + num2str(sendport));
+    rq.set_url("127.0.0.1:"s + std::to_string(sendport));
     rq.set_api("/"s + api);
     rq.set_data(data);
     return rq.js_post();

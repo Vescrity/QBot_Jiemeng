@@ -1,16 +1,10 @@
 #ifndef JIEMENG_STRING
 #define JIEMENG_STRING
-#include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <string>
 
 using namespace std;
-
-/// @brief Change a number to string
-/// @param num The number to change
-/// @return The string
-string num2str(long long num);
 
 inline void str_replace(std::string &str, const std::string &from,
                         const std::string &to) {
@@ -30,11 +24,12 @@ inline std::string string2CQ(const std::string &str) {
     return text;
 }
 } // namespace Jiemeng
-string url_encode(const char *msg);
+/*string url_encode(const char *msg);
 inline string url_encode(const string &msg) {
     return url_encode(msg.c_str());
 }
-
+std::string url_encode(std::string_view input);
+*/
 inline int get_st(const char *a, const char *sub_str) {
 #ifdef _WIN32
     char *d = strstr(a, sub_str);

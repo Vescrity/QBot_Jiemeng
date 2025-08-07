@@ -41,7 +41,7 @@ class WSIO_Cache {
     WSIO_Cache(const std::string &host, const int &port)
         : serverHost(host), serverPort(port), resolver(ioContext),
           ws(ioContext) {
-        auto const results = resolver.resolve(serverHost, num2str(serverPort));
+        auto const results = resolver.resolve(serverHost, std::to_string(serverPort));
         msg_flag = 0;
         memset(flag, 0, sizeof flag);
         boost::asio::connect(ws.next_layer(), results.begin(), results.end());

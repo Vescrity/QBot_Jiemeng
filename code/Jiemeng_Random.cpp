@@ -1,12 +1,11 @@
 #include <random>
 #include "Jiemeng_Random.hpp"
-#include "Jiemeng_String.hpp"
 static auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-default_random_engine _e(seed);
+std::default_random_engine _e(seed);
 
 Lint Rands(Lint l, Lint r)
 {
-  uniform_int_distribution<Lint> u(l, r);
+  std::uniform_int_distribution<Lint> u(l, r);
   return u(_e);
 }
 Lint adb(Lint a, Lint b)
@@ -42,7 +41,7 @@ std::string calc_nkh(std::string Rstr)
       else
         sscanf(matc.c_str(), "%lld%*[dD]%lld", &l, &r);
       Lint rd = adb(l, r);
-      matc = num2str(rd);
+      matc = std::to_string(rd);
 
       matc = prf + matc + suf;
 
@@ -66,7 +65,7 @@ std::string calc_nkh(std::string Rstr)
       Lint l, r;
       sscanf(matc.c_str(), "%lld^%lld", &l, &r);
       Lint rd = (Lint)(pow(l, r));
-      matc = num2str(rd);
+      matc = std::to_string(rd);
       matc = prf + matc + suf;
       ret = boost::regex_search(matc, m, reg);
       
@@ -87,7 +86,7 @@ std::string calc_nkh(std::string Rstr)
       Lint l, r;
       sscanf(matc.c_str(), "%lld*%lld", &l, &r);
       Lint rd = l * r;
-      matc = num2str(rd);
+      matc = std::to_string(rd);
       matc = prf + matc + suf;
       ret = boost::regex_search(matc, m, reg);
     }
@@ -113,7 +112,7 @@ std::string calc_nkh(std::string Rstr)
       else
         sscanf(matc.c_str(), "%lld+%lld", &l, &r);
       Lint rd = l + r;
-      matc = num2str(rd);
+      matc = std::to_string(rd);
       matc = prf + matc + suf;
       ret = boost::regex_search(matc, m, reg);
       
