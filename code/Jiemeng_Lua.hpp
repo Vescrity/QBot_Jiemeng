@@ -26,6 +26,7 @@ class Lua_Shell {
     /// @param  代码字符串
     /// @return 返回值
     string exec(const string &);
+    string exec(const string &, const Message &msg);
     void load(const string &);
 };
 } // namespace Jiemeng

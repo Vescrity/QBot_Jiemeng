@@ -4,8 +4,8 @@
 #include "Jiemeng_Operation.hpp"
 #include <filesystem>
 #include <fstream>
-#include <sstream>
 #include <memory>
+#include <sstream>
 namespace fs = std::filesystem;
 namespace Jiemeng {
 
@@ -18,7 +18,8 @@ void Answer_List::init(const json &js) {
         answer_group.push_back(std::move(ans));
     }
     sort(answer_group.begin(), answer_group.end(),
-         [](const unique_ptr<Answer_Group> &a, const unique_ptr<Answer_Group> &b) { return *a < *b; });
+         [](const unique_ptr<Answer_Group> &a,
+            const unique_ptr<Answer_Group> &b) { return *a < *b; });
 }
 unique_ptr<Answer_List> main_answer_read(const json &custom) {
     auto p = make_unique<Answer_List>();
@@ -30,7 +31,7 @@ unique_ptr<Answer_List> main_answer_read(const json &custom) {
     return p;
 }
 void All_Answer::main_answer_reload(const json &custom) {
-    main_answer = main_answer_read(custom) ;
+    main_answer = main_answer_read(custom);
     return;
 }
 void All_Answer::init(const json &custom) {
@@ -133,19 +134,19 @@ void Answer::init(const json &js) {
                 operation.type = Operation::Type::ignore;
             } else if (js.count("clear")) {
                 operation.type = Operation::Type::clear;
-            } else if (js.count("lua_once")) {
-                operation.type = Operation::Type::lua_once;
-                operation.str = js["lua_once"];
-            } else if (js.count("lua_call")) {
-                operation.type = Operation::Type::lua_call;
-                operation.str = js["lua_call"];
-            } else if (js.count("call_state")) {
-                operation.type = Operation::Type::call_state;
-                operation.str = js["call_state"];
-            } else if (js.count("lua_shell")) {
-                operation.type = Operation::Type::lua_shell;
-                operation.str = js["lua_shell"];
             }
+#define ELSE_OPER(key)                                                         \
+    else if (js.count(#key)) {                                                 \
+        operation.type = Operation::Type::key;                                 \
+        operation.str = js[#key];                                              \
+    }
+            ELSE_OPER(lua_call)
+            ELSE_OPER(lua_call1)
+            ELSE_OPER(lua_exec)
+            ELSE_OPER(lua_exec1)
+            ELSE_OPER(state_call)
+            ELSE_OPER(state_exec)
+#undef ELSE_OPER
             if (js.count("data")) {
                 operation.is_json = 1;
                 operation.data = js["data"];

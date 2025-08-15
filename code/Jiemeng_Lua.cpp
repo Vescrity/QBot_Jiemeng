@@ -10,6 +10,8 @@
 #include "Jiemeng_Version.hpp"
 #include "txt2img_api.hpp"
 #include <filesystem>
+#include <lua.h>
+#include <sol/object.hpp>
 #include <sol/types.hpp>
 #include <thread>
 using json = nlohmann::json;
@@ -257,6 +259,8 @@ void Lua_Shell::init() {
     jsonlib.set_function("json2table",
                          [&](json &js) { return json_to_lua_table(js, *lua); });
 
+    sol::table tmp = lua->create_table();
+    (*lua)["_TMP"] = tmp;
     (*lua)["bot"] = botlib;
     (*lua)["jsonlib"] = jsonlib;
     (*lua)["bot"]["_version"] = JIEMENG_VERSION;
@@ -280,10 +284,10 @@ sol::protected_function_result Lua_Shell::get_func(const string &func) {
 }
 
 string Lua_Shell::call(const string &func, Message message) {
-    std::lock_guard<std::mutex> locker(mtx);
     debug_lable("[Lua_Call]");
     dout << "call: " << func << "\n";
     try {
+        std::lock_guard<std::mutex> locker(mtx);
         auto fun = lua->script("return "s + func);
         sol::function fu = fun;
         auto result = fu(message);
@@ -300,6 +304,19 @@ string Lua_Shell::exec(const string &code) {
     std::lock_guard<std::mutex> locker(mtx);
     string str;
     try {
+        str = (*lua)["tostring"](lua->script(code));
+    } catch (const sol::error &e) {
+        JM_EXCEPTION("[Lua_Call]")
+        return "";
+    }
+    return str;
+}
+string Lua_Shell::exec(const string &code, const Message &msg) {
+    std::lock_guard<std::mutex> locker(mtx);
+    string str;
+    try {
+        sol::table tmp = lua->get_or("_TMP", lua->create_table());
+        tmp["msg"] = sol::make_object(lua->lua_state(), msg);
         str = (*lua)["tostring"](lua->script(code));
     } catch (const sol::error &e) {
         JM_EXCEPTION("[Lua_Call]")

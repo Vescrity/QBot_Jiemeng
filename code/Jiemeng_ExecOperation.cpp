@@ -2,6 +2,7 @@
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng_MessageReplace.hpp"
+#include <sol/object.hpp>
 namespace Jiemeng {
 using Type = Operation::Type;
 string Bot::exec_operation(const Message &message, const Operation &operation) {
@@ -14,17 +15,26 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
     if (operation.type == Type::lua_call) {
         return lua->call(operation.str, message);
     }
-    if (operation.type == Type::lua_once) {
+    if (operation.type == Type::lua_call1) {
         auto one = std::make_unique<Lua_Shell>(this);
         string rt = one->call(operation.str, message);
         return rt;
     }
-    if (operation.type == Type::call_state) {
-        auto &s = map_lua[operation.str];
-        return s->call(operation.data["func"], message);
+    if (operation.type == Type::lua_exec)
+        return (lua->exec(operation.str, message));
+    if (operation.type == Type::lua_exec1) {
+        auto one = std::make_unique<Lua_Shell>(this);
+        string rt = one->exec(operation.str, message);
+        return rt;
     }
-    if (operation.type == Type::lua_shell)
-        return (lua->exec(operation.str));
+    if (operation.type == Type::state_call) {
+        auto &s = map_lua[operation.str];
+        return s->call(operation.data["call"], message);
+    }
+    if (operation.type == Type::state_exec) {
+        auto &s = map_lua[operation.str];
+        return s->exec(operation.data["exec"], message);
+    }
 
     if (operation.type == Type::order) {
         Operation oper = operation;

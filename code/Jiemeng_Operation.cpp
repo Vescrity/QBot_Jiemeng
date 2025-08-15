@@ -89,42 +89,27 @@ void Operation_List::upgrade(const Message &message, Bot *bot) {
 }
 
 void Operation::set_type(const string &t) {
-    if (t == "message") {
-        type = Type::message;
-        return;
+#define TYPE_CASE(str)                                                         \
+    if (t == #str) {                                                           \
+        type = Type::str;                                                      \
+        return;                                                                \
     }
-    if (t == "order") {
-        type = Type::order;
-        return;
-    }
-    if (t == "lua_call") {
-        type = Type::lua_call;
-        return;
-    }
-    if (t == "lua_once") {
-        type = Type::lua_once;
-        return;
-    }
-    if (t == "call_state") {
-        type = Type::call_state;
-        return;
-    }
-    if (t == "ignore") {
-        type = Type::ignore;
-        return;
-    }
-    if (t == "draw_deck") {
-        type = Type::draw_deck;
-        return;
-    }
-    if (t == "clear") {
-        type = Type::clear;
-        return;
-    }
+    TYPE_CASE(message)
+    TYPE_CASE(order)
+    TYPE_CASE(lua_call)
+    TYPE_CASE(lua_call1)
+    TYPE_CASE(lua_exec)
+    TYPE_CASE(lua_exec1)
+    TYPE_CASE(state_call)
+    TYPE_CASE(state_exec)
+    TYPE_CASE(draw_deck)
+    TYPE_CASE(clear)
+    TYPE_CASE(ignore)
+#undef TYPE_CASE
     throw invalid_argument("未定义的 Operation_Type");
 }
 
-Operation::Operation():type(Type::message), str("clear"){}
+Operation::Operation() : type(Type::message), str("clear") {}
 void Operation_List::clear_ignore() {
     while (!list.empty()) {
         if (list.back().type != Type::ignore)
