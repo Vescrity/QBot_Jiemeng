@@ -81,6 +81,32 @@ function bot.onebot.set_group_special_title(gid, uid, title)
     bot.onebot_api_async('set_group_special_title', dt)
 end
 ---comment
+---@param group_id string
+---@param name string
+---@return string
+function bot.onebot.set_group_name(group_id, name)
+    local data = {
+        group_id = group_id,
+        group_name = name
+    }
+    bot.onebot_api_async('set_group_name', data)
+    return ''
+end
+---comment
+---@param group_id string
+---@param user_id string
+---@param card string
+---@return string
+function bot.onebot.set_group_card(group_id, user_id, card)
+    local data = {
+        group_id = group_id,
+        user_id = user_id,
+        card = card
+    }
+    bot.onebot_api_async('set_group_card', data)
+    return ''
+end
+---comment
 ---@param message Message
 ---@return string
 function mapi.bot.set_title(message)
