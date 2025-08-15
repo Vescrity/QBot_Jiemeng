@@ -15,14 +15,15 @@ function json.new() end
 function json:dump(n) end
 
 --- 将一个键值对添加到 json 对象
---- @param key string|int 键
+--- @param key string|integer 键
 --- @param value json 要设置的值
 function json:__newindex(key, value) end
 
 --- 从 json 对象中获取值
---- @param key string|int 键
+--- @param key string|integer 键
 --- @return json
 function json:__index(key) end
+
 --- contains
 --- @param key string
 --- @return nil
@@ -62,7 +63,7 @@ function Request:set_url(url) end
 function Request:set_api(api) end
 
 --- 设置传送的数据(json)
---- @param data json 
+--- @param data json
 function Request:set_data(data) end
 
 --- 设置传送的数据(string)
@@ -85,7 +86,7 @@ function Request:js_post() end
 --- @return json data 响应数据
 function Request:js_get() end
 
----@class Message_Place 
+---@class Message_Place
 ---@field group_id string
 ---@field group_nm string
 ---@field user_id string
@@ -94,42 +95,53 @@ function Request:js_get() end
 ---@field level integer 权限等级
 Message_Place = {}
 ---
----@return Message_Place 
+---@return Message_Place
 function Message_Place.new() end
+
 ---设置为群组消息
 function Message_Place:set_group() end
+
 ---设置为私信消息
 function Message_Place:set_private() end
+
 ---检查是否为群组消息
 ---@return boolean
 function Message_Place:is_group() end
+
 ---检查是否为私信消息
 ---@return boolean
 function Message_Place:is_private() end
+
 ---获取权限等级
 ---@return integer
 function Message_Place:get_level() end
 
----消息类 
----@class Message:Message_Place 
+---消息类
+---@class Message:Message_Place
 Message = {}
----@return Message 
+---@return Message
 function Message.new() end
+
 ---获取消息 CQ 码
 ---@return string
 function Message:get_string() end
+
 ---获取消息段 json
 ---@return json
 function Message:get_json() end
----获取消息纯文本 
+
+---获取消息纯文本
 ---@return string
 function Message:true_str() end
----获取消息位置属性 
+
+---获取消息位置属性
 ---@return Message_Place
 function Message:get_place() end
+
 ---输出消息至控制台
 ---@return nil
 function Message:show() end
+
 ---根据传入更改消息内容
 ---@param msg string|json
 ---@return nil
@@ -139,19 +151,19 @@ function Message:change(msg) end
 ---@field str string
 Operation = {}
 
----@return Operation 
+---@return Operation
 function Operation.new() end
 
 ---设置 Operation 的类型
 ---@param type_name string
 function Operation:set_type(type_name) end
 
-
 ---@class Operation_List
 Operation_List = {}
 
 ---@return Operation_List
 function Operation_List.new() end
+
 ---@param oper Operation
 ---@return nil
 function Operation_List:push_back(oper) end
@@ -166,7 +178,7 @@ bot.custom_config = {}
 bot.group_list = {}
 
 --- sleep (ms)
---- @param ms number 
+--- @param ms number
 function bot.sleep(ms) end
 
 --- 返回[l,r]区间内随机整数
@@ -174,6 +186,7 @@ function bot.sleep(ms) end
 --- @param r integer
 --- @return integer rand_number
 function bot.rand(l, r) end
+
 --- 对 rstr 中的 Rcode 变换
 --- @param rstr string
 --- @return string
@@ -211,9 +224,9 @@ function bot.deck_list() end
 --- @return string result
 function bot.message_replace(str, message) end
 
---- 按等效接收到该消息的方式处理消息 
+--- 按等效接收到该消息的方式处理消息
 --- @param message Message 要处理的消息
---- @return nil 
+--- @return nil
 function bot.process_message(message) end
 
 --- 按照指定操作列表处理消息
@@ -230,15 +243,17 @@ function bot.deck_reload() end
 
 --- 重新加载 Lua 脚本 (Async)
 function bot.lua_reload() end
+
 --- 与 Onebot 实例进行  通信
 ---@param data table
 ---@param api string
 ---@return json msg 响应
 function bot.onebot_api(api, data) end
+
 --- 与 Onebot 实例进行  通信(Async)
 ---@param api string
 ---@param data table
----@return nil 
+---@return nil
 function bot.onebot_api_async(api, data) end
 
 ---@return string
@@ -250,30 +265,39 @@ function bot.txt2img(str) end
 
 ---@return integer
 function bot.get_deck_size() end
+
 ---@return integer
 function bot.get_answer_size() end
 
 ---@return string[]
 function bot.get_group_list() end
+
 ---@param id string id
 function bot.add_group_list(id) end
+
 ---@param id string id
 function bot.add_private_list(id) end
+
 ---@param id string id
 function bot.add_black_list(id) end
+
 ---@param id string id
 function bot.del_group_list(id) end
+
 ---@param id string id
 function bot.del_private_list(id) end
+
 ---@param id string id
 function bot.del_black_list(id) end
 
 function bot.save_config() end
+
 ---在指定的 lua state 中运行 lua 代码
 ---@param state_name string
 ---@param code string
 ---@return string
 function bot.state_run(state_name, code) end
+
 ---在指定的 lua state 中运行 lua 代码(async)
 ---@param state_name string
 ---@param code string
@@ -283,9 +307,11 @@ jsonlib = {}
 ---@param t table
 ---@return json
 function jsonlib.table2json(t) end
+
 ---@param t table|string
 ---@return json
 function jsonlib.parse(t) end
+
 ---@param j json
 ---@return table|number|string
 function jsonlib.json2table(j) end
