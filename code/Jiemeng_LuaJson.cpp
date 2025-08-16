@@ -74,7 +74,7 @@ json parse_to_json(const sol::object &obj) {
         const std::string &str = obj.as<std::string>();
         try {
             return json::parse(str);
-        } catch (const json::parse_error &e) { throw e; }
+        } catch (const json::parse_error &e) { throw; }
     } else if (obj.is<json>()) {
         return obj.as<json>();
     } else {

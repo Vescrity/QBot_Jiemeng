@@ -18,11 +18,11 @@ Operation_List extract(Operation oper, const Message &message, Bot *bot) {
         auto uwu = string_cut(oper.str, "[-cut-]");
         Operation op;
         op.type = Type::message;
-        int qwq = 0;
+        int qwq = uwu->size();
         for (const auto &i : *uwu) {
             op.str = i;
             rt += op;
-            if (qwq++)
+            if (--qwq)
                 rt += clears;
         }
         return rt;
@@ -46,7 +46,7 @@ Operation_List extract(Operation oper, const Message &message, Bot *bot) {
     }
     if (oper.type == Type::order) {
         auto para = string_cut(oper.str, bot->config.spliter, 2);
-        auto &paras = (*para);
+        const auto &paras = (*para);
         const string &order = paras[0];
         if (order == "order") {
             auto Pa = string_cut(message.true_str(), bot->config.spliter, 2);
@@ -79,7 +79,7 @@ void Operation_List::upgrade(const Message &message, Bot *bot) {
     debug_lable("[Upgrade]");
     dout << "开始对 Operation_List 执行更新操作\n";
     Operation_List rt;
-    for (auto &i : list)
+    for (const auto &i : list)
         rt += extract(i, message, bot);
     /*Operation c;
      *   c.type = Type::clear;
@@ -105,6 +105,7 @@ void Operation::set_type(const string &t) {
     TYPE_CASE(draw_deck)
     TYPE_CASE(clear)
     TYPE_CASE(ignore)
+    TYPE_CASE(stop)
 #undef TYPE_CASE
     throw invalid_argument("未定义的 Operation_Type");
 }

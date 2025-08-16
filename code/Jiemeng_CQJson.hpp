@@ -34,7 +34,7 @@ class CQMessage {
         json_ready = 0;
         return std::move(cq);
     }
-    string const_str() const { return get_string(); }
+    const string& const_str() const { return get_string(); }
     string true_str() const;
     void change(const json &j) {
         js = j;

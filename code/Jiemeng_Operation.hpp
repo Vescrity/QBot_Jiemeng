@@ -18,19 +18,23 @@ class Operation {
         lua_call1,
         lua_exec,
         lua_exec1,
+        lua_oper,
+        lua_oper1,
         state_call,
         state_exec,
         ignore,
         sleep,
+        stop,
         draw_deck,
         clear
     } type;
-    bool is_json;
+    bool is_json = false;
     json data;
     string str;
     Operation();
     void set_type(const string &);
     class Clear : std::exception {};
+    class Stop : std::exception {};
     class reRecv : public std::exception {
         std::string message;
 

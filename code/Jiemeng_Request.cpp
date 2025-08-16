@@ -93,9 +93,9 @@ string Request::curl_get() {
 static size_t Wset(void *buf, size_t size, size_t nmemb, void *userp) {
     if (userp == nullptr)
         return 0;
-    string *str = (string *)userp;
+    string *str = static_cast<string *>(userp);
     size_t totalBytes = size * nmemb;
-    str->append((char *)buf, totalBytes);
+    str->append(static_cast<char *>(buf), totalBytes);
     return totalBytes;
 }
 // libcurl-Post
@@ -120,7 +120,7 @@ string Request::Post() {
     curl_easy_setopt(curl, CURLOPT_POST, 1);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, msgs.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Wset);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&rt);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, static_cast<void *>(&rt));
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_perform(curl);
     curl_easy_cleanup(curl);
@@ -163,7 +163,7 @@ string Request::Get() {
     curl_easy_setopt(curl, CURLOPT_URL,
                      (url_link() + datas_urlencode()).c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Wset);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&rt);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, static_cast<void *>(&rt));
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_perform(curl);
     curl_easy_cleanup(curl);

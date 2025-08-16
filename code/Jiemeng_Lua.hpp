@@ -14,7 +14,7 @@ class Lua_Shell {
   public:
     std::mutex mtx;
     sol::protected_function_result get_func(const string &);
-    Lua_Shell(Bot* const b) 
+    explicit Lua_Shell(Bot* const b) 
         : bot(b),
         lua(std::make_unique<sol::state>()) { init(); };
     void reload();
@@ -26,7 +26,8 @@ class Lua_Shell {
     /// @param  代码字符串
     /// @return 返回值
     string exec(const string &);
-    string exec(const string &, const Message &msg);
+    string exec(const string &, const Message &);
+    sol::object run(const string &, const Message &);
     void load(const string &);
 };
 } // namespace Jiemeng
