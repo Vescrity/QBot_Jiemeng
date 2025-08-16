@@ -1,14 +1,19 @@
 #include "Jiemeng.hpp"
 #include "Jiemeng_Exception.hpp"
+#include "Jiemeng_IO.hpp"
 #include "txt2img_api.hpp"
 // TODO: 允许用户定义 lua 函数在消息发送前处理消息内容
 using namespace Jiemeng;
 bool Bot::private_output(const string &user_id, const CQMessage &message) {
     try {
-        if (message.const_str().length() == 0 || user_id == "10000")
+        auto nn = message.const_str().length();
+        if (nn == 0 || user_id == "10000")
             return false;
         blue_lable("[Output]");
-        blue_puts(message.const_str());
+        if (nn < 1e4)
+            blue_puts(message.const_str());
+        else
+            warn_puts("< Very Long, maybe binary? >");
         json send_data, rt;
         // send_data["action"] = "send_private_msg";
         send_data["user_id"] = stoull(user_id);
@@ -27,10 +32,14 @@ bool Bot::private_output(const string &user_id, const CQMessage &message) {
 }
 bool Bot::group_output(const string &group_id, const CQMessage &message) {
     try {
-        if (message.const_str().length() == 0)
+        auto nn = message.const_str().length();
+        if (nn == 0)
             return false;
         blue_lable("[Output]");
-        blue_puts(message.const_str());
+        if (nn < 1e4)
+            blue_puts(message.const_str());
+        else
+            warn_puts("< Very Long, maybe binary? >");
         json send_data, rt;
         send_data["group_id"] = stoull(group_id);
         send_data["message"] = message.get_json();
