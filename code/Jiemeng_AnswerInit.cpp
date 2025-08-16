@@ -1,6 +1,7 @@
 #include "Jiemeng_Algorithm.hpp"
 #include "Jiemeng_Answer.hpp"
 #include "Jiemeng_Exception.hpp"
+#include "Jiemeng_IO.hpp"
 #include "Jiemeng_Operation.hpp"
 #include <filesystem>
 #include <fstream>
@@ -144,9 +145,16 @@ void Answer::init(const json &js) {
             ELSE_OPER(lua_call1)
             ELSE_OPER(lua_exec)
             ELSE_OPER(lua_exec1)
+            ELSE_OPER(lua_oper)
+            ELSE_OPER(lua_oper1)
             ELSE_OPER(state_call)
             ELSE_OPER(state_exec)
 #undef ELSE_OPER
+            else{
+                warn_lable("[ELSE_OPER]");
+                warn_puts("undefined Operation?");
+                warn_puts(js.dump(2));
+            }
             if (js.count("data")) {
                 operation.is_json = 1;
                 operation.data = js["data"];

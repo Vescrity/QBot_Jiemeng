@@ -2,6 +2,7 @@
 #include "Jiemeng.hpp"
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_Exception.hpp"
+#include "Jiemeng_IO.hpp"
 #include "Jiemeng_MessageReplace.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_Request.hpp"
@@ -11,6 +12,7 @@
 #include "txt2img_api.hpp"
 #include <filesystem>
 #include <lua.h>
+#include <sol/forward.hpp>
 #include <sol/object.hpp>
 #include <sol/types.hpp>
 #include <thread>
@@ -63,7 +65,7 @@ void Lua_Shell::init() {
             [](json &js, int n) { return js.dump(n); }
         ),
         //"__index", json_index,
-        "__index", [](nlohmann::json &j, sol::stack_object key) {
+        "__index", [](const nlohmann::json &j, sol::stack_object key) {
             if (key.is<std::string>()) {
                 return j[key.as<std::string>()];
             } else if (key.is<int>()) {
@@ -92,7 +94,7 @@ void Lua_Shell::init() {
                     return std::make_tuple(sol::nil, sol::nil);
                     });
         },*/
-        "val", [&](json &js) -> sol::object { return json_to_lua_table(js, *lua); },
+        "val", [&](const json &js) -> sol::object { return json_to_lua_table(js, *lua); },
         "contains", [&](json &js, const string &str) { return js.contains(str); },
         "parse", [&](json &js, const sol::object &obj) { js = parse_to_json(obj); });
     lua->new_usertype<Request>(
@@ -137,7 +139,7 @@ void Lua_Shell::init() {
         "change",
         sol::overload(
             [](Message &m, const char *str) { return m.change(str); },
-            [](Message &m, json &js) { return m.change(js); }),
+            [](Message &m, const json &js) { return m.change(js); }),
         "set_group", &Message::set_group, 
         "set_private", &Message::set_private,
         "user_id", &Message::user_id,
@@ -150,6 +152,7 @@ void Lua_Shell::init() {
     lua->new_usertype<Operation>(
         "Operation", "new", sol::constructors<Operation()>(),
         "str", &Operation::str,
+        "data", &Operation::data,
         "set_type", &Operation::set_type
     );
     lua->new_usertype<Operation_List>(
@@ -179,7 +182,7 @@ void Lua_Shell::init() {
     botlib.set_function("deck_list",
                         [this]() { return this->bot->deck->list(); });
     botlib.set_function("message_replace",
-                        [this](const string &str, Message &message) {
+                        [this](const string &str, const Message &message) {
                             string s = str;
                             message_replace(s, message);
                             return s;
@@ -257,7 +260,7 @@ void Lua_Shell::init() {
     jsonlib.set_function("table2json", lua_table_to_json);
     jsonlib.set_function("parse", parse_to_json);
     jsonlib.set_function("json2table",
-                         [&](json &js) { return json_to_lua_table(js, *lua); });
+                         [&](const json &js) { return json_to_lua_table(js, *lua); });
 
     sol::table tmp = lua->create_table();
     (*lua)["_TMP"] = tmp;
@@ -293,12 +296,22 @@ string Lua_Shell::call(const string &func, Message message) {
         auto result = fu(message);
         if (!result.valid())
             throw sol::error(result);
-        string q = (*lua)["tostring"](result);
-        return q;
+        if (result.get_type() == sol::type::none)
+            return "";
+        return (*lua)["tostring"](result);
     } catch (const sol::error &e) {
         JM_EXCEPTION("[Lua_Call]")
         return "";
     }
+}
+sol::object Lua_Shell::run(const string &code, const Message &msg){
+    std::lock_guard<std::mutex> locker(mtx);
+    sol::table tmp = lua->get_or("_TMP", lua->create_table());
+    tmp["msg"] = sol::make_object(lua->lua_state(), msg);
+    auto result = lua->script(code);
+    if (!result.valid())
+        throw sol::error(result);
+    return result;
 }
 string Lua_Shell::exec(const string &code) {
     std::lock_guard<std::mutex> locker(mtx);
@@ -306,20 +319,19 @@ string Lua_Shell::exec(const string &code) {
     try {
         str = (*lua)["tostring"](lua->script(code));
     } catch (const sol::error &e) {
-        JM_EXCEPTION("[Lua_Call]")
+        JM_EXCEPTION("[Lua_Exec]")
         return "";
     }
     return str;
 }
 string Lua_Shell::exec(const string &code, const Message &msg) {
-    std::lock_guard<std::mutex> locker(mtx);
     string str;
     try {
-        sol::table tmp = lua->get_or("_TMP", lua->create_table());
-        tmp["msg"] = sol::make_object(lua->lua_state(), msg);
-        str = (*lua)["tostring"](lua->script(code));
+        const auto& rt = run(code,msg);
+        std::lock_guard<std::mutex> locker(mtx);
+        str = (*lua)["tostring"](rt);
     } catch (const sol::error &e) {
-        JM_EXCEPTION("[Lua_Call]")
+        JM_EXCEPTION("[Lua_Exec]")
         return "";
     }
     return str;

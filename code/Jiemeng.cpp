@@ -123,9 +123,11 @@ void Bot::process_operation(const Message &message, Operation_List &list,
         try {
             buf = buf + exec_operation(message, i);
         } catch (const Operation::Clear &) {
-            CQMessage ms(buf);
-            message_output(message, ms);
+            message_output(message, CQMessage(buf));
             buf = "";
+        } catch (const Operation::Stop &) {
+            message_output(message, CQMessage(buf));
+            break;
         } catch (Operation::reRecv &e) {
             Message msg = message;
             msg.change(string(e.what()));

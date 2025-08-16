@@ -2,63 +2,76 @@
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng_MessageReplace.hpp"
+#include "Jiemeng_Operation.hpp"
 #include <sol/object.hpp>
 namespace Jiemeng {
 using Type = Operation::Type;
+string order_parse(const Message &, const Operation &);
 string Bot::exec_operation(const Message &message, const Operation &operation) {
-    if (operation.type == Type::message)
+    switch (operation.type) {
+    case Type::message:
         return (operation.str);
-    if (operation.type == Type::sleep) {
+    case Type::sleep:
         minisleep(int(operation.data));
         return "";
-    }
-    if (operation.type == Type::lua_call) {
+    case Type::lua_call:
         return lua->call(operation.str, message);
-    }
-    if (operation.type == Type::lua_call1) {
+    case Type::lua_call1: {
         auto one = std::make_unique<Lua_Shell>(this);
         string rt = one->call(operation.str, message);
         return rt;
     }
-    if (operation.type == Type::lua_exec)
+    case Type::lua_oper: {
+        auto op = (lua->run(operation.str, message)).as<Operation>();
+        return exec_operation(message, op);
+    }
+    case Type::lua_oper1: {
+        auto one = std::make_unique<Lua_Shell>(this);
+        auto op = one->run(operation.str, message).as<Operation>();
+        return exec_operation(message, op);
+    }
+    case Type::lua_exec:
         return (lua->exec(operation.str, message));
-    if (operation.type == Type::lua_exec1) {
+    case Type::lua_exec1: {
         auto one = std::make_unique<Lua_Shell>(this);
         string rt = one->exec(operation.str, message);
         return rt;
     }
-    if (operation.type == Type::state_call) {
-        auto &s = map_lua[operation.str];
-        return s->call(operation.data["call"], message);
-    }
-    if (operation.type == Type::state_exec) {
+    case Type::state_exec: {
         auto &s = map_lua[operation.str];
         return s->exec(operation.data["exec"], message);
     }
-
-    if (operation.type == Type::order) {
+    case Type::state_call: {
+        auto &s = map_lua[operation.str];
+        return s->call(operation.data["call"], message);
+    }
+    case Type::clear:
+        throw Operation::Clear();
+    case Type::stop:
+        throw Operation::Stop();
+    case Type::order: {
         Operation oper = operation;
         auto para = string_cut(oper.str, this->config.spliter, 2);
         auto &paras = (*para);
         string &order = paras[0];
         if (order == "s_sh") {
             auto Pa = string_cut(paras[1], this->config.spliter, 2);
-            auto &state = (*Pa)[0];
-            auto &code = (*Pa)[1];
+            const auto &state = (*Pa)[0];
+            const auto &code = (*Pa)[1];
             return this->map_lua[state]->exec(code);
         }
         if (order == "l_sh") {
-            auto &Pa = paras[1];
+            const auto &Pa = paras[1];
             return this->lua->exec(Pa);
         }
         if (order == "1_sh") {
-            auto &Pa = paras[1];
+            const auto &Pa = paras[1];
             auto l = std::make_unique<Lua_Shell>(this);
-            auto r = l->exec(Pa);
+            const auto &r = l->exec(Pa);
             return r;
         }
         if (order == "sh") {
-            auto &Pa = paras[1];
+            const auto &Pa = paras[1];
             return execmd(Pa);
         }
         if (order == "answer_reload") {
@@ -94,11 +107,11 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
         }
         throw invalid_argument("未知的 Order");
     }
-    // 理论上不应该出现draw_deck
-    if (operation.type == Type::draw_deck)
-        throw runtime_error("BUG: draw_deck 不应出现在这里");
-    if (operation.type == Type::clear)
-        throw Operation::Clear();
-    throw invalid_argument("未知的 Operation");
+    case Type::ignore: return "";
+    case Type::draw_deck:
+    default:
+        throw runtime_error("BUG: 不应出现的 Operation");
+    }
 }
 } // namespace Jiemeng
+
