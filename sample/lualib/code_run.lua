@@ -54,7 +54,7 @@ end
 ---
 ---@param code string
 ---@return string
-function cpp_run(code)
+local function cpp_run(code)
     local executable_file_name = os.tmpname()
     local tmpscript_file_name = os.tmpname()
     local temp_file_name = executable_file_name .. ".cpp"
@@ -88,7 +88,7 @@ end
 ---@param lua_code string
 ---@param jit boolean|nil
 ---@return string
-function lua_run(lua_code, jit)
+local function lua_run(lua_code, jit)
     local executable_file_name = os.tmpname()
     local LUA = jit and '/usr/bin/luajit' or '/usr/bin/lua'
     local temp_file_name = executable_file_name .. ".lua"
@@ -112,7 +112,7 @@ end
 ---comment
 ---@param code string
 ---@return string
-function py_run(code)
+local function py_run(code)
     local executable_file_name = os.tmpname()
     local temp_file_name = executable_file_name .. ".py"
     -- local executable_file_name = os.tmpname()
@@ -157,3 +157,9 @@ function mapi.wrap_shell(message)
     local para = reverse_split(message:true_str())
     return lua_run([=[os.execute([==[]=] .. para .. [=[]==])]=])
 end
+
+return {
+    cpp_run,
+    lua_run,
+    py_run
+}
