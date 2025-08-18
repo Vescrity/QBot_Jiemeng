@@ -16,7 +16,6 @@ void Message::init(const json &js) {
         notice_init(js);
 }
 void Message::message_init(const json &js) {
-    message_id = to_string(js["message_id"]);
     if (js["message_type"] == "group")
         set_group();
     else
@@ -25,7 +24,7 @@ void Message::message_init(const json &js) {
     const json &sender = js["sender"];
     user_id = to_string(js["user_id"]);
     user_nk = sender["nickname"];
-
+    message_id = js["message_id"];
     if (sender.contains("card"))
         if (sender["card"].is_string())
             user_nm = sender["card"];
@@ -52,10 +51,10 @@ std::string notice2str(const json &j) {
     return formatted;
 }
 void Message::notice_init(const json &js) {
-    message_id = "0";
     const string keys =
         js.contains("notice_type") ? "notice_type" : "request_type";
     const string notice_type = js[keys];
+    no_true_str = true;
     auto af = [&] {
         message() = "[JM:";
         message().str() += notice_type + notice2str(js);

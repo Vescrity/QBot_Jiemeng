@@ -31,12 +31,12 @@ class Message_Place {
 };
 /// @brief 消息类
 class Message : public Message_Place, public CQMessage {
-    string message_id;
     void message_init(const json &);
     void notice_init(const json &);
 
   public:
     Message() : CQMessage(""s) {}
+    int message_id = 0;
     explicit Message(const string &s) : CQMessage(s) {}
     Message_Place &place() { return (*this); }
     /// @brief 显示消息内容
