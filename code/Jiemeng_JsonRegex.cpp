@@ -3,13 +3,38 @@
 #include "Jiemeng_String.hpp"
 #include <boost/regex.hpp>
 #include <string>
-#include <locale>
-#include <codecvt>
-std::wstring string_to_wstring(const std::string &str)
+#include <clocale>
+
+std::wstring string_to_wstring(const std::string& str) {
+    if (str.empty()) return L"";
+
+    // 获取当前环境变量的 locale（如 "en_US.UTF-8" 或 "C.UTF-8"）
+    const char* locale = std::setlocale(LC_ALL, "");
+    if (!locale) {
+        throw std::runtime_error("Failed to set locale from environment");
+    }
+
+    // 检查当前 locale 是否支持 UTF-8（避免非 UTF-8 环境导致乱码）
+    if (std::string(locale).find("UTF-8") == std::string::npos &&
+        std::string(locale).find("utf8") == std::string::npos) {
+        throw std::runtime_error("Current locale is not UTF-8");
+    }
+
+    // 转换
+    std::size_t len = std::mbstowcs(nullptr, str.c_str(), 0);
+    if (len == static_cast<std::size_t>(-1)) {
+        throw std::runtime_error("Invalid multibyte string");
+    }
+
+    std::vector<wchar_t> buf(len + 1);
+    std::mbstowcs(buf.data(), str.c_str(), str.size());
+    return std::wstring(buf.data(), len);
+}
+/*std::wstring string_to_wstring(const std::string &str)
 {
   std::wstring_convert<std::codecvt_utf8<wchar_t>> wstring_convert;
   return wstring_convert.from_bytes(str);
-}
+}*/
 bool reg_check(const string &msg, const json &regs);
 inline bool reg_str_check(const string &msg, const std::string &rstr)
 {
