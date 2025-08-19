@@ -1,5 +1,6 @@
 ---适用于桔梦的 AI-Chatbot 模块
-
+CHAT_SYSTEM = CHAT_SYSTEM or ''
+CHAT_MODEL = CHAT_MODEL or nil
 require("bot_string")
 require("bot_api")
 
@@ -59,7 +60,7 @@ function Chat:newsession()
             },
             generationConfig = {
                 thinkingConfig = {
-                    thinkingBudget = 0
+                    thinkingBudget = -1
                 }
             }
         }
@@ -82,6 +83,32 @@ function Chat:make_content(roles, str)
     return con
 end
 
+---@param session string
+function Chat:save(session)
+    local str = 'return ' .. table2str(self.sessions[session])
+    FILENAME = string.format("ChatSession/Session_%s.lua", session)
+    os.execute('mkdir -p ChatSession')
+    local file = assert(
+        io.open(FILENAME, "w")
+    )
+    file:write(str)
+    file:close()
+end
+
+---@param session string
+---@return boolean
+function Chat:load(session)
+    FILENAME = string.format("ChatSession/Session_%s.lua", session)
+    local ok, t = pcall(dofile, FILENAME) -- 安全加载文件
+
+    if not ok or type(t) ~= "table" then
+        return false
+    end
+
+    self.sessions[session] = t
+    return true
+end
+
 ---comment
 ---@param session string
 ---@param message_str string
@@ -90,7 +117,16 @@ end
 ---@param user_id string|number|nil
 ---@return string
 function Chat:Chat(session, message_str, model, user_nk, user_id)
-    if (message_str == '/clear') then
+    if (message_str == '/save') then
+        self:save(session)
+        return '已保存会话'
+    elseif (message_str == '/load') then
+        if self:load(session) then
+            return '已加载会话'
+        else
+            return '加载失败，可能没有已保存的会话'
+        end
+    elseif (message_str == '/clear') then
         self.sessions[session] = self:newsession()
         return '上下文已清理'
     elseif (message_str == '/kill') then
@@ -158,9 +194,10 @@ function Chat:Chat(session, message_str, model, user_nk, user_id)
             send_data.data.model = 'Jiemeng'
         end
     else
+        local models = CHAT_MODEL or 'gemini-2.5-flash'
         send_data = {
             url = 'https://generativelanguage.googleapis.com',
-            api = '/v1beta/models/gemini-2.5-flash:generateContent',
+            api = string.format('/v1beta/models/%s:generateContent', models),
             headers = { 'X-goog-api-key: ' .. gemini_key },
             data = self.sessions[session]
         }
@@ -194,7 +231,7 @@ function Chat:Chat(session, message_str, model, user_nk, user_id)
             err = response.error.message
         elseif not (response.promptFeedback == nil) then
             err = '似乎被捂嘴了…… ' .. response.promptFeedback.blockReason
-        elseif not ( response.candidates[1] == nil ) then
+        elseif not (response.candidates[1] == nil) then
             err = '似乎被捂嘴了…… ' .. response.candidates[1].finishReason
         end
         output = '咦，脑袋没了！！\n' .. err
