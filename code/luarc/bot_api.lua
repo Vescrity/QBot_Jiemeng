@@ -107,6 +107,29 @@ function bot.onebot.set_group_card(group_id, user_id, card)
     return ''
 end
 ---comment
+---@param group_id string
+---@param user_id string
+---@param duration integer
+---@param async boolean
+function bot.onebot.set_group_ban(group_id, user_id, duration, async)
+    local data = {
+        group_id = group_id,
+        user_id = user_id,
+        duration = duration
+    }
+    local f
+    f = async and bot.onebot_api_async or bot.onebot_api
+    f('set_group_ban', data)
+end
+---comment
+---@param message_id integer
+function bot.onebot.set_essence_msg(message_id)
+    local data = {
+        message_id = message_id,
+    }
+    bot.onebot_api_async('set_essence_msg', data)
+end
+---comment
 ---@param message Message
 ---@return string
 function mapi.bot.set_title(message)
