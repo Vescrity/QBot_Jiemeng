@@ -48,15 +48,6 @@ void Lua_Shell::reload() {
 void Lua_Shell::init() {
     lua->open_libraries();
 
-    auto json_index = [](nlohmann::json &j, sol::this_state s,
-                         const std::string &key) -> sol::object {
-        sol::state_view lua(s);
-        if (j.contains(key)) {
-            return sol::make_object(lua, j[key]);
-        } else {
-            return sol::nil;
-        }
-    };
     /* clang-format off */
     lua->new_usertype<json>(
         "json", "new", sol::constructors<json()>(), 
@@ -64,7 +55,6 @@ void Lua_Shell::init() {
             [](json &js) { return js.dump(); },
             [](json &js, int n) { return js.dump(n); }
         ),
-        //"__index", json_index,
         "__index", [](const nlohmann::json &j, sol::stack_object key) {
             if (key.is<std::string>()) {
                 return j[key.as<std::string>()];
@@ -147,6 +137,7 @@ void Lua_Shell::init() {
         "user_nk", &Message::user_nk,
         "group_id", &Message::group_id,
         "group_nm", &Message::group_nm,
+        "message_id", &Message::message_id,
         "level", &Message::level
     );
     lua->new_usertype<Operation>(
@@ -200,7 +191,6 @@ void Lua_Shell::init() {
                         [this]() { return this->bot->deck_reload(); });
     botlib.set_function("lua_reload", [this]() {
         thread([this] { reload(); }).detach();
-        return "";
     });
     // TODO
     botlib.set_function("onebot_api",
@@ -274,8 +264,6 @@ void Lua_Shell::init() {
         json_to_lua_table(bot->config.custom_config, *lua);
     (*lua)["bot"]["group_list"] = bot->config.get_group_list();
     lua->script_file("./init.lua");
-    // load("./luarc");
-    // load("./user_luarc");
 }
 
 sol::protected_function_result Lua_Shell::get_func(const string &func) {

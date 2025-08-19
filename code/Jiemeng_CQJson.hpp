@@ -17,6 +17,9 @@ class CQMessage {
     void generate_string() const;
 
   public:
+    /// 对于自定义生成的消息，如从 notice 生成的消息，
+    /// 不应产生 true_str
+    bool no_true_str = false;
     explicit CQMessage(const string &s) { change(s); }
     explicit CQMessage(const json &j) { change(j); }
     json &get_json() const {
@@ -34,7 +37,7 @@ class CQMessage {
         json_ready = 0;
         return std::move(cq);
     }
-    const string& const_str() const { return get_string(); }
+    const string &const_str() const { return get_string(); }
     string true_str() const;
     void change(const json &j) {
         js = j;
