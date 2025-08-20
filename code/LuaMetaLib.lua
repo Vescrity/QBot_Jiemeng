@@ -90,7 +90,6 @@ function Request:js_get() end
 ---@field group_id string
 ---@field group_nm string
 ---@field user_id string
----@field message_id integer
 ---@field user_nm string
 ---@field user_nk string
 ---@field level integer 权限等级
@@ -119,6 +118,7 @@ function Message_Place:get_level() end
 
 ---消息类
 ---@class Message:Message_Place
+---@field message_id integer
 Message = {}
 ---@return Message
 function Message.new() end
