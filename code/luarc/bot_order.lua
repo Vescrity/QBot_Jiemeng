@@ -7,7 +7,7 @@ mapi.bot = mapi.bot or {}
 ---@param action fun(para: string) 处理函数
 ---@return string
 local function process_message(message, action)
-    local para = reverse_split(message:true_str())
+    local para = message:param()
     if para == '' then return '未提供对象' end
     action(para)
     return ''

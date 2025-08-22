@@ -17,7 +17,7 @@ function bot.requset_wrap(url, api, is_Get, data_table, headers, return_json)
     local req = Request.new()
     req:set_url(url)
     req:set_api(api)
-    for i, str in ipairs(headers) do
+    for _, str in ipairs(headers) do
         req:add_Headers(str)
     end
     local js = jsonlib.table2json(data_table)
@@ -133,7 +133,7 @@ end
 ---@param message Message
 ---@return string
 function mapi.bot.set_title(message)
-    local title = reverse_split(message:true_str()) or ''
+    local title = message:param()
     ---@type integer
     local gid=tonumber(message.group_id)
     ---@type integer
