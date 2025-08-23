@@ -18,6 +18,9 @@ std::string json2CQ(const json &message) {
         cqCode += "[CQ:" + cqType;
         for (auto it = cqData.begin(); it != cqData.end(); ++it) {
             std::string key = it.key();
+            if (it.value().is_null()) {
+                continue;
+            }
             std::string value = it.value().is_string() ? string(it.value())
                                                        : to_string(it.value());
             str_replace(value, "&", "&amp;");
