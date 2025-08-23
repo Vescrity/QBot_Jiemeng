@@ -86,7 +86,7 @@ end
 ---@param session string
 function Chat:save(session)
     local str = 'return ' .. table2str(self.sessions[session])
-    FILENAME = string.format("ChatSession/Session_%s.lua", session)
+    local FILENAME = string.format("ChatSession/Session_%s.lua", session)
     os.execute('mkdir -p ChatSession')
     local file = assert(
         io.open(FILENAME, "w")
@@ -98,7 +98,7 @@ end
 ---@param session string
 ---@return boolean
 function Chat:load(session)
-    FILENAME = string.format("ChatSession/Session_%s.lua", session)
+    local FILENAME = string.format("ChatSession/Session_%s.lua", session)
     local ok, t = pcall(dofile, FILENAME) -- 安全加载文件
 
     if not ok or type(t) ~= "table" then

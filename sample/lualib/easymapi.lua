@@ -11,8 +11,7 @@ end
 ---@param message Message
 ---@return string
 function mapi.change_Rcode(message)
-    local str=message:true_str()
-    local para = bot.string.reverse_split(str)
+    local para = message:true_param()
     local result = bot.change_Rcode('['..para..']')
     return bot.string_only(result)
 end
@@ -20,5 +19,5 @@ end
 ---comment
 ---@param message Message
 function mapi.echo_message(message)
-    bot.group_output(message.group_id,message.user_id,message.get_string())
+    bot.group_output(message.group_id, message:get_string())
 end

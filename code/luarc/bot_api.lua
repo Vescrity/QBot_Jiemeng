@@ -11,6 +11,7 @@ bot.onebot = bot.onebot or {}
 ---@param api string
 ---@param is_Get boolean
 ---@param data_table table
+---@param headers table
 ---@param return_json boolean
 ---@return json|table
 function bot.requset_wrap(url, api, is_Get, data_table, headers, return_json)
@@ -122,6 +123,22 @@ function bot.onebot.set_group_ban(group_id, user_id, duration, async)
     f('set_group_ban', data)
 end
 ---comment
+---@param group_id string|integer
+---@param character string
+---@param text string
+---@param async boolean
+---@return json?
+function bot.onebot.send_group_ai_record(group_id, character, text, async)
+    local data = {
+        group_id = group_id,
+        character = character,
+        text = text
+    }
+    local f
+    f = async and bot.onebot_api_async or bot.onebot_api
+    return f('send_group_ai_record', data)
+end
+---comment
 ---@param message_id integer
 function bot.onebot.set_essence_msg(message_id)
     local data = {
@@ -164,6 +181,18 @@ function bot.get_reply_id(message)
     end
     return 0
 end
+---comment
+---@param message Message
+---@return Message
+function bot.get_reply_message(message)
+    local msgid = bot.get_reply_id(message)
+    local js = get_msg(msgid, true)
+    local msg = Message:new()
+    msg:change(js.message)
+    return msg
+end
+
+
 
 ---@deprecated
 ---@param text string
