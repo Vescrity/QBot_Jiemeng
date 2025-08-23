@@ -189,9 +189,8 @@ void Lua_Shell::init() {
                         [this]() { return this->bot->answer_reload(); });
     botlib.set_function("deck_reload",
                         [this]() { return this->bot->deck_reload(); });
-    botlib.set_function("lua_reload", [this]() {
-        thread([this] { reload(); }).detach();
-    });
+    botlib.set_function("lua_reload",
+                        [this]() { thread([this] { reload(); }).detach(); });
     // TODO
     botlib.set_function("onebot_api",
                         [this](const string &api, const sol::object &obj) {
@@ -301,7 +300,7 @@ string Lua_Shell::call(const string &func, Message message) {
         return "";
     }
 }
-sol::object Lua_Shell::run(const string &code, const Message &msg){
+sol::object Lua_Shell::run(const string &code, const Message &msg) {
     std::lock_guard<std::mutex> locker(mtx);
     sol::table tmp = lua->get_or("_TMP", lua->create_table());
     tmp["msg"] = sol::make_object(lua->lua_state(), msg);
@@ -324,7 +323,7 @@ string Lua_Shell::exec(const string &code) {
 string Lua_Shell::exec(const string &code, const Message &msg) {
     string str;
     try {
-        const auto& rt = run(code,msg);
+        const auto &rt = run(code, msg);
         std::lock_guard<std::mutex> locker(mtx);
         str = (*lua)["tostring"](rt);
     } catch (const sol::error &e) {
