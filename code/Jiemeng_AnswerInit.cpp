@@ -43,14 +43,14 @@ void All_Answer::init(const json &custom) {
 }
 
 void Answer_Group::init(const json &js) {
-    if (js.count("grps")) {
+    if (js.contains("grps")) {
         if (js["grps"].is_array())
             grps = js["grps"].get<vector<string>>();
         else
             throw std::invalid_argument("argument \"grps\" should be an array");
     } else
         grps.push_back("private_true"s);
-    if (js.count("user")) {
+    if (js.contains("user")) {
         if (js["user"].is_array())
             user = js["user"].get<vector<string>>();
         else
@@ -73,7 +73,7 @@ void Answer_Group::init(const json &js) {
             "argument \"regex\" or \"pri\" is invalid: " +
             std::string(e.what()));
     }
-    if (js.count("anss"))
+    if (js.contains("anss"))
         answer.init(js["anss"]);
     else
         throw std::invalid_argument("argument \"anss\" is not given");
@@ -89,16 +89,16 @@ void Answer::init(const json &js) {
     } else if (js.is_array()) {
         Array_init(js);
     } else if (js.is_object()) {
-        if (js.count("and")) {
+        if (js.contains("and")) {
             and_flag = true;
             Array_init(js["and"]);
-        } else if (js.count("or")) {
+        } else if (js.contains("or")) {
             and_flag = false;
             Array_init(js["or"]);
         } else {
             // TODO: 优化写法！
             leaf = 1;
-            if (js.count("order")) {
+            if (js.contains("order")) {
                 operation.type = Operation::Type::order;
                 if (!js["order"].is_string())
                     throw invalid_argument("order 被赋了错误的类型。");
@@ -108,17 +108,17 @@ void Answer::init(const json &js) {
                 } else if (operation.str == "clear") {
                     operation.type = Operation::Type::clear;
                 }
-            } else if (js.count("draw_deck")) {
+            } else if (js.contains("draw_deck")) {
                 operation.type = Operation::Type::draw_deck;
                 if (!js["draw_deck"].is_string())
                     throw invalid_argument("draw_deck 被赋了错误的类型。");
                 operation.str = js["draw_deck"];
-            } else if (js.count("text")) {
+            } else if (js.contains("text")) {
                 operation.type = Operation::Type::message;
                 if (!js["text"].is_string())
                     throw invalid_argument("text 被赋了错误的类型。");
                 operation.str = js["text"];
-            } else if (js.count("sleep")) {
+            } else if (js.contains("sleep")) {
                 operation.type = Operation::Type::sleep;
                 operation.data = js["sleep"];
                 if (!operation.data.is_number()) {
@@ -131,13 +131,13 @@ void Answer::init(const json &js) {
                         throw invalid_argument("Sleep expect NUMBER");
                     }
                 }
-            } else if (js.count("ignore")) {
+            } else if (js.contains("ignore")) {
                 operation.type = Operation::Type::ignore;
-            } else if (js.count("clear")) {
+            } else if (js.contains("clear")) {
                 operation.type = Operation::Type::clear;
             }
 #define ELSE_OPER(key)                                                         \
-    else if (js.count(#key)) {                                                 \
+    else if (js.contains(#key)) {                                                 \
         operation.type = Operation::Type::key;                                 \
         operation.str = js[#key];                                              \
     }
@@ -155,7 +155,7 @@ void Answer::init(const json &js) {
                 warn_puts("undefined Operation?");
                 warn_puts(js.dump(2));
             }
-            if (js.count("data")) {
+            if (js.contains("data")) {
                 operation.is_json = 1;
                 operation.data = js["data"];
             }
@@ -175,7 +175,7 @@ void Answer::Array_init(const json &js) {
         for (auto &i : js) {
             if (!i.is_object())
                 lvs.push_back(lvs.back() + 1);
-            else if (!i.count("weight"))
+            else if (!i.contains("weight"))
                 lvs.push_back(lvs.back() + 1);
             else
                 lvs.push_back(int(i["weight"]) + lvs.back());

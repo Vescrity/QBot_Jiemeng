@@ -29,15 +29,12 @@ namespace Jiemeng{
             black_list = js["black_list"].get<vector<string>>();
             group_list = js["group_list"].get<vector<string>>();
             custom_config = js["Custom_Config"];
-            if(js.count("lua_state_list"))
+            if(js.contains("lua_state_list"))
             {
                 lua_state_list = js["lua_state_list"];
                 if(!lua_state_list.is_array())
                     throw invalid_argument("lua_state_list 被提供了错误的数据类型。应为 array。");
             }
-            
-            /*if (js.count("broad_List"))
-             *     broad_list = js["broad_list"].get<vector<string>>();*/
         }
         catch(const std::exception &e)
         {
