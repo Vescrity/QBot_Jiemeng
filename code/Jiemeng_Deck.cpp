@@ -1,10 +1,10 @@
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_Exception.hpp"
+#include "Jiemeng_IO.hpp"
 #include "Jiemeng_Random.hpp"
 #include "Jiemeng_String.hpp"
 #include <filesystem>
 #include <fstream>
-
 // TODO: 优化
 namespace fs = std::filesystem;
 namespace Jiemeng {
@@ -29,20 +29,31 @@ string Deck::draw(const string &str, int times) {
 Deck::Deck() {
     init("./deck");
 }
-void Deck::init(const string &folderPath) {
+void Deck::init(const std::string &folderPath) {
     debug_lable("[Deck]");
     dout << "开始从 " << folderPath << " 加载牌堆\n";
-    json &mergedJSON = js;
-    json jsonData;
+
+    if (!fs::exists(folderPath)) {
+        error_lable("[Deck]");
+        error_puts("指定的 Deck 目录不存在");
+        return;
+    }
+
     for (const auto &entry : fs::directory_iterator(folderPath)) {
         if (entry.path().extension() == ".json") {
-            ifstream file(entry.path());
+            std::ifstream file(entry.path());
             if (file) {
-                // json jsonData;
-                file >> jsonData;
-                file.close();
-                for (auto it = jsonData.begin(); it != jsonData.end(); ++it)
-                    mergedJSON[it.key()] = it.value();
+                try {
+                    json fileData;
+                    file >> fileData;
+                    for (auto it = fileData.begin(); it != fileData.end(); ++it)
+                        js[it.key()] = it.value();
+
+                    // js.merge_patch(fileData);
+                } catch (const std::exception &e) {
+                    error_lable("[Deck]");
+                    error_puts(string(entry.path()) + ":\n" + e.what());
+                }
             }
         }
     }
