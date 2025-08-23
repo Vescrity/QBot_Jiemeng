@@ -237,20 +237,29 @@ void Lua_Shell::init() {
         this->bot->config.del_black_list(str);
     });
     botlib.set_function("save_config", [this]() { this->bot->save_config(); });
-    botlib.set_function("state_run",
-                        [this](const string &state_name, const string &code) {
-                            return this->bot->map_lua[state_name]->exec(code);
-                        });
+    botlib.set_function(
+        "state_run", [this](const string &state_name, const string &code) {
+            auto &m = this->bot->map_lua;
+            if (m.contains(state_name)) {
+                return this->bot->map_lua[state_name]->exec(code);
+            }
+            throw sol::error("No that state.");
+        });
     botlib.set_function("state_run_async", [this](const string &state_name,
                                                   const string &code) {
-        string n = state_name;
-        string c = code;
+        const string &n = state_name;
+        const string &c = code;
+        auto &m = this->bot->map_lua;
+        if (!m.contains(n)) {
+            throw sol::error("No that state.");
+        }
         thread([this, n, c] { this->bot->map_lua[n]->exec(c); }).detach();
     });
     jsonlib.set_function("table2json", lua_table_to_json);
     jsonlib.set_function("parse", parse_to_json);
-    jsonlib.set_function("json2table",
-                         [&](const json &js) { return json_to_lua_table(js, *lua); });
+    jsonlib.set_function("json2table", [&](const json &js) {
+        return json_to_lua_table(js, *lua);
+    });
 
     sol::table tmp = lua->create_table();
     (*lua)["_TMP"] = tmp;
