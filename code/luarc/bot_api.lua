@@ -1,4 +1,3 @@
-
 ---@module 'LuaMetaLib'
 
 require('bot_string')
@@ -56,31 +55,34 @@ end
 ---@param msg_id integer
 ---@return nil
 function bot.onebot.del_msg(msg_id)
-    local dt = {message_id = msg_id}
+    local dt = { message_id = msg_id }
     bot.onebot_api_async('delete_msg', dt)
 end
+
 ---comment
 ---@param gid integer
 ---@param uid integer
 function bot.onebot.group_poke(gid, uid)
-    local dt={
-        group_id=gid,
-        user_id=uid
+    local dt = {
+        group_id = gid,
+        user_id = uid
     }
-    bot.onebot_api_async('group_poke',dt)
+    bot.onebot_api_async('group_poke', dt)
 end
+
 ---comment
 ---@param gid integer
 ---@param uid integer
 ---@param title string
 function bot.onebot.set_group_special_title(gid, uid, title)
-    local dt={
-        group_id=gid,
-        user_id=uid,
-        special_title=title
+    local dt = {
+        group_id = gid,
+        user_id = uid,
+        special_title = title
     }
     bot.onebot_api_async('set_group_special_title', dt)
 end
+
 ---comment
 ---@param group_id string
 ---@param name string
@@ -93,6 +95,7 @@ function bot.onebot.set_group_name(group_id, name)
     bot.onebot_api_async('set_group_name', data)
     return ''
 end
+
 ---comment
 ---@param group_id string
 ---@param user_id string
@@ -107,6 +110,7 @@ function bot.onebot.set_group_card(group_id, user_id, card)
     bot.onebot_api_async('set_group_card', data)
     return ''
 end
+
 ---comment
 ---@param group_id string
 ---@param user_id string
@@ -122,6 +126,7 @@ function bot.onebot.set_group_ban(group_id, user_id, duration, async)
     f = async and bot.onebot_api_async or bot.onebot_api
     f('set_group_ban', data)
 end
+
 ---comment
 ---@param group_id string|integer
 ---@param character string
@@ -138,6 +143,7 @@ function bot.onebot.send_group_ai_record(group_id, character, text, async)
     f = async and bot.onebot_api_async or bot.onebot_api
     return f('send_group_ai_record', data)
 end
+
 ---comment
 ---@param message_id integer
 function bot.onebot.set_essence_msg(message_id)
@@ -146,26 +152,28 @@ function bot.onebot.set_essence_msg(message_id)
     }
     bot.onebot_api_async('set_essence_msg', data)
 end
+
 ---comment
 ---@param message Message
 ---@return string
 function mapi.bot.set_title(message)
     local title = message:param()
     ---@type integer
-    local gid=tonumber(message.group_id)
+    local gid = tonumber(message.group_id)
     ---@type integer
-    local uid=tonumber(message.user_id)
+    local uid = tonumber(message.user_id)
     bot.onebot.set_group_special_title(gid, uid, title)
     return ''
 end
 
 function bot.message_output(message)
-    if(message:is_group()) then
-        return bot.group_output(message.group_id,message:get_string())
+    if (message:is_group()) then
+        return bot.group_output(message.group_id, message:get_string())
     else
-        return bot.private_output(message.user_id,message:get_string())
+        return bot.private_output(message.user_id, message:get_string())
     end
 end
+
 ---comment
 ---@param message Message
 ---@return integer
@@ -173,7 +181,7 @@ function bot.get_reply_id(message)
     ---@type table
     local msg = jsonlib.json2table(message:get_json())
     local rt = 0
-    for i,v in ipairs(msg) do
+    for i, v in ipairs(msg) do
         if (v.type == 'reply') then
             rt = v.data.id
             return rt
@@ -181,6 +189,7 @@ function bot.get_reply_id(message)
     end
     return 0
 end
+
 ---comment
 ---@param message Message
 ---@return Message
@@ -189,10 +198,11 @@ function bot.get_reply_message(message)
     local js = get_msg(msgid, true)
     local msg = Message:new()
     msg:change(js.message)
+    msg.message_id = js.message_id:val()
+    msg.user_nk = js.sender.nickname:val()
+    msg.user_id = tostring(js.sender.user_id:val())
     return msg
 end
-
-
 
 ---@deprecated
 ---@param text string
@@ -201,18 +211,20 @@ function find_reply_id(text)
     local id = string.match(text, "%[CQ:reply,id=(%-?%d+)%]")
     return tonumber(id)
 end
+
 ---comment
 ---@param msgid integer
 ---@param isjson? boolean
 ---@return table | json
 function bot.get_msg(msgid, isjson)
-    local t = {message_id = msgid}
-    local qwq = bot.onebot_api('get_msg' ,t)
+    local t = { message_id = msgid }
+    local qwq = bot.onebot_api('get_msg', t)
     if (isjson) then return qwq.data end
     ---@type table<string, table>
     ---@diagnostic disable-next-line: assign-type-mismatch
     local rt = jsonlib.json2table(qwq)
     return rt.data
 end
+
 ---@deprecated
 get_msg = bot.get_msg
