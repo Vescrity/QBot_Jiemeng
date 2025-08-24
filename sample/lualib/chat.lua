@@ -255,8 +255,12 @@ end
 ---@return string
 function Chat:chat_all(message, model)
     local session = ''
-    if (message:is_group()) then session = session .. message.group_id .. '_' end
-    if (not self.shared) then session = session .. message.user_id end
+    if (message:is_group()) then
+        session = session .. message.group_id .. '_'
+    end
+    if (not self.shared) or message:is_private() then
+        session = session .. message.user_id
+    end
     local para = bot.string.reverse_split(message:true_str())
     local rt = self:Chat(session, para, model, message.user_nk, message.user_id)
     if #rt > 1024 then return string.format('[CQ:image,file=file://%s]', md2png(rt)) end
