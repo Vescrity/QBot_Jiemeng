@@ -219,12 +219,8 @@ json ans_merge(const std::string &folderPath) {
                     file.close();
                 }
             } else {
-#ifndef _WIN32
                 throw runtime_error("Failed to open file: "s +
                                     string(entry.path()));
-#else
-                throw runtime_error("Failed to open file: "s);
-#endif
             }
         }
     }
