@@ -1,5 +1,4 @@
 local game = {}
-require('bot_string')
 ---@diagnostic disable-next-line
 ---@class Character
 local Character = {}
@@ -82,6 +81,7 @@ function Character:level_up(select)
     self.mdef = self.mdef * 1.2
     return '升级成功'
 end
+
 ---
 ---@param a Character
 ---@param b Character
@@ -123,7 +123,7 @@ end
 
 local function gen_monster(level)
     local mon = Character:new(nil, '怪物' .. tostring(level), level, 50, 1.65,
-                              1.1, 0)
+        1.1, 0)
     local times = (1.4 ^ (level - 1))
     mon.hp = mon.hp * times
     mon.def = mon.def * times
@@ -225,21 +225,23 @@ function Character:game(oper, oper2)
         return r
     else
         return
-            '操作：\nstatus 状态信息\nmon_info 怪物信息\nchallenge[#1/2/3] 挑战[并升级]\nup#[1/2/3] 升级 ATK/DEF/MDEF\nnewgame[#name] 新游戏[名称]'
+        '操作：\nstatus 状态信息\nmon_info 怪物信息\nchallenge[#1/2/3] 挑战[并升级]\nup#[1/2/3] 升级 ATK/DEF/MDEF\nnewgame[#name] 新游戏[名称]'
     end
 end
-mapi.game = {}
 
+mapi.game = {}
+local exs = require("luarc.jm_generic_extend").string
 function mapi.game.game(message)
     local player = game_data[message.user_id] or
-                       new_player(message.user_nm)
+        new_player(message.user_nm)
     if (player.level == 0) then player = new_player(player.name) end
-    local ord = bot.string.reverse_split(message:true_str())
-    local op2, op1 = bot.string.reverse_split(ord)
+    local ord = exs.reverse_split(message:true_str())
+    local op2, op1 = exs.reverse_split(ord)
     local rt = player:game(op1, op2)
     if (op1 ~= 'load') then
         game_data[message.user_id] = Character:new(player)
     end
     return rt
 end
+
 return game

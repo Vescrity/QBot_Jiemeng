@@ -1,6 +1,6 @@
 mapi = mapi or {}
 require('bot_string')
-local reverse_split = bot.string.reverse_split
+local reverse_split = require("luarc.jm_generic_extend").string.reverse_split
 ---
 ---@param code string
 ---@return string

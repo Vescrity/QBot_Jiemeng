@@ -1,7 +1,7 @@
 ---适用于桔梦的 AI-Chatbot 模块
 CHAT_SYSTEM = CHAT_SYSTEM or ''
 CHAT_MODEL = CHAT_MODEL or nil
-require("bot_string")
+local exs = require("luarc.jm_generic_extend").string
 require("bot_api")
 
 ---@class Chat
@@ -261,7 +261,7 @@ function Chat:chat_all(message, model)
     if (not self.shared) or message:is_private() then
         session = session .. message.user_id
     end
-    local para = bot.string.reverse_split(message:true_str())
+    local para = exs.reverse_split(message:true_str())
     local rt = self:Chat(session, para, model, message.user_nk, message.user_id)
     if #rt > 1024 then return string.format('[CQ:image,file=file://%s]', md2png(rt)) end
     return bot.string_only(rt)
