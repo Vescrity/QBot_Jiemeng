@@ -105,9 +105,9 @@ string Deck::get_output(string str) {
 }
 
 int Deck::r_js(const string &key) {
-    int n = js[key].size();
-    if (n == 0)
+    if(!js.contains(key))
         throw invalid_argument(key + " not found.");
+    int n = js[key].size();
     string s;
     int n_lst[n + 1];
     memset(n_lst, 0, sizeof n_lst);
