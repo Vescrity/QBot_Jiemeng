@@ -55,8 +55,8 @@ void warn_lable(const char *s) { basic_IO(s, WARN, LABLE); }
 void warn_print(const string &s) { basic_IO(s, WARN, PRINT); }
 void warn_puts(const string &s) { basic_IO(s, WARN, PUTS); }
 void error_lable(const char *s) { basic_IO(s, ERROR, LABLE); }
-void error_print(const string &s) { basic_IO(s, ERROR, PRINT); }
-void error_puts(const string &s) { basic_IO(s, ERROR, PUTS); }
+void _error_print(const string &s) { basic_IO(s, ERROR, PRINT); }
+void _error_puts(const string &s) { basic_IO(s, ERROR, PUTS); }
 inline void exception_show(const string &lable, const string &msg) {
     error_lable(lable.c_str());
     error_puts(msg);

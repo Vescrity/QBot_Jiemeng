@@ -30,8 +30,11 @@ void warn_print(const string &s);
 /// @brief RED
 /// @param s
 void error_lable(const char *s);
-void error_puts(const string &s);
-void error_print(const string &);
+void _error_puts(const string &s);
+void _error_print(const string &);
 void exception_show(const string &lable, const string &msg);
+#define error_print(msg) _error_print(std::string(__FILE__) + ":" + std::to_string(__LINE__) + "[" + (__func__) + "]\n" + (msg))
+#define error_puts(msg) _error_print(std::string(__FILE__) + ":" + std::to_string(__LINE__) + "[" + (__func__) + "]\n" + (msg))
+
 
 #endif
