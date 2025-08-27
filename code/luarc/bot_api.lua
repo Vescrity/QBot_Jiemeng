@@ -1,7 +1,5 @@
 ---@module 'LuaMetaLib'
 
-require('bot_string')
-local reverse_split = bot.string.reverse_split
 mapi = mapi or {}
 mapi.bot = mapi.bot or {}
 bot.onebot = bot.onebot or {}
@@ -22,7 +20,8 @@ function bot.requset_wrap(url, api, is_Get, data_table, headers, return_json)
     end
     local js = jsonlib.table2json(data_table)
     req:set_data(js)
-    local rt = json.new()
+    local rt
+    ---@cast rt json
     if (is_Get) then
         rt = req:js_get()
     else
@@ -180,10 +179,11 @@ end
 function bot.get_reply_id(message)
     ---@type table
     local msg = jsonlib.json2table(message:get_json())
-    local rt = 0
-    for i, v in ipairs(msg) do
+    local rt
+    for _, v in ipairs(msg) do
         if (v.type == 'reply') then
             rt = v.data.id
+            ---@cast rt integer
             return rt
         end
     end
@@ -199,7 +199,7 @@ function bot.get_reply_message(message)
     local msg = Message:new()
     msg:change(js.message)
     msg.message_id = js.message_id:val()
-    msg.user_nk = js.sender.nickname:val()
+    msg.user_nk = tostring(js.sender.nickname:val())
     msg.user_id = tostring(js.sender.user_id:val())
     return msg
 end

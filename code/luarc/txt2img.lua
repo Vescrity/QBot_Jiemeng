@@ -1,5 +1,3 @@
-require('bot_string')
-local reverse_split = bot.string.reverse_split
 mapi = mapi or {}
 ---comment
 ---@param message Message

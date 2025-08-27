@@ -1,5 +1,3 @@
-require('bot_string')
-local reverse_split = bot.string.reverse_split
 mapi = mapi or {}
 mapi.bot = mapi.bot or {}
 --- 通用处理函数
@@ -18,30 +16,35 @@ end
 function mapi.bot.add_group(message)
     return process_message(message, bot.add_group_list)
 end
+
 ---
 ---@param message Message
 ---@return string
 function mapi.bot.del_group(message)
     return process_message(message, bot.del_group_list)
 end
+
 ---
 ---@param message Message
 ---@return string
 function mapi.bot.add_private(message)
     return process_message(message, bot.add_private_list)
 end
+
 ---
 ---@param message Message
 ---@return string
 function mapi.bot.del_private(message)
     return process_message(message, bot.del_private_list)
 end
+
 ---
 ---@param message Message
 ---@return string
 function mapi.bot.add_black(message)
     return process_message(message, bot.add_black_list)
 end
+
 ---
 ---@param message Message
 ---@return string
