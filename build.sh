@@ -13,6 +13,8 @@ echo '开始执行编译'
 cmake ..
 make -j$(nproc) "$@"
 
+if [ -n "$1" ]; then
+
 echo '尝试构建工作目录'
 
 mkdir tmp
@@ -28,6 +30,8 @@ cp -r ../sample .
 cp ../LICENSE .
 cp ./sample/config.json .
 cp ../README.md .
+
+fi
 
 endTime=`date +%Y%m%d-%H:%M:%S`
 endTime_s=`date +%s`
