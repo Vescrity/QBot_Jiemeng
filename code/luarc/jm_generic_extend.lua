@@ -23,6 +23,7 @@ function ex.file2table(file_name)
     if not ok or type(t) ~= 'table' then return {} end
     return t
 end
+
 ex.string = {}
 ---
 ---@param s string
@@ -38,6 +39,7 @@ function ex.string.reverse_split(s, spliter)
         return '', s
     end
 end
+
 ---包装任意文本的字符串至 `""` 内，用于命令行参数传递
 ---@param arg string
 ---@return unknown
@@ -74,6 +76,32 @@ function ex.string.parse_options(options_table, options_string)
     return result
 end
 
+---replace `{{value}}` to t.value
+---@param template string
+---@param t {[string]: string|number}
+---@return string
+function ex.string.format_from_table(template, t)
+    for k, v in pairs(t) do
+        template = template:gsub("{{" .. k .. "}}", tostring(v))
+    end
+    return template
+end
 
+ex.file = {}
+function ex.file.read(filename)
+    local f = io.open(filename, "r")
+    assert(f ~= nil)
+    local s = f:read("*a")
+    f:close()
+    return s
+end
+
+function ex.file.write(filename, str)
+    local f = io.open(filename, "w")
+    if (f == nil) then return false end
+    f:write(str)
+    f:close()
+    return true
+end
 
 return ex

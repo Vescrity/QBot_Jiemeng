@@ -57,6 +57,14 @@ function bot.onebot.del_msg(msg_id)
     local dt = { message_id = msg_id }
     bot.onebot_api_async('delete_msg', dt)
 end
+---comment
+---@param message Message
+---@return string
+function mapi.bot.del_msg(message)
+    local msgid = bot.get_reply_id(message)
+    bot.onebot.del_msg(msgid)
+    return ''
+end
 
 ---comment
 ---@param gid integer
@@ -68,6 +76,17 @@ function bot.onebot.group_poke(gid, uid)
     }
     bot.onebot_api_async('group_poke', dt)
 end
+
+---@param message Message
+---@return string
+function mapi.bot.poke(message)
+    if message:is_group() then
+        bot.onebot.group_poke(message.group_id, message.user_id)
+        return ''
+    end
+    return '未实现'
+end
+
 
 ---comment
 ---@param gid integer
@@ -93,6 +112,13 @@ function bot.onebot.set_group_name(group_id, name)
     }
     bot.onebot_api_async('set_group_name', data)
     return ''
+end
+---comment
+---@param msg Message
+---@return string
+function mapi.bot.set_group_name(msg)
+    local para = msg:true_param()
+    return bot.onebot.set_group_name(msg.group_id,para)
 end
 
 ---comment
@@ -157,10 +183,10 @@ end
 ---@return string
 function mapi.bot.set_title(message)
     local title = message:param()
-    ---@type integer
     local gid = tonumber(message.group_id)
-    ---@type integer
+    ---@cast gid integer
     local uid = tonumber(message.user_id)
+    ---@cast uid integer
     bot.onebot.set_group_special_title(gid, uid, title)
     return ''
 end
@@ -191,11 +217,27 @@ function bot.get_reply_id(message)
 end
 
 ---comment
+---@param msgid integer
+---@param isjson? boolean
+---@return table | json
+function bot.get_msg_by_id(msgid, isjson)
+    local t = { message_id = msgid }
+    local qwq = bot.onebot_api('get_msg', t)
+    if (isjson) then return qwq.data end
+    ---@type table<string, table>
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    local rt = jsonlib.json2table(qwq)
+    return rt.data
+end
+---@deprecated
+bot.get_msg = bot.get_msg_by_id
+
+---comment
 ---@param message Message
 ---@return Message
 function bot.get_reply_message(message)
     local msgid = bot.get_reply_id(message)
-    local js = get_msg(msgid, true)
+    local js = bot.get_msg_by_id(msgid, true)
     local msg = Message:new()
     msg:change(js.message)
     msg.message_id = js.message_id:val()
@@ -212,19 +254,6 @@ function find_reply_id(text)
     return tonumber(id)
 end
 
----comment
----@param msgid integer
----@param isjson? boolean
----@return table | json
-function bot.get_msg(msgid, isjson)
-    local t = { message_id = msgid }
-    local qwq = bot.onebot_api('get_msg', t)
-    if (isjson) then return qwq.data end
-    ---@type table<string, table>
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    local rt = jsonlib.json2table(qwq)
-    return rt.data
-end
 
 ---@deprecated
 get_msg = bot.get_msg
