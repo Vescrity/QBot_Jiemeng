@@ -1,6 +1,6 @@
 # QBot_Jiemeng
 
-[文档](https://vescrity.github.io/Jiemeng_Doc)|[样例](https://vescrity.github.io/Jiemeng_Example)
+[文档](https://vescrity.github.io/Jiemeng_Doc)|[样例](https://github.com/vescrity/Jiemeng_Example)
 
 桔梦(QBot_Jiemeng)是一个以 Onebot 标准的实现项目作为前端的 bot 项目。以词库匹配作为核心机制。
 
