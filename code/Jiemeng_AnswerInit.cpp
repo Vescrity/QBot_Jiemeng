@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <sol/forward.hpp>
+#include <sol/sol.hpp>
 #include <sstream>
 namespace fs = std::filesystem;
 namespace Jiemeng {
@@ -43,40 +45,45 @@ void All_Answer::init(const json &custom) {
 }
 
 void Answer_Group::init(const json &js) {
-    if (js.contains("grps")) {
-        if (js["grps"].is_array())
-            grps = js["grps"].get<vector<string>>();
-        else
-            throw std::invalid_argument("argument \"grps\" should be an array");
-    } else
-        grps.push_back("private_true"s);
-    if (js.contains("user")) {
-        if (js["user"].is_array())
-            user = js["user"].get<vector<string>>();
-        else
-            throw std::invalid_argument("argument \"user\" should be an array");
-    } else
-        user.push_back("1"s);
-    js_getval(level, js, "level", 0);
-    // 默认要求同时满足条件
-    js_getval(both_flag, js, "both", true);
-
     try {
-        regex = Json_Regex(js["regex"]);
-        priority = js["pri"];
-    } catch (const std::out_of_range &e) {
+        if (js.contains("grps")) {
+            if (js["grps"].is_array())
+                grps = js["grps"].get<vector<string>>();
+            else
+                throw std::invalid_argument(
+                    "argument \"grps\" should be an array");
+        } else
+            grps.push_back("private_true"s);
+        if (js.contains("user")) {
+            if (js["user"].is_array())
+                user = js["user"].get<vector<string>>();
+            else
+                throw std::invalid_argument(
+                    "argument \"user\" should be an array");
+        } else
+            user.push_back("1"s);
+        js_getval(level, js, "level", 0);
+        // 默认要求同时满足条件
+        js_getval(both_flag, js, "both", true);
+        if (js.contains("regex"))
+            regex = Json_Regex(js["regex"]);
+        else
+            throw std::invalid_argument("argument \"regex\" is missing: \n");
+        if (js.contains("pri"))
+            priority = js["pri"];
+        else
+            throw std::invalid_argument("argument \"pri\" is missing: \n");
+
+        if (js.contains("anss"))
+            answer.init(js["anss"]);
+        else
+            throw std::invalid_argument("argument \"anss\" is not given");
+
+    } catch (const std::exception &e) {
         throw std::invalid_argument(
-            "argument \"regex\" or \"pri\" is missing: " +
-            std::string(e.what()));
-    } catch (const std::domain_error &e) {
-        throw std::invalid_argument(
-            "argument \"regex\" or \"pri\" is invalid: " +
-            std::string(e.what()));
+            "unexpected error: " + std::string(e.what()) + "\nJSON content:\n" +
+            js.dump(2));
     }
-    if (js.contains("anss"))
-        answer.init(js["anss"]);
-    else
-        throw std::invalid_argument("argument \"anss\" is not given");
 }
 
 void Answer::init(const json &js) {
@@ -137,7 +144,7 @@ void Answer::init(const json &js) {
                 operation.type = Operation::Type::clear;
             }
 #define ELSE_OPER(key)                                                         \
-    else if (js.contains(#key)) {                                                 \
+    else if (js.contains(#key)) {                                              \
         operation.type = Operation::Type::key;                                 \
         operation.str = js[#key];                                              \
     }
@@ -150,7 +157,7 @@ void Answer::init(const json &js) {
             ELSE_OPER(state_call)
             ELSE_OPER(state_exec)
 #undef ELSE_OPER
-            else{
+            else {
                 warn_lable("[ELSE_OPER]");
                 warn_puts("undefined Operation?");
                 warn_puts(js.dump(2));
@@ -193,24 +200,24 @@ void Answer::Array_init(const json &js) {
 }
 
 json ans_merge(const std::string &folderPath) {
+    sol::state lua_s;
+    lua_s.open_libraries();
+    sol::function table2json =
+        lua_s.script(R"( return require("cjson").encode)");
     json mergedJson;
     std::vector<json> answerArrays;
     for (const auto &entry : fs::directory_iterator(folderPath)) {
-        if (entry.path().extension() == ".json") {
+        json fileJson;
+        if (entry.path().extension() == ".lua") {
+            auto t = lua_s.do_file(entry.path());
+            assert(t.get_type() == sol::type::table);
+            string s = table2json(t);
+            fileJson = json::parse(s);
+        } else if (entry.path().extension() == ".json") {
             std::ifstream file(entry.path());
             if (file.is_open()) {
-                json fileJson;
                 try {
                     file >> fileJson;
-                    if (fileJson.contains("Answers") &&
-                        fileJson["Answers"].is_array())
-                        answerArrays.push_back(fileJson["Answers"]);
-                    else {
-                        warn_lable("[Answer_Merge]");
-                        warn_puts("文件 "s + string(entry.path()) +
-                                  " 没有发现 Answers "
-                                  "字段或格式不正确，请检查。本次加载将忽略。");
-                    }
                     file.close();
                 } catch (exception &e) {
                     error_lable("[Answer_Merge]");
@@ -222,6 +229,15 @@ json ans_merge(const std::string &folderPath) {
                 throw runtime_error("Failed to open file: "s +
                                     string(entry.path()));
             }
+        } else
+            continue;
+        if (fileJson.contains("Answers") && fileJson["Answers"].is_array())
+            answerArrays.push_back(fileJson["Answers"]);
+        else {
+            warn_lable("[Answer_Merge]");
+            warn_puts("文件 "s + string(entry.path()) +
+                      " 没有发现 Answers "
+                      "字段或格式不正确，请检查。本次加载将忽略。");
         }
     }
 

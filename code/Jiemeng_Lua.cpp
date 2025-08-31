@@ -262,16 +262,17 @@ void Lua_Shell::init(const string &state_name) {
     });
 
     sol::table tmp = lua->create_table();
+    botlib["_state_name"] = state_name;
+    botlib["_version"] = JIEMENG_VERSION;
+    botlib["_platform"] = JIEMENG_PLATFORM;
+    botlib["_compile_time"] = UPDATE_TIME;
+    botlib["spliter"] = bot->config.spliter;
+    botlib["custom_config"] =
+        json_to_lua_table(bot->config.custom_config, *lua);
+    botlib["group_list"] = bot->config.get_group_list();
     (*lua)["_TMP"] = tmp;
     (*lua)["bot"] = botlib;
     (*lua)["jsonlib"] = jsonlib;
-    (*lua)["bot"]["_version"] = JIEMENG_VERSION;
-    (*lua)["bot"]["_platform"] = JIEMENG_PLATFORM;
-    (*lua)["bot"]["_compile_time"] = UPDATE_TIME;
-    (*lua)["bot"]["spliter"] = bot->config.spliter;
-    (*lua)["bot"]["custom_config"] =
-        json_to_lua_table(bot->config.custom_config, *lua);
-    (*lua)["bot"]["group_list"] = bot->config.get_group_list();
     lua->script_file("./init.lua");
 }
 
