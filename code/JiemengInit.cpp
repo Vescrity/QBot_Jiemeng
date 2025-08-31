@@ -2,7 +2,6 @@
 #include "Jiemeng_Deck.hpp"
 #include "Jiemeng_Lua.hpp"
 #include "Jiemeng_Socket.hpp"
-#include "Jiemeng_Http.hpp"
 #include <fstream>
 #include <future>
 #include <memory>
@@ -52,7 +51,7 @@ void Bot::config_init() {
 void Bot::lua_init() {
     lua = make_unique<Lua_Shell>(this);
     for (auto &state : config.lua_state_list) {
-        auto &s = map_lua[state["name"]] = make_unique<Lua_Shell>(this);
+        auto &s = map_lua[state["name"]] = make_unique<Lua_Shell>(this, state["name"]);
         s->load(state["path"]);
     }
 }

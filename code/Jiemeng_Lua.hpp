@@ -9,14 +9,14 @@ class Bot;
 class Lua_Shell {
     Bot* const bot;
     std::unique_ptr<sol::state> lua;
-    void init();
+    void init(const string &state_name = "main");
 
   public:
     std::mutex mtx;
     sol::protected_function_result get_func(const string &);
-    explicit Lua_Shell(Bot* const b) 
+    explicit Lua_Shell(Bot* const b, const string &state_name = "main") 
         : bot(b),
-        lua(std::make_unique<sol::state>()) { init(); };
+        lua(std::make_unique<sol::state>()) { init(state_name); };
     void reload();
     /// @brief 调用一个 Lua 函数，并将 Message 转为 Lua table 传递
     /// @param func_name 函数名

@@ -17,7 +17,7 @@ string Bot::exec_operation(const Message &message, const Operation &operation) {
     case Type::lua_call:
         return lua->call(operation.str, message);
     case Type::lua_call1: {
-        auto one = std::make_unique<Lua_Shell>(this);
+        auto one = std::make_unique<Lua_Shell>(this, "1");
         string rt = one->call(operation.str, message);
         return rt;
     }

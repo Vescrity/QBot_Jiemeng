@@ -14,6 +14,7 @@
 #include <lua.h>
 #include <sol/forward.hpp>
 #include <sol/object.hpp>
+#include <sol/state.hpp>
 #include <sol/types.hpp>
 #include <thread>
 using json = nlohmann::json;
@@ -45,7 +46,7 @@ void Lua_Shell::reload() {
     init();
     return;
 }
-void Lua_Shell::init() {
+void Lua_Shell::init(const string &state_name) {
     lua->open_libraries();
 
     /* clang-format off */
