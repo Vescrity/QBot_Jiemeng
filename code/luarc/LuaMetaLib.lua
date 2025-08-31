@@ -170,6 +170,7 @@ function Operation_List.new() end
 function Operation_List:push_back(oper) end
 
 bot = {}
+bot._state_name = ''
 bot._version = ''
 bot._platform = ''
 bot._compile_time = ''
