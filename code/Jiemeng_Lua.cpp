@@ -180,11 +180,16 @@ void Lua_Shell::init(const string &state_name) {
                             return s;
                         });
     botlib.set_function("process_message", [this](const Message &message) {
-        return this->bot->process_message(message);
+        thread([this, message] {
+            this->bot->process_message(message);
+        }).detach();
     });
     botlib.set_function("process_operation",
                         [this](const Message &message, Operation_List &list) {
-                            return this->bot->process_operation(message, list);
+                            thread([this, message, list] {
+                                auto l = list;
+                                this->bot->process_operation(message, l);
+                            }).detach();
                         });
     botlib.set_function("answer_reload",
                         [this]() { return this->bot->answer_reload(); });
