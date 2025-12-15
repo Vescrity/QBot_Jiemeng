@@ -1,5 +1,31 @@
 ---@module 'LuaMetaLib'
 local ex = {}
+ex.algo = require("jm_algorithm")
+---@class GenericCache
+---@field path string
+---@field payload table
+ex.Cache = {}
+ex.Cache.__index = ex.Cache
+---comment
+---@param path string
+---@return GenericCache
+function ex.Cache.new(path)
+    local i = { init = false, payload = {}, path = path }
+    setmetatable(i, ex.Cache)
+    return i
+end
+
+function ex.Cache:get()
+    if not self.init then
+        self.payload = ex.file2table(self.path)
+        self.init = true
+    end
+    return self.payload
+end
+
+function ex.Cache:save()
+    ex.table2file(self.payload, self.path)
+end
 
 ---@type fun(t: table): string
 ex.table2str = require("cjson.util").serialise_value
@@ -22,6 +48,29 @@ function ex.file2table(file_name)
     local ok, t = pcall(dofile, file_name) -- 安全加载文件
     if not ok or type(t) ~= 'table' then return {} end
     return t
+end
+
+---@class random_item
+---@field weight integer
+---@field payload any
+
+---@alias random_list random_item[]
+
+---@param obj_list random_list
+---@return any
+function ex.get_random_obj(obj_list)
+    local sum = 0
+    for _, v in ipairs(obj_list) do
+        sum = sum + v.weight
+    end
+    local r = bot.rand(1, sum)
+    for _, v in ipairs(obj_list) do
+        if r <= v.weight then
+            return v.payload
+        else
+            r = r - v.weight
+        end
+    end
 end
 
 ex.string = {}
@@ -82,6 +131,7 @@ end
 ---@return string
 function ex.string.format_from_table(template, t)
     for k, v in pairs(t) do
+        print('extend LINE 85: ', k, v)
         template = template:gsub("{{" .. k .. "}}", tostring(v))
     end
     return template
