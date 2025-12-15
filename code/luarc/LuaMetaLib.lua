@@ -179,6 +179,9 @@ bot.custom_config = {}
 ---@deprecated 因为不能同步更新故不建议使用
 bot.group_list = {}
 
+--- @param s string
+function bot.debug_puts(s) end
+
 --- sleep (ms)
 --- @param ms number
 function bot.sleep(ms) end

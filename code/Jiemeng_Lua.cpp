@@ -154,6 +154,8 @@ void Lua_Shell::init(const string &state_name) {
     /* clang-format on */
     sol::table botlib = lua->create_table();
     sol::table jsonlib = lua->create_table();
+    botlib.set_function("debug_lable", debug_lable);
+    botlib.set_function("debug_puts", debug_puts);
     botlib.set_function("sleep", minisleep);
     botlib.set_function("rand", Rands);
     botlib.set_function("change_Rcode", chg_Rcode);
