@@ -10,7 +10,7 @@ bot.onebot = bot.onebot or {}
 ---@param data_table table
 ---@param headers table
 ---@param return_json boolean
----@return json|table
+---@return json|table|nil
 function bot.requset_wrap(url, api, is_Get, data_table, headers, return_json)
     local req = Request.new()
     req:set_url(url)
@@ -19,6 +19,9 @@ function bot.requset_wrap(url, api, is_Get, data_table, headers, return_json)
         req:add_Headers(str)
     end
     local js = jsonlib.table2json(data_table)
+    if DEBUG_REQUEST == 1 then
+        print(js:dump(2))
+    end
     req:set_data(js)
     local rt
     ---@cast rt json
@@ -42,7 +45,7 @@ end
 ---
 ---@param Data table
 ---@param return_json? boolean (false)
----@return json|table
+---@return json|table|nil
 function bot.request_api(Data, return_json)
     local get = Data.get or false
     local rtj = return_json or false
