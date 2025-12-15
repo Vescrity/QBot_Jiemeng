@@ -63,6 +63,7 @@ void Bot::run() {
             msg.show();
             process_message(msg);
         } catch (const Not_Serious &) { return; }
+        catch (exception &e) { JM_EXCEPTION("[CRITICAL]"); }
     };
     server->run(pmsg);
 }
