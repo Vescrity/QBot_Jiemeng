@@ -60,6 +60,7 @@ function bot.onebot.del_msg(msg_id)
     local dt = { message_id = msg_id }
     bot.onebot_api_async('delete_msg', dt)
 end
+
 ---comment
 ---@param message Message
 ---@return string
@@ -90,7 +91,6 @@ function mapi.bot.poke(message)
     return '未实现'
 end
 
-
 ---comment
 ---@param gid integer
 ---@param uid integer
@@ -116,12 +116,13 @@ function bot.onebot.set_group_name(group_id, name)
     bot.onebot_api_async('set_group_name', data)
     return ''
 end
+
 ---comment
 ---@param msg Message
 ---@return string
 function mapi.bot.set_group_name(msg)
     local para = msg:true_param()
-    return bot.onebot.set_group_name(msg.group_id,para)
+    return bot.onebot.set_group_name(msg.group_id, para)
 end
 
 ---comment
@@ -193,7 +194,9 @@ function mapi.bot.set_title(message)
     bot.onebot.set_group_special_title(gid, uid, title)
     return ''
 end
-
+---comment
+---@param message Message
+---@return boolean
 function bot.message_output(message)
     if (message:is_group()) then
         return bot.group_output(message.group_id, message:get_string())
@@ -232,6 +235,7 @@ function bot.get_msg_by_id(msgid, isjson)
     local rt = jsonlib.json2table(qwq)
     return rt.data
 end
+
 ---@deprecated
 bot.get_msg = bot.get_msg_by_id
 
@@ -246,6 +250,7 @@ function bot.get_reply_message(message)
     msg.message_id = js.message_id:val()
     msg.user_nk = tostring(js.sender.nickname:val())
     msg.user_id = tostring(js.sender.user_id:val())
+    msg.time = tonumber(js.time:val())
     return msg
 end
 
@@ -256,7 +261,6 @@ function find_reply_id(text)
     local id = string.match(text, "%[CQ:reply,id=(%-?%d+)%]")
     return tonumber(id)
 end
-
 
 ---@deprecated
 get_msg = bot.get_msg
