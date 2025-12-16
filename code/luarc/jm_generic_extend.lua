@@ -15,6 +15,10 @@ function ex.Cache.new(path)
     return i
 end
 
+function ex.Cache:reload()
+    self.init = false
+end
+
 function ex.Cache:get()
     if not self.init then
         self.payload = ex.file2table(self.path)
