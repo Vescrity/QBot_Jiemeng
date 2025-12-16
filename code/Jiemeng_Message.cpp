@@ -21,6 +21,7 @@ void Message::message_init(const json &js) {
     else
         set_private();
     change(js["message"]);
+    time = js["time"];
     const json &sender = js["sender"];
     user_id = to_string(js["user_id"]);
     user_nk = sender["nickname"];

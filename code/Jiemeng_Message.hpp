@@ -37,6 +37,7 @@ class Message : public Message_Place, public CQMessage {
   public:
     Message() : CQMessage(""s) {}
     int message_id = 0;
+    int time = 0;
     explicit Message(const string &s) : CQMessage(s) {}
     Message_Place &place() { return (*this); }
     /// @brief 显示消息内容

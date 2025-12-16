@@ -139,6 +139,7 @@ void Lua_Shell::init(const string &state_name) {
         "group_id", &Message::group_id,
         "group_nm", &Message::group_nm,
         "message_id", &Message::message_id,
+        "time", &Message::time,
         "level", &Message::level
     );
     lua->new_usertype<Operation>(

@@ -119,6 +119,7 @@ function Message_Place:get_level() end
 ---消息类
 ---@class Message:Message_Place
 ---@field message_id integer
+---@field time integer
 Message = {}
 ---@return Message
 function Message.new() end
