@@ -89,11 +89,11 @@ function ex.string.reverse_split(s, spliter)
     end
 end
 
----包装任意文本的字符串至 `""` 内，用于命令行参数传递
+---包装任意文本的字符串用于命令行参数传递
 ---@param arg string
----@return unknown
+---@return string
 function ex.string.qoute(arg)
-    return '"' .. arg:gsub('"', [[\"]]):gsub([[\]], [[\\]]) .. '"'
+    return "'" .. arg:gsub("'", "'\\''") .. "'"
 end
 
 ---简易命令解析
