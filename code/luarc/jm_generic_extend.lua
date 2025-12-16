@@ -131,8 +131,8 @@ end
 ---@return string
 function ex.string.format_from_table(template, t)
     for k, v in pairs(t) do
-        print('extend LINE 85: ', k, v)
-        template = template:gsub("{{" .. k .. "}}", tostring(v))
+        print('extend: ', k, v)
+        template = template:gsub("{{" .. k .. "}}", function() return tostring(v) end)
     end
     return template
 end
